@@ -1,0 +1,29 @@
+{
+  "$ref": "#/definitions/IPtzLancCameraConfiguration",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "IPtzLancCameraConfiguration": {
+      "properties": {
+        "ConnectionPort": {
+          "type": "string"
+        },
+        "ConnectionUrl": {
+          "type": "string"
+        },
+        "ControllerType": {
+          "type": "string"
+        },
+        "InstanceNumber": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "ConnectionPort",
+        "ConnectionUrl",
+        "ControllerType",
+        "InstanceNumber"
+      ],
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+    "name": "cgf.cameracontrol.main.core",
+    "version": "1.0.0",
+    "description": "Core Library of the Camera Control Software initially developped for usage at Chrischona Frauenfeld",
+    "keywords": [
+        "Chrischona",
+        "Frauenfeld",
+        "Atem",
+        "Blackmagic",
+        "atem-connection",
+        "Camera",
+        "PTZ"
+    ],
+    "homepage": "https://github.com/sensslen/Cgf.CameraControl.Main.Core#readme",
+    "bugs": {
+        "url": "https://github.com/sensslen/Cgf.CameraControl.Main.Core/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sensslen/Cgf.CameraControl.Main.Core.git"
+    },
+    "license": "MIT",
+    "author": {
+        "name": "Simon Ensslen",
+        "email": "sensslen@gmail.com"
+    },
+    "main": "index.js",
+    "scripts": {
+        "ptz-camera-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type IPtzLancCameraConfiguration -o src/CameraConnection/PtzLancCamera/IPtzLancCameraConfiguration.json --tsconfig ./tsconfig.json --additional-properties true",
+        "generate-config-validation-schema": "npm run ptz-camera-config-schema",
+        "postinstall": "sort-package-json",
+        "prebuild": "npm run generate-config-validation-schema",
+        "build": "tsc"
+    },
+    "dependencies": {
+        "ajv": "^7.0.3"
+    },
+    "devDependencies": {
+        "@types/ts-nameof": "^4.2.1",
+        "make-dir-cli": "^2.0.0",
+        "sort-package-json": "^1.48.0",
+        "strict-event-emitter-types": "^2.0.0",
+        "ts-json-schema-generator": "^0.82.0",
+        "ts-nameof": "^5.0.0",
+        "typescript": "^4.1.3"
+    }
+}
