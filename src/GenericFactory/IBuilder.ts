@@ -1,4 +1,3 @@
-import { Schema } from 'ajv';
 import { IConfig } from './IConfig';
 
 export interface IBuilder<TConcrete> {
