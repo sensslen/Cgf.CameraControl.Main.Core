@@ -1,4 +1,4 @@
-import { IConfig } from '../..';
+import { IConfig } from '../../GenericFactory/IConfig';
 import { ConfigValidator } from '../../Configuration/ConfigValidator';
 import { IBuilder } from '../../GenericFactory/IBuilder';
 import { ICameraConnection } from '../ICameraConnection';
@@ -11,6 +11,7 @@ export class PtzLancCameraBuilder implements IBuilder<ICameraConnection> {
     constructor(private logger: ILogger) {}
 
     Type = nameof<PtzLancCamera>();
+
     build(config: IConfig): ICameraConnection | undefined {
         let configValidator = new ConfigValidator();
         let validConfig = configValidator.validate<IPtzLancCameraConfiguration>(config, ConfigSchema);

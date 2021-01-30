@@ -2,35 +2,35 @@ import { IBuilder } from './IBuilder';
 import { IConfig } from './IConfig';
 
 export class Factory<TConcrete> {
-    private builders: { [key: string]: IBuilder<TConcrete> } = {};
-    private himInstances: { [key: number]: TConcrete } = {};
+    private _builders: { [key: string]: IBuilder<TConcrete> } = {};
+    private _instances: { [key: number]: TConcrete } = {};
 
     public get(instance: number): TConcrete | undefined {
-        return this.himInstances[instance];
+        return this._instances[instance];
     }
 
     public parseConfig(config: IConfig): void {
-        if (this.himInstances[config.InstanceNumber]) {
+        if (this._instances[config.instance]) {
             return;
         }
 
-        let builder = this.builders[config.ControllerType];
+        let builder = this._builders[config.type];
         if (builder !== undefined) {
-            let hmi = builder.build(config);
+            let instance = builder.build(config);
 
-            if (hmi === undefined) {
+            if (instance === undefined) {
                 return;
             }
 
-            this.himInstances[config.InstanceNumber] = hmi;
+            this._instances[config.instance] = instance;
         }
     }
 
     public builderAdd(builder: IBuilder<TConcrete>) {
-        if (this.builders[builder.Type]) {
+        if (this._builders[builder.Type]) {
             return;
         }
 
-        this.builders[builder.Type] = builder;
+        this._builders[builder.Type] = builder;
     }
 }

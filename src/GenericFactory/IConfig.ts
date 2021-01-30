@@ -1,4 +1,4 @@
 export interface IConfig {
-    ControllerType: string;
-    InstanceNumber: number;
+    type: string;
+    instance: number;
 }
