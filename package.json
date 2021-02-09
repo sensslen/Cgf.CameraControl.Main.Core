@@ -1,6 +1,6 @@
 {
     "name": "cgf.cameracontrol.main.core",
-    "version": "1.0.1-beta1",
+    "version": "1.0.1-beta4",
     "description": "Core Library of the Camera Control Software initially developped for usage at Chrischona Frauenfeld",
     "keywords": [
         "Chrischona",
@@ -28,8 +28,9 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "atem-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type IAtemConfig -o src/VideoMixer/Blackmagicdesign/IAtemConfig.json --tsconfig ./tsconfig.json --additional-properties true",
-        "prebuild": "npm run generate-config-validation-schema",
+        "prebuild": "npm run clean && npm run generate-config-validation-schema",
         "build": "tsc",
+        "clean": "del-cli dist -f",
         "generate-config-validation-schema": "npm run ptz-camera-config-schema && npm run atem-config-schema",
         "postinstall": "sort-package-json",
         "prepublishOnly": "sort-package-json && npm run build",
@@ -43,6 +44,7 @@
     },
     "devDependencies": {
         "@types/ts-nameof": "^4.2.1",
+        "del-cli": "^3.0.1",
         "make-dir-cli": "^2.0.0",
         "sort-package-json": "^1.48.0",
         "strict-event-emitter-types": "^2.0.0",
