@@ -27,13 +27,14 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
-        "prebuild": "npm run generate-config-validation-schema",
+        "prebuild": "npm run clean && npm run generate-config-validation-schema",
         "build": "tsc",
+        "clean": "del-cli dist -f",
         "f310-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type Ilogitechf310Config -o src/logitech/F310/Ilogitechf310Config.json --tsconfig ./tsconfig.json --additional-properties true",
-        "rumblepad-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type IRumblepad2Config -o src/logitech/Rumblepad2/IRumblepad2Config.json --tsconfig ./tsconfig.json --additional-properties true",
         "generate-config-validation-schema": "npm run f310-config-schema && npm run rumblepad-config-schema",
         "postinstall": "sort-package-json",
-        "prepublishOnly": "sort-package-json && npm run build"
+        "prepublishOnly": "sort-package-json && npm run build",
+        "rumblepad-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type IRumblepad2Config -o src/logitech/Rumblepad2/IRumblepad2Config.json --tsconfig ./tsconfig.json --additional-properties true"
     },
     "dependencies": {
         "@sensslen/node-gamepad": "^0.2.0-beta4",
@@ -43,6 +44,7 @@
     },
     "devDependencies": {
         "@types/ts-nameof": "^4.2.1",
+        "del-cli": "^3.0.1",
         "sort-package-json": "^1.48.0",
         "strict-event-emitter-types": "^2.0.0",
         "ts-json-schema-generator": "^0.83.0",
