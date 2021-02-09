@@ -2,16 +2,14 @@ import { NodeGamepad, IConfig } from '@sensslen/node-gamepad';
 import { ILogger as NodeGamepadLogger } from '@sensslen/node-gamepad';
 import { IHmi, ILogger, VideomixerFactory } from 'cgf.cameracontrol.main.core';
 import { IConnection } from 'cgf.cameracontrol.main.core';
-import {
-    eInputChangeDirection,
-    eSpecialFunctionKey,
-    eSpecialFunctionType,
-    Ilogitechf310Config,
-} from './Ilogitechf310Config';
 import * as gamepadConfig from '@sensslen/node-gamepad/controllers/logitech/gamepadf310.json';
 import { StrictEventEmitter } from 'strict-event-emitter-types';
 import { EventEmitter } from 'events';
 import { IVideoMixer } from 'cgf.cameracontrol.main.core/dist/VideoMixer/IVideoMixer';
+import { eInputChangeDirection } from '../../ConfigurationHelper/eInputChangeDirection';
+import { eF310SpecialFunctionKey } from './eF310SpecialFunctionKey';
+import { eSpecialFunctionType } from '../../ConfigurationHelper/eSpecialFunctionType';
+import { Ilogitechf310Config } from './Ilogitechf310Config';
 const interpolate = require('everpolate').linear;
 
 enum eAltKeyState {
@@ -20,7 +18,7 @@ enum eAltKeyState {
     altLower,
 }
 
-export class logitechf310 implements IHmi {
+export class F310 implements IHmi {
     private readonly pad: NodeGamepad;
     private readonly moveInterpolation: number[][] = [
         [0, 63, 31, 127, 128, 160, 172, 255],
@@ -105,19 +103,19 @@ export class logitechf310 implements IHmi {
         });
 
         this.pad.on('A:press', () => {
-            this.specialFunction(eSpecialFunctionKey.a);
+            this.specialFunction(eF310SpecialFunctionKey.a);
         });
 
         this.pad.on('B:press', () => {
-            this.specialFunction(eSpecialFunctionKey.b);
+            this.specialFunction(eF310SpecialFunctionKey.b);
         });
 
         this.pad.on('X:press', () => {
-            this.specialFunction(eSpecialFunctionKey.x);
+            this.specialFunction(eF310SpecialFunctionKey.x);
         });
 
         this.pad.on('Y:press', () => {
-            this.specialFunction(eSpecialFunctionKey.y);
+            this.specialFunction(eF310SpecialFunctionKey.y);
         });
 
         this.pad.start();
@@ -165,7 +163,7 @@ export class logitechf310 implements IHmi {
         }
     }
 
-    private specialFunction(key: eSpecialFunctionKey): void {
+    private specialFunction(key: eF310SpecialFunctionKey): void {
         let specialFunction = this.config.SpecialFunction.Default[key];
         switch (this.altKeyState) {
             case eAltKeyState.alt:

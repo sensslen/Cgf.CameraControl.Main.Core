@@ -1,0 +1,180 @@
+{
+  "$ref": "#/definitions/IRumblepad2Config",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "IRumblepad2Config": {
+      "properties": {
+        "ConnectionChange": {
+          "properties": {
+            "Alt": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "type": "number"
+                },
+                "left": {
+                  "type": "number"
+                },
+                "right": {
+                  "type": "number"
+                },
+                "up": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            },
+            "AltLower": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "type": "number"
+                },
+                "left": {
+                  "type": "number"
+                },
+                "right": {
+                  "type": "number"
+                },
+                "up": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            },
+            "Default": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "type": "number"
+                },
+                "left": {
+                  "type": "number"
+                },
+                "right": {
+                  "type": "number"
+                },
+                "up": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "Default"
+          ],
+          "type": "object"
+        },
+        "SerialNumber": {
+          "type": "string"
+        },
+        "SpecialFunction": {
+          "properties": {
+            "Alt": {
+              "additionalProperties": false,
+              "properties": {
+                "1": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "2": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "3": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "4": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                }
+              },
+              "type": "object"
+            },
+            "AltLower": {
+              "additionalProperties": false,
+              "properties": {
+                "1": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "2": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "3": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "4": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                }
+              },
+              "type": "object"
+            },
+            "Default": {
+              "additionalProperties": false,
+              "properties": {
+                "1": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "2": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "3": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "4": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "Default"
+          ],
+          "type": "object"
+        },
+        "VideoMixer": {
+          "properties": {
+            "Connection": {
+              "type": "number"
+            },
+            "MixBlock": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "Connection",
+            "MixBlock"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "ConnectionChange",
+        "SpecialFunction",
+        "VideoMixer"
+      ],
+      "type": "object"
+    },
+    "ISpecialFunctionDefinition": {
+      "properties": {
+        "index": {
+          "type": "number"
+        },
+        "type": {
+          "$ref": "#/definitions/eSpecialFunctionType"
+        }
+      },
+      "required": [
+        "type",
+        "index"
+      ],
+      "type": "object"
+    },
+    "eSpecialFunctionType": {
+      "enum": [
+        "key",
+        "macro"
+      ],
+      "type": "string"
+    }
+  }
+}

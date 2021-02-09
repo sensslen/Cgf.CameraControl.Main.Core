@@ -29,8 +29,9 @@
     "scripts": {
         "prebuild": "npm run generate-config-validation-schema",
         "build": "tsc",
-        "gamepad-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type IGamepadConfig -o src/IGamepadConfig.json --tsconfig ./tsconfig.json --additional-properties true",
-        "generate-config-validation-schema": "npm run gamepad-config-schema",
+        "f310-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type Ilogitechf310Config -o src/logitech/F310/Ilogitechf310Config.json --tsconfig ./tsconfig.json --additional-properties true",
+        "rumblepad-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type IRumblepad2Config -o src/logitech/Rumblepad2/IRumblepad2Config.json --tsconfig ./tsconfig.json --additional-properties true",
+        "generate-config-validation-schema": "npm run f310-config-schema && npm run rumblepad-config-schema",
         "postinstall": "sort-package-json",
         "prepublishOnly": "sort-package-json && npm run build"
     },
