@@ -1,0 +1,51 @@
+{
+    "name": "cgf.cameracontrol.main.controller",
+    "version": "1.0.0",
+    "description": "Core Library of the Camera Control Software initially developped for usage at Chrischona Frauenfeld",
+    "keywords": [
+        "Chrischona",
+        "Frauenfeld",
+        "Atem",
+        "Blackmagic",
+        "atem-connection",
+        "Camera",
+        "PTZ"
+    ],
+    "homepage": "https://github.com/sensslen/Cgf.CameraControl.Main.Controller#readme",
+    "bugs": {
+        "url": "https://github.com/sensslen/Cgf.CameraControl.Main.Controller/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sensslen/Cgf.CameraControl.Main.Controller.git"
+    },
+    "license": "MIT",
+    "author": {
+        "name": "Simon Ensslen",
+        "email": "sensslen@gmail.com"
+    },
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "prebuild": "npm run generate-config-validation-schema",
+        "build": "tsc",
+        "gamepad-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type IGamepadConfig -o src/IGamepadConfig.json --tsconfig ./tsconfig.json --additional-properties true",
+        "generate-config-validation-schema": "npm run gamepad-config-schema",
+        "postinstall": "sort-package-json",
+        "prepublishOnly": "sort-package-json && npm run build"
+    },
+    "dependencies": {
+        "@sensslen/node-gamepad": "^0.2.0-beta4",
+        "ajv": "^7.0.3",
+        "cgf.cameracontrol.main.core": "^1.0.1-beta4",
+        "everpolate": "0.0.3"
+    },
+    "devDependencies": {
+        "@types/ts-nameof": "^4.2.1",
+        "sort-package-json": "^1.48.0",
+        "strict-event-emitter-types": "^2.0.0",
+        "ts-json-schema-generator": "^0.83.0",
+        "ts-nameof": "^5.0.0",
+        "typescript": "^4.1.3"
+    }
+}
