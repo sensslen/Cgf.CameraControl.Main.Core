@@ -1,43 +1,37 @@
 {
-    "name": "cgf.cameracontrol.controller",
-    "version": "1.0.0",
+    "name": "cgf.cameracontrol.main.cli",
+    "version": "1.3.0",
     "description": "Software that allows to contorl Blackmagicdesign ATEM Switcher and it's associated cameras",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "postinstall": "patch-package",
-        "prestart": "npm run tsc && cpy src/config.json build",
-        "start": "node build/index.js",
-        "tsc": "tsc"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/sensslen/Cgf.CameraControl.git"
-    },
     "keywords": [
         "camera",
         "control"
     ],
-    "author": "Simon Ensslen",
-    "license": "MIT",
+    "homepage": "https://github.com/sensslen/Cgf.CameraControl.Main.Cli#readme",
     "bugs": {
-        "url": "https://github.com/sensslen/Cgf.CameraControl/issues"
+        "url": "https://github.com/sensslen/Cgf.CameraControl.Main.Cli/issues"
     },
-    "homepage": "https://github.com/sensslen/Cgf.CameraControl#readme",
-    "devDependencies": {
-        "@types/node": "^14.11.1",
-        "@types/yargs": "^15.0.9",
-        "cpy-cli": "^3.1.1",
-        "patch-package": "^6.2.2",
-        "typescript": "^4.0.3"
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sensslen/Cgf.CameraControl.Main.Cli.git"
+    },
+    "license": "MIT",
+    "author": "Simon Ensslen",
+    "main": "index.js",
+    "scripts": {
+        "build": "tsc",
+        "postinstall": "sort-package-json",
+        "prestart": "npm run build && cpy src/config.json dist",
+        "start": "node dist/index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "dependencies": {
-        "@microsoft/signalr": "^3.1.8",
-        "atem-connection": "^2.1.0",
-        "axios": "^0.21.1",
-        "everpolate": "0.0.3",
-        "node-gamepad": "^0.1.15",
-        "strict-event-emitter-types": "^2.0.0",
-        "yargs": "^16.1.0"
+        "cgf.cameracontrol.main.core": "^1.0.1-beta6",
+        "cgf.cameracontrol.main.gamepad": "^1.0.0-beta1",
+        "yargs": "^16.2.0"
+    },
+    "devDependencies": {
+        "@types/yargs": "^15.0.9",
+        "sort-package-json": "^1.48.0",
+        "typescript": "^4.0.3"
     }
 }
