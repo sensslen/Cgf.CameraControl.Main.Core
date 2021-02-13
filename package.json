@@ -25,14 +25,14 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "dependencies": {
-        "cgf.cameracontrol.main.core": "^1.0.1-beta6",
-        "cgf.cameracontrol.main.gamepad": "^1.0.0-beta1",
+        "cgf.cameracontrol.main.core": "^1.0.1-beta7",
+        "cgf.cameracontrol.main.gamepad": "^1.0.0-beta2",
         "yargs": "^16.2.0"
     },
     "devDependencies": {
-        "@types/yargs": "^15.0.9",
+        "@types/yargs": "^16.0.0",
         "cpy-cli": "^3.1.1",
         "sort-package-json": "^1.48.0",
-        "typescript": "^4.0.3"
+        "typescript": "^4.0.5"
     }
 }
