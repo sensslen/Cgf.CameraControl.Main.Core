@@ -4,16 +4,16 @@
   "definitions": {
     "ISpecialFunctionDefinition": {
       "properties": {
-        "index": {
+        "Index": {
           "type": "number"
         },
-        "type": {
+        "Type": {
           "$ref": "#/definitions/eSpecialFunctionType"
         }
       },
       "required": [
-        "type",
-        "index"
+        "Type",
+        "Index"
       ],
       "type": "object"
     },

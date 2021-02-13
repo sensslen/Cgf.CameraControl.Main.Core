@@ -182,12 +182,12 @@ export class Rumblepad2 implements IHmi {
         }
 
         if (specialFunction) {
-            switch (specialFunction.type) {
+            switch (specialFunction.Type) {
                 case eSpecialFunctionType.key:
-                    this.mixer?.toggleKey(this.config.VideoMixer.MixBlock, specialFunction.index);
+                    this.mixer?.toggleKey(this.config.VideoMixer.MixBlock, specialFunction.Index);
                     break;
                 case eSpecialFunctionType.macro:
-                    this.mixer?.runMacro(specialFunction.index);
+                    this.mixer?.runMacro(specialFunction.Index);
                     break;
             }
         }
