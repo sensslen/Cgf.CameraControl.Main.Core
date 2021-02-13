@@ -56,7 +56,7 @@ export class Core {
     }
 
     private error(logger: ILogger, error: string): void {
-        logger.error(`${nameof(Core)}: ${error}`);
+        logger.error(`Core: ${error}`);
     }
 }
 

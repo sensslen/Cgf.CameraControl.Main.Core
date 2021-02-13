@@ -11,7 +11,7 @@ import { CameraConnectionFactory } from '../../CameraConnection/CameraConnection
 export class AtemBuilder implements IBuilder<IVideoMixer> {
     constructor(private logger: ILogger, private cameraFactory: CameraConnectionFactory) {}
 
-    Type = `blackmagicdesign/${nameof<Atem>()}`;
+    Type = 'blackmagicdesign/Atem';
 
     build(config: IConfig): IVideoMixer | undefined {
         let configValidator = new ConfigValidator();
@@ -26,6 +26,6 @@ export class AtemBuilder implements IBuilder<IVideoMixer> {
     }
 
     private error(error: string): void {
-        this.logger.error(`${nameof(AtemBuilder)}: ${error}`);
+        this.logger.error(`AtemBuilder: ${error}`);
     }
 }

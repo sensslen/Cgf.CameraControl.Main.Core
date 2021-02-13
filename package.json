@@ -1,6 +1,6 @@
 {
     "name": "cgf.cameracontrol.main.core",
-    "version": "1.0.1-beta8",
+    "version": "1.0.1-beta9",
     "description": "Core Library of the Camera Control Software initially developped for usage at Chrischona Frauenfeld",
     "keywords": [
         "Chrischona",
@@ -44,13 +44,11 @@
         "axios": "^0.21.1"
     },
     "devDependencies": {
-        "@types/ts-nameof": "^4.2.1",
         "del-cli": "^3.0.1",
         "make-dir-cli": "^2.0.0",
         "sort-package-json": "^1.48.0",
         "strict-event-emitter-types": "^2.0.0",
         "ts-json-schema-generator": "^0.84.0",
-        "ts-nameof": "^5.0.0",
         "typescript": "^4.1.5"
     }
 }

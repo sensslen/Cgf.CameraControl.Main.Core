@@ -10,7 +10,7 @@ import { ILogger } from '../../Logger/ILogger';
 export class PtzLancCameraBuilder implements IBuilder<ICameraConnection> {
     constructor(private logger: ILogger) {}
 
-    Type = nameof<PtzLancCamera>();
+    Type = 'PtzLancCamera';
 
     build(config: IConfig): ICameraConnection | undefined {
         let configValidator = new ConfigValidator();
@@ -25,6 +25,6 @@ export class PtzLancCameraBuilder implements IBuilder<ICameraConnection> {
     }
 
     private error(error: string): void {
-        this.logger.error(`${nameof(PtzLancCameraBuilder)}: ${error}`);
+        this.logger.error(`PtzLancCameraBuilder: ${error}`);
     }
 }

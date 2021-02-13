@@ -156,10 +156,10 @@ export class Atem implements IVideoMixer {
     }
 
     private LogError(toLog: string) {
-        this.logger.error(`${nameof(Atem)}: ${toLog}`);
+        this.logger.error(`Atem: ${toLog}`);
     }
 
     private Log(toLog: string) {
-        this.logger.log(`${nameof(Atem)}: ${toLog}`);
+        this.logger.log(`Atem: ${toLog}`);
     }
 }
