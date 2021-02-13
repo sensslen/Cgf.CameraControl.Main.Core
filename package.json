@@ -1,23 +1,20 @@
 {
-    "name": "cgf.cameracontrol.main.controller",
-    "version": "1.0.0",
-    "description": "Core Library of the Camera Control Software initially developped for usage at Chrischona Frauenfeld",
+    "name": "cgf.cameracontrol.main.gamepad",
+    "version": "1.0.0-beta1",
+    "description": "Gamepad Library of the Camera Control Software initially developped for usage at Chrischona Frauenfeld",
     "keywords": [
         "Chrischona",
         "Frauenfeld",
-        "Atem",
-        "Blackmagic",
-        "atem-connection",
         "Camera",
         "PTZ"
     ],
-    "homepage": "https://github.com/sensslen/Cgf.CameraControl.Main.Controller#readme",
+    "homepage": "https://github.com/sensslen/Cgf.CameraControl.Main.Gamepad#readme",
     "bugs": {
-        "url": "https://github.com/sensslen/Cgf.CameraControl.Main.Controller/issues"
+        "url": "https://github.com/sensslen/Cgf.CameraControl.Main.Gamepad/issues"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/sensslen/Cgf.CameraControl.Main.Controller.git"
+        "url": "git+https://github.com/sensslen/Cgf.CameraControl.Main.Gamepad.git"
     },
     "license": "MIT",
     "author": {
