@@ -34,8 +34,8 @@ export class Atem implements IVideoMixer {
 
         this.atem = new AtemConnection();
 
-        this.atem.on('info', this.Log);
-        this.atem.on('error', this.LogError);
+        this.atem.on('info', (toLog) => this.Log(toLog));
+        this.atem.on('error', (toLog) => this.LogError(toLog));
 
         this.atem.connect(config.IP);
 
