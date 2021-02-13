@@ -1,6 +1,6 @@
 {
     "name": "cgf.cameracontrol.main.gamepad",
-    "version": "1.0.0-beta5",
+    "version": "1.0.0-beta7",
     "description": "Gamepad Library of the Camera Control Software initially developped for usage at Chrischona Frauenfeld",
     "keywords": [
         "Chrischona",
@@ -36,16 +36,14 @@
     "dependencies": {
         "@sensslen/node-gamepad": "^0.2.0-beta7",
         "ajv": "^7.1.0",
-        "cgf.cameracontrol.main.core": "^1.0.1-beta8",
+        "cgf.cameracontrol.main.core": "^1.0.1-beta9",
         "everpolate": "0.0.3"
     },
     "devDependencies": {
-        "@types/ts-nameof": "^4.2.1",
         "del-cli": "^3.0.1",
         "sort-package-json": "^1.48.0",
         "strict-event-emitter-types": "^2.0.0",
         "ts-json-schema-generator": "^0.84.0",
-        "ts-nameof": "^5.0.0",
         "typescript": "^4.1.5"
     }
 }

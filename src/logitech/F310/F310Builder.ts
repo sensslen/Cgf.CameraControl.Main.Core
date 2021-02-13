@@ -7,7 +7,7 @@ import { F310 } from './F310';
 export class F310Builder implements IBuilder<IHmi> {
     constructor(private logger: ILogger, private mixerFactory: VideomixerFactory) {}
 
-    Type = `logitech/${nameof<F310>()}`;
+    Type = 'logitech/F310';
 
     build(config: IConfig): IHmi | undefined {
         let configValidator = new ConfigValidator();
@@ -22,6 +22,6 @@ export class F310Builder implements IBuilder<IHmi> {
     }
 
     private error(error: string): void {
-        this.logger.error(`${nameof(F310Builder)}: ${error}`);
+        this.logger.error(`F310Builder: ${error}`);
     }
 }

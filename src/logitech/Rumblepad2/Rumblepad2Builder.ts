@@ -7,7 +7,7 @@ import { Rumblepad2 } from './Rumblepad2';
 export class Rumblepad2Builder implements IBuilder<IHmi> {
     constructor(private logger: ILogger, private mixerFactory: VideomixerFactory) {}
 
-    Type = `logitech/${nameof<Rumblepad2>()}`;
+    Type = 'logitech/Rumblepad2';
 
     build(config: IConfig): IHmi | undefined {
         let configValidator = new ConfigValidator();
@@ -22,6 +22,6 @@ export class Rumblepad2Builder implements IBuilder<IHmi> {
     }
 
     private error(error: string): void {
-        this.logger.error(`${nameof(Rumblepad2Builder)}: ${error}`);
+        this.logger.error(`Rumblepad2Builder: ${error}`);
     }
 }
