@@ -10,6 +10,7 @@ import { IConfigurationStructure } from './Configuration/IConfigurationStructure
 import * as ConfigSchema from './Configuration/IConfigurationStructure.json';
 import { IConnection } from './GenericFactory/IConnection';
 import { ConfigValidator } from './Configuration/ConfigValidator';
+import { IConfig } from './Configuration/IConfig';
 
 export class Core {
     private _camFactory = new CameraConnectionFactory();
@@ -59,6 +60,7 @@ export class Core {
     }
 }
 
+export { IConfig };
 export { IHmi };
 export { IBuilder };
 export { ILogger };
