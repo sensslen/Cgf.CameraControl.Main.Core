@@ -7,6 +7,7 @@ import yargs = require('yargs/yargs');
 
 let logger = new Logger();
 let core = new Core();
+
 core.HmiFactory.builderAdd(new F310Builder(logger, core.MixerFactory));
 core.HmiFactory.builderAdd(new Rumblepad2Builder(logger, core.MixerFactory));
 
