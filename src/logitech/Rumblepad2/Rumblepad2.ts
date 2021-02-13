@@ -1,4 +1,5 @@
-import { NodeGamepad, IConfig } from '@sensslen/node-gamepad';
+import { NodeGamepad } from '@sensslen/node-gamepad';
+import { IConfig as IGamepadConfig } from '@sensslen/node-gamepad';
 import { ILogger as NodeGamepadLogger } from '@sensslen/node-gamepad';
 import { IHmi, ILogger, VideomixerFactory } from 'cgf.cameracontrol.main.core';
 import { IConnection } from 'cgf.cameracontrol.main.core';
@@ -29,7 +30,7 @@ export class Rumblepad2 implements IHmi {
     private readonly mixer?: IVideoMixer;
 
     constructor(private config: IRumblepad2Config, private logger: ILogger, mixerFactory: VideomixerFactory) {
-        let padConfig = gamepadConfig as IConfig;
+        let padConfig = gamepadConfig as IGamepadConfig;
         if (config.SerialNumber) {
             padConfig.serialNumber = config.SerialNumber;
         }
