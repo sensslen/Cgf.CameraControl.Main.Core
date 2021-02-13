@@ -1,4 +1,4 @@
-import { IConfig } from './IConfig';
+import { IConfig } from '../Configuration/IConfig';
 
 export interface IBuilder<TConcrete> {
     Type: string;

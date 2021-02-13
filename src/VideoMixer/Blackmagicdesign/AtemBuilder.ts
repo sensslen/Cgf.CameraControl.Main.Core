@@ -1,4 +1,4 @@
-import { IConfig } from '../../GenericFactory/IConfig';
+import { IConfig } from '../../Configuration/IConfig';
 import { ConfigValidator } from '../../Configuration/ConfigValidator';
 import { IBuilder } from '../../GenericFactory/IBuilder';
 import { IVideoMixer } from '../IVideoMixer';

@@ -1,4 +1,4 @@
-import { IConfig } from '../../GenericFactory/IConfig';
+import { IConfig } from '../../Configuration/IConfig';
 
 export interface IAtemConfig extends IConfig {
     IP: string;

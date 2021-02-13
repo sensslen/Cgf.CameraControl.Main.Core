@@ -1,5 +1,5 @@
 import { IBuilder } from './IBuilder';
-import { IConfig } from './IConfig';
+import { IConfig } from '../Configuration/IConfig';
 
 export class Factory<TConcrete> {
     private _builders: { [key: string]: IBuilder<TConcrete> } = {};
