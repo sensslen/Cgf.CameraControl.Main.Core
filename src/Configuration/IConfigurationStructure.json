@@ -1,0 +1,49 @@
+{
+  "$ref": "#/definitions/IConfigurationStructure",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "IConfig": {
+      "properties": {
+        "instance": {
+          "type": "number"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "instance"
+      ],
+      "type": "object"
+    },
+    "IConfigurationStructure": {
+      "properties": {
+        "cams": {
+          "items": {
+            "$ref": "#/definitions/IConfig"
+          },
+          "type": "array"
+        },
+        "interfaces": {
+          "items": {
+            "$ref": "#/definitions/IConfig"
+          },
+          "type": "array"
+        },
+        "videoMixers": {
+          "items": {
+            "$ref": "#/definitions/IConfig"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "cams",
+        "videoMixers",
+        "interfaces"
+      ],
+      "type": "object"
+    }
+  }
+}

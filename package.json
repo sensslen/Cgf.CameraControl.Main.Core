@@ -1,6 +1,6 @@
 {
     "name": "cgf.cameracontrol.main.core",
-    "version": "1.0.1-beta4",
+    "version": "1.0.1-beta6",
     "description": "Core Library of the Camera Control Software initially developped for usage at Chrischona Frauenfeld",
     "keywords": [
         "Chrischona",
@@ -31,8 +31,9 @@
         "prebuild": "npm run clean && npm run generate-config-validation-schema",
         "build": "tsc",
         "clean": "del-cli dist -f",
-        "generate-config-validation-schema": "npm run ptz-camera-config-schema && npm run atem-config-schema",
+        "generate-config-validation-schema": "npm run ptz-camera-config-schema && npm run atem-config-schema&& npm run main-config-schema",
         "postinstall": "sort-package-json",
+        "main-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type IConfigurationStructure -o src/Configuration/IConfigurationStructure.json --tsconfig ./tsconfig.json --additional-properties true",
         "prepublishOnly": "sort-package-json && npm run build",
         "ptz-camera-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type IPtzLancCameraConfiguration -o src/CameraConnection/PtzLancCamera/IPtzLancCameraConfiguration.json --tsconfig ./tsconfig.json --additional-properties true"
     },

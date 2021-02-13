@@ -7,8 +7,9 @@ import { AtemBuilder } from './VideoMixer/Blackmagicdesign/AtemBuilder';
 import { IBuilder } from './GenericFactory/IBuilder';
 import { IHmi } from './Hmi/IHmi';
 import { IConfigurationStructure } from './Configuration/IConfigurationStructure';
-import { IConfig } from './GenericFactory/IConfig';
+import * as ConfigSchema from './Configuration/IConfigurationStructure.json';
 import { IConnection } from './GenericFactory/IConnection';
+import { ConfigValidator } from './Configuration/ConfigValidator';
 
 export class Core {
     private _camFactory = new CameraConnectionFactory();
@@ -27,27 +28,39 @@ export class Core {
         return this._hmiFactory;
     }
 
-    bootstrap(logger: ILogger, config: IConfigurationStructure) {
+    bootstrap(logger: ILogger, config: any) {
+        let configValidator = new ConfigValidator();
+        let validConfig = configValidator.validate<IConfigurationStructure>(config, ConfigSchema);
+
+        if (validConfig === undefined) {
+            this.error(logger, 'Failed to load configuration');
+            this.error(logger, configValidator.errorGet());
+            return;
+        }
+
         this._camFactory.builderAdd(new PtzLancCameraBuilder(logger));
         this._mixerFactory.builderAdd(new AtemBuilder(logger, this._camFactory));
 
-        for (let cam of config.cams) {
+        for (let cam of validConfig.cams) {
             this._camFactory.parseConfig(cam);
         }
 
-        for (let videoMixer of config.videoMixers) {
+        for (let videoMixer of validConfig.videoMixers) {
             this._mixerFactory.parseConfig(videoMixer);
         }
 
-        for (let hmi of config.interfaces) {
+        for (let hmi of validConfig.interfaces) {
             this._hmiFactory.parseConfig(hmi);
         }
+    }
+
+    private error(logger: ILogger, error: string): void {
+        logger.error(`${nameof(Core)}: ${error}`);
     }
 }
 
 export { IHmi };
 export { IBuilder };
-export { IConfig };
 export { ILogger };
 export { VideomixerFactory };
 export { CameraConnectionFactory };
