@@ -26,7 +26,7 @@
     },
     "dependencies": {
         "cgf.cameracontrol.main.core": "1.0.1-beta12",
-        "cgf.cameracontrol.main.gamepad": "1.0.0-beta11",
+        "cgf.cameracontrol.main.gamepad": "1.0.0-beta12",
         "yargs": "^16.2.0"
     },
     "devDependencies": {
