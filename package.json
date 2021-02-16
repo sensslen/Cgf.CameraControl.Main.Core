@@ -1,6 +1,6 @@
 {
     "name": "cgf.cameracontrol.main.gamepad",
-    "version": "1.0.0-beta10",
+    "version": "1.0.0-beta12",
     "description": "Gamepad Library of the Camera Control Software initially developped for usage at Chrischona Frauenfeld",
     "keywords": [
         "Chrischona",
@@ -34,9 +34,9 @@
         "rumblepad-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type IRumblepad2Config -o src/logitech/Rumblepad2/IRumblepad2Config.json --tsconfig ./tsconfig.json --additional-properties true"
     },
     "dependencies": {
-        "@sensslen/node-gamepad": "^0.2.0-beta7",
+        "@sensslen/node-gamepad": "0.2.0-beta10",
         "ajv": "^7.1.0",
-        "cgf.cameracontrol.main.core": "^1.0.1-beta12",
+        "cgf.cameracontrol.main.core": "1.0.1-beta12",
         "everpolate": "0.0.3"
     },
     "devDependencies": {
