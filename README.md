@@ -13,8 +13,8 @@ To start using this project use the following steps:
 -   edit [src/config.json](./src/config.json) to match your setup or just create a new configuration and run the application with the config parameter.
 -   run the application using `npm start` or alternatively with a custom configuration using `npm start -- --config path/to/my/specail/config.json`
 
-> **⚠ WARNING: Aliens are coming.**  
-> The following chapters need to be rebuilt. They are currently under construction
+> **⚠ WARNING: Under Construction.**  
+> The following chapters need to be rebuilt. These reflect the configuration of version 1 and do no longer apply
 ## Configuration
 
 Configuration of the Application is storead as JSON File. There is the default configuration ([src/config.json](./src/config.json)) which is loaded when the config parameter is omitted when starting the application. Additionally the application may be started with a custom configuration that may be located anywhere on the file system.
