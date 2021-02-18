@@ -23,12 +23,14 @@ export class Atem implements IVideoMixer {
 
     constructor(private config: IAtemConfig, private logger: ILogger, camConnectionFactory: CameraConnectionFactory) {
         for (let key in config.CameraConnections) {
-            const index = config.CameraConnections[key];
-            let cam = camConnectionFactory.get(index);
-            if (cam) {
-                this._cameraConnections[key] = cam;
-            } else {
-                this.LogError(`Failed to get camera with index:${index}`);
+            if (config.CameraConnections.hasOwnProperty(key)) {
+                const index = config.CameraConnections[key];
+                let cam = camConnectionFactory.get(index);
+                if (cam) {
+                    this._cameraConnections[key] = cam;
+                } else {
+                    this.LogError(`Failed to get camera with index:${index}`);
+                }
             }
         }
 
