@@ -1,3 +1,4 @@
+[![CodeFactor](https://www.codefactor.io/repository/github/sensslen/cgf.cameracontrol.main.cli/badge)](https://www.codefactor.io/repository/github/sensslen/cgf.cameracontrol.main.cli)
 # Cgf.CameraControl.Main
 
 Typescript application that uses a Gamepad to control a Video mixer and multiple cameras.
@@ -7,12 +8,13 @@ Typescript application that uses a Gamepad to control a Video mixer and multiple
 To start using this project use the following steps:
 
 -   install [node.js](https://nodejs.org/en/)
--   clone the repository (`git clone https://github.com/sensslen/Cgf.CameraControl.git`)
--   navigate to the [Cgf.CameraControl.Master](.) directory
+-   clone the repository (`git clone https://github.com/sensslen/Cgf.CameraControl.Main.Cli.git`)
 -   install dependencies by calling `npm install`
 -   edit [src/config.json](./src/config.json) to match your setup or just create a new configuration and run the application with the config parameter.
 -   run the application using `npm start` or alternatively with a custom configuration using `npm start -- --config path/to/my/specail/config.json`
 
+> **⚠ WARNING: Aliens are coming.**  
+> The following chapters need to be rebuilt. They are currently under construction
 ## Configuration
 
 Configuration of the Application is storead as JSON File. There is the default configuration ([src/config.json](./src/config.json)) which is loaded when the config parameter is omitted when starting the application. Additionally the application may be started with a custom configuration that may be located anywhere on the file system.
