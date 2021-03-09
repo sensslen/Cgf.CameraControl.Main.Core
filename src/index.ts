@@ -11,6 +11,7 @@ import * as ConfigSchema from './Configuration/IConfigurationStructure.json';
 import { IConnection } from './GenericFactory/IConnection';
 import { ConfigValidator } from './Configuration/ConfigValidator';
 import { IConfig } from './Configuration/IConfig';
+import { IVideoMixer } from './VideoMixer/IVideoMixer';
 
 export class Core {
     private _camFactory = new CameraConnectionFactory();
@@ -67,3 +68,5 @@ export { ILogger };
 export { VideomixerFactory };
 export { CameraConnectionFactory };
 export { IConnection };
+export { IVideoMixer };
+export { ICameraConnection };
