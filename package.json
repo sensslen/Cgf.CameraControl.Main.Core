@@ -31,9 +31,9 @@
         "f710-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type Ilogitechf710Config -o src/logitech/F710/Ilogitechf710Config.json --tsconfig ./tsconfig.json --additional-properties true",
         "generate-config-validation-schema": "npm run f310-config-schema && npm run f710-config-schema",
         "postinstall": "sort-package-json",
+        "run": "npm run build && node dist/test.js",
         "presetuppublish": "sort-package-json && npm run build",
-        "setuppublish": "node dist/SetupPackage.js",
-        "run": "npm run build && node dist/test.js"
+        "setuppublish": "node dist/SetupPackage.js"
     },
     "dependencies": {
         "@sensslen/node-gamepad": "^0.2.1-beta.10",
