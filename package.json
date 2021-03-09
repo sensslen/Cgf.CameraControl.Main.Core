@@ -27,20 +27,24 @@
         "prebuild": "npm run clean && npm run generate-config-validation-schema",
         "build": "tsc",
         "clean": "del-cli dist -f",
-        "f310-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type Ilogitechf310Config -o src/logitech/F310/Ilogitechf310Config.json --tsconfig ./tsconfig.json --additional-properties true",
-        "generate-config-validation-schema": "npm run f310-config-schema && npm run rumblepad-config-schema",
+        "f310-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type Ilogitechf310Config -o src/logitech/F310/Ilogitechf310Config.json --tsconfig ./tsconfig.json --additional-properties true",
+        "f710-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type Ilogitechf710Config -o src/logitech/F710/Ilogitechf710Config.json --tsconfig ./tsconfig.json --additional-properties true",
+        "generate-config-validation-schema": "npm run f310-config-schema && npm run f710-config-schema",
         "postinstall": "sort-package-json",
-        "prepublishOnly": "sort-package-json && npm run build",
-        "rumblepad-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type IRumblepad2Config -o src/logitech/Rumblepad2/IRumblepad2Config.json --tsconfig ./tsconfig.json --additional-properties true"
+        "presetuppublish": "sort-package-json && npm run build",
+        "setuppublish": "node dist/SetupPackage.js",
+        "run": "npm run build && node dist/test.js"
     },
     "dependencies": {
-        "@sensslen/node-gamepad": "0.2.0-beta10",
+        "@sensslen/node-gamepad": "^0.2.1-beta.10",
         "ajv": "^7.1.0",
-        "cgf.cameracontrol.main.core": "1.0.1-beta12",
+        "cgf.cameracontrol.main.core": "^1.0.2-beta.4",
         "everpolate": "0.0.3"
     },
     "devDependencies": {
         "del-cli": "^3.0.1",
+        "semver": "^7.3.4",
+        "simple-git": "^2.36.1",
         "sort-package-json": "^1.48.0",
         "strict-event-emitter-types": "^2.0.0",
         "ts-json-schema-generator": "^0.84.0",

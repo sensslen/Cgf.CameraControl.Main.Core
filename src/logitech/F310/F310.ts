@@ -6,7 +6,7 @@ import { IConnection } from 'cgf.cameracontrol.main.core';
 import * as gamepadConfig from '@sensslen/node-gamepad/controllers/logitech/gamepadf310.json';
 import { StrictEventEmitter } from 'strict-event-emitter-types';
 import { EventEmitter } from 'events';
-import { IVideoMixer } from 'cgf.cameracontrol.main.core/dist/VideoMixer/IVideoMixer';
+import { IVideoMixer } from 'cgf.cameracontrol.main.core';
 import { eInputChangeDirection } from '../../ConfigurationHelper/eInputChangeDirection';
 import { eF310SpecialFunctionKey } from './eF310SpecialFunctionKey';
 import { eSpecialFunctionType } from '../../ConfigurationHelper/eSpecialFunctionType';

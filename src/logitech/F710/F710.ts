@@ -3,14 +3,14 @@ import { IConfig as IGamepadConfig } from '@sensslen/node-gamepad';
 import { ILogger as NodeGamepadLogger } from '@sensslen/node-gamepad';
 import { IHmi, ILogger, VideomixerFactory } from 'cgf.cameracontrol.main.core';
 import { IConnection } from 'cgf.cameracontrol.main.core';
-import { IRumblepad2Config } from './IRumblepad2Config';
-import { eSpecialFunctionType } from '../../ConfigurationHelper/eSpecialFunctionType';
-import { eRumblepadSpecialFunctionKey } from './eRumblepadSpecialFunctionKey';
-import { eInputChangeDirection } from '../../ConfigurationHelper/eInputChangeDirection';
-import * as gamepadConfig from '@sensslen/node-gamepad/controllers/logitech/rumblepad2.json';
+import * as gamepadConfig from '@sensslen/node-gamepad/controllers/logitech/gamepadf710.json';
 import { StrictEventEmitter } from 'strict-event-emitter-types';
 import { EventEmitter } from 'events';
 import { IVideoMixer } from 'cgf.cameracontrol.main.core';
+import { eInputChangeDirection } from '../../ConfigurationHelper/eInputChangeDirection';
+import { eF710SpecialFunctionKey } from './eF710SpecialFunctionKey';
+import { eSpecialFunctionType } from '../../ConfigurationHelper/eSpecialFunctionType';
+import { Ilogitechf710Config } from './Ilogitechf710Config';
 const interpolate = require('everpolate').linear;
 
 enum eAltKeyState {
@@ -19,7 +19,7 @@ enum eAltKeyState {
     altLower,
 }
 
-export class Rumblepad2 implements IHmi {
+export class F710 implements IHmi {
     private readonly pad: NodeGamepad;
     private readonly moveInterpolation: number[][] = [
         [0, 63, 31, 127, 128, 160, 172, 255],
@@ -29,7 +29,7 @@ export class Rumblepad2 implements IHmi {
     private altKeyState = eAltKeyState.default;
     private readonly mixer?: IVideoMixer;
 
-    constructor(private config: IRumblepad2Config, private logger: ILogger, mixerFactory: VideomixerFactory) {
+    constructor(private config: Ilogitechf710Config, private logger: ILogger, mixerFactory: VideomixerFactory) {
         let padConfig = gamepadConfig as IGamepadConfig;
         if (config.SerialNumber) {
             padConfig.serialNumber = config.SerialNumber;
@@ -71,52 +71,52 @@ export class Rumblepad2 implements IHmi {
             this.changeConnection(eInputChangeDirection.down);
         });
 
-        this.pad.on('r1:press', () => {
+        this.pad.on('RB:press', () => {
             this.mixer?.cut(config.VideoMixer.MixBlock);
         });
 
-        this.pad.on('r2:press', () => {
+        this.pad.on('RT:press', () => {
             this.mixer?.auto(config.VideoMixer.MixBlock);
         });
 
-        this.pad.on('l1:press', () => {
+        this.pad.on('LB:press', () => {
             if (this.altKeyState == eAltKeyState.default) {
                 this.altKeyState = eAltKeyState.alt;
             }
         });
 
-        this.pad.on('l1:release', () => {
+        this.pad.on('LB:release', () => {
             if (this.altKeyState == eAltKeyState.alt) {
                 this.altKeyState = eAltKeyState.default;
             }
         });
 
-        this.pad.on('l2:press', () => {
+        this.pad.on('LT:press', () => {
             if (this.altKeyState == eAltKeyState.default) {
                 this.altKeyState = eAltKeyState.altLower;
             }
         });
 
-        this.pad.on('l2:release', () => {
+        this.pad.on('LT:release', () => {
             if (this.altKeyState == eAltKeyState.altLower) {
                 this.altKeyState = eAltKeyState.default;
             }
         });
 
-        this.pad.on('1:press', () => {
-            this.specialFunction(eRumblepadSpecialFunctionKey._1);
+        this.pad.on('A:press', () => {
+            this.specialFunction(eF710SpecialFunctionKey.a);
         });
 
-        this.pad.on('2:press', () => {
-            this.specialFunction(eRumblepadSpecialFunctionKey._2);
+        this.pad.on('B:press', () => {
+            this.specialFunction(eF710SpecialFunctionKey.b);
         });
 
-        this.pad.on('3:press', () => {
-            this.specialFunction(eRumblepadSpecialFunctionKey._3);
+        this.pad.on('X:press', () => {
+            this.specialFunction(eF710SpecialFunctionKey.x);
         });
 
-        this.pad.on('4:press', () => {
-            this.specialFunction(eRumblepadSpecialFunctionKey._4);
+        this.pad.on('Y:press', () => {
+            this.specialFunction(eF710SpecialFunctionKey.y);
         });
 
         this.pad.start();
@@ -164,7 +164,7 @@ export class Rumblepad2 implements IHmi {
         }
     }
 
-    private specialFunction(key: eRumblepadSpecialFunctionKey): void {
+    private specialFunction(key: eF710SpecialFunctionKey): void {
         let specialFunction = this.config.SpecialFunction.Default[key];
         switch (this.altKeyState) {
             case eAltKeyState.alt:
