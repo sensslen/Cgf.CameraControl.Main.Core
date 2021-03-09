@@ -34,7 +34,8 @@
         "generate-config-validation-schema": "npm run ptz-camera-config-schema && npm run atem-config-schema&& npm run main-config-schema",
         "postinstall": "sort-package-json",
         "main-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type IConfigurationStructure -o src/Configuration/IConfigurationStructure.json --tsconfig ./tsconfig.json --additional-properties true",
-        "prepublishOnly": "sort-package-json && npm run build",
+        "presetuppublish": "sort-package-json && npm run build",
+        "setuppublish": "node dist/SetupPackage.js",
         "ptz-camera-config-schema": "ts-json-schema-generator --path ./src/**/*.ts --type IPtzLancCameraConfiguration -o src/CameraConnection/PtzLancCamera/IPtzLancCameraConfiguration.json --tsconfig ./tsconfig.json --additional-properties true"
     },
     "dependencies": {
@@ -45,10 +46,11 @@
     },
     "devDependencies": {
         "del-cli": "^3.0.1",
-        "make-dir-cli": "^2.0.0",
+        "semver": "^7.3.4",
+        "simple-git": "^2.36.1",
         "sort-package-json": "^1.48.0",
         "strict-event-emitter-types": "^2.0.0",
-        "ts-json-schema-generator": "^0.84.0",
+        "ts-json-schema-generator": "^0.88.0",
         "typescript": "^4.1.5"
     }
 }
