@@ -12,6 +12,7 @@ import { IConnection } from './GenericFactory/IConnection';
 import { ConfigValidator } from './Configuration/ConfigValidator';
 import { IConfig } from './Configuration/IConfig';
 import { IVideoMixer } from './VideoMixer/IVideoMixer';
+import { ICameraConnection } from './CameraConnection/ICameraConnection';
 
 export class Core {
     private _camFactory = new CameraConnectionFactory();
