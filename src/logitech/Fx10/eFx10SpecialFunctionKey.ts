@@ -1,4 +1,4 @@
-export enum eF310SpecialFunctionKey {
+export enum eFx10SpecialFunctionKey {
     a = 'A',
     b = 'B',
     x = 'X',

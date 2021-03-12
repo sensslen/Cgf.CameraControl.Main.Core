@@ -3,14 +3,13 @@ import { IConfig as IGamepadConfig } from '@sensslen/node-gamepad';
 import { ILogger as NodeGamepadLogger } from '@sensslen/node-gamepad';
 import { IHmi, ILogger, VideomixerFactory } from 'cgf.cameracontrol.main.core';
 import { IConnection } from 'cgf.cameracontrol.main.core';
-import * as gamepadConfig from '@sensslen/node-gamepad/controllers/logitech/gamepadf710.json';
 import { StrictEventEmitter } from 'strict-event-emitter-types';
 import { EventEmitter } from 'events';
 import { IVideoMixer } from 'cgf.cameracontrol.main.core';
 import { eInputChangeDirection } from '../../ConfigurationHelper/eInputChangeDirection';
-import { eF710SpecialFunctionKey } from './eF710SpecialFunctionKey';
+import { eFx10SpecialFunctionKey } from './eFx10SpecialFunctionKey';
 import { eSpecialFunctionType } from '../../ConfigurationHelper/eSpecialFunctionType';
-import { Ilogitechf710Config } from './Ilogitechf710Config';
+import { ILogitechFx10Config } from './ILogitechFx10Config';
 const interpolate = require('everpolate').linear;
 
 enum eAltKeyState {
@@ -19,7 +18,7 @@ enum eAltKeyState {
     altLower,
 }
 
-export class F710 implements IHmi {
+export class Fx10 implements IHmi {
     private readonly pad: NodeGamepad;
     private readonly moveInterpolation: number[][] = [
         [0, 63, 31, 127, 128, 160, 172, 255],
@@ -29,17 +28,21 @@ export class F710 implements IHmi {
     private altKeyState = eAltKeyState.default;
     private readonly mixer?: IVideoMixer;
 
-    constructor(private config: Ilogitechf710Config, private logger: ILogger, mixerFactory: VideomixerFactory) {
-        let padConfig = gamepadConfig as IGamepadConfig;
+    constructor(
+        private config: ILogitechFx10Config,
+        private logger: ILogger,
+        mixerFactory: VideomixerFactory,
+        gamepadConfig: IGamepadConfig
+    ) {
         if (config.SerialNumber) {
-            padConfig.serialNumber = config.SerialNumber;
+            gamepadConfig.serialNumber = config.SerialNumber;
         }
 
         const gamepadLogger: NodeGamepadLogger = {
             Log: (tolog: string) => this.logger.log(tolog),
         };
 
-        this.pad = new NodeGamepad(padConfig, gamepadLogger);
+        this.pad = new NodeGamepad(gamepadConfig, gamepadLogger);
 
         this.mixer = mixerFactory.get(config.VideoMixer.Connection);
 
@@ -104,19 +107,19 @@ export class F710 implements IHmi {
         });
 
         this.pad.on('A:press', () => {
-            this.specialFunction(eF710SpecialFunctionKey.a);
+            this.specialFunction(eFx10SpecialFunctionKey.a);
         });
 
         this.pad.on('B:press', () => {
-            this.specialFunction(eF710SpecialFunctionKey.b);
+            this.specialFunction(eFx10SpecialFunctionKey.b);
         });
 
         this.pad.on('X:press', () => {
-            this.specialFunction(eF710SpecialFunctionKey.x);
+            this.specialFunction(eFx10SpecialFunctionKey.x);
         });
 
         this.pad.on('Y:press', () => {
-            this.specialFunction(eF710SpecialFunctionKey.y);
+            this.specialFunction(eFx10SpecialFunctionKey.y);
         });
 
         this.pad.start();
@@ -164,7 +167,7 @@ export class F710 implements IHmi {
         }
     }
 
-    private specialFunction(key: eF710SpecialFunctionKey): void {
+    private specialFunction(key: eFx10SpecialFunctionKey): void {
         let specialFunction = this.config.SpecialFunction.Default[key];
         switch (this.altKeyState) {
             case eAltKeyState.alt:

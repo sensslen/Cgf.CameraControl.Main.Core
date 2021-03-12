@@ -27,10 +27,10 @@
         "prebuild": "npm run clean && npm run generate-config-validation-schema",
         "build": "tsc",
         "clean": "del-cli dist -f",
-        "f310-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type Ilogitechf310Config -o src/logitech/F310/Ilogitechf310Config.json --tsconfig ./tsconfig.json --additional-properties true",
-        "f710-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type Ilogitechf710Config -o src/logitech/F710/Ilogitechf710Config.json --tsconfig ./tsconfig.json --additional-properties true",
-        "generate-config-validation-schema": "npm run f310-config-schema && npm run f710-config-schema",
+        "fx10-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ILogitechFx10Config -o src/logitech/Fx10/ILogitechFx10Config.json --tsconfig ./tsconfig.json --additional-properties true",
+        "generate-config-validation-schema": "npm run fx10-config-schema && npm run generate-config-validation-schema",
         "postinstall": "sort-package-json",
+        "rumblepad2-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IRumblepad2Config -o src/logitech/Rumblepad2/IRumblepad2Config.json --tsconfig ./tsconfig.json --additional-properties true",
         "run": "npm run build && node dist/test.js",
         "presetuppublish": "sort-package-json && npm run build",
         "setuppublish": "node dist/SetupPackage.js"
@@ -38,7 +38,7 @@
     "dependencies": {
         "@sensslen/node-gamepad": "^0.2.1-beta.10",
         "ajv": "^7.1.0",
-        "cgf.cameracontrol.main.core": "^1.0.2-beta.4",
+        "cgf.cameracontrol.main.core": "^1.0.2-beta.5",
         "everpolate": "0.0.3"
     },
     "devDependencies": {

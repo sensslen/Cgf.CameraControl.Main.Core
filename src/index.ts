@@ -1,7 +1,5 @@
-import { F310Builder } from './logitech/F310/F310Builder';
-import { F710Builder } from './logitech/F710/F710Builder';
+import { Fx10Builder } from './logitech/Fx10/Fx10Builder';
 import { Rumblepad2Builder } from './logitech/Rumblepad2/Rumblepad2Builder';
 
-export { F310Builder };
-export { F710Builder };
+export { Fx10Builder };
 export { Rumblepad2Builder };
