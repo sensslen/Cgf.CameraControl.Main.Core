@@ -28,7 +28,7 @@
         "build": "tsc",
         "clean": "del-cli dist -f",
         "fx10-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ILogitechFx10Config -o src/logitech/Fx10/ILogitechFx10Config.json --tsconfig ./tsconfig.json --additional-properties true",
-        "generate-config-validation-schema": "npm run fx10-config-schema && npm run generate-config-validation-schema",
+        "generate-config-validation-schema": "npm run fx10-config-schema && npm run rumblepad2-config-schema",
         "postinstall": "sort-package-json",
         "rumblepad2-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IRumblepad2Config -o src/logitech/Rumblepad2/IRumblepad2Config.json --tsconfig ./tsconfig.json --additional-properties true",
         "run": "npm run build && node dist/test.js",
