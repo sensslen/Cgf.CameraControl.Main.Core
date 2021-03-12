@@ -1,5 +1,5 @@
 import { Core } from 'cgf.cameracontrol.main.core';
-import { F310Builder, Rumblepad2Builder } from 'cgf.cameracontrol.main.gamepad';
+import { Fx10Builder, Rumblepad2Builder } from 'cgf.cameracontrol.main.gamepad';
 import { Logger } from './Logger';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -8,7 +8,7 @@ import yargs = require('yargs/yargs');
 let logger = new Logger();
 let core = new Core();
 
-core.HmiFactory.builderAdd(new F310Builder(logger, core.MixerFactory));
+core.HmiFactory.builderAdd(new Fx10Builder(logger, core.MixerFactory));
 core.HmiFactory.builderAdd(new Rumblepad2Builder(logger, core.MixerFactory));
 
 const argv = yargs(process.argv.slice(2)).options({
