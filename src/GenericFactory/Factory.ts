@@ -27,10 +27,10 @@ export class Factory<TConcrete> {
     }
 
     public builderAdd(builder: IBuilder<TConcrete>) {
-        if (this._builders[builder.Type]) {
-            return;
-        }
-
-        this._builders[builder.Type] = builder;
+        builder.Types.forEach((type) => {
+            if (this._builders[type] === undefined) {
+                this._builders[type] = builder;
+            }
+        });
     }
 }
