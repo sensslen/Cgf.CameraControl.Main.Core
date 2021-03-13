@@ -22,7 +22,11 @@ export class Fx10 implements IHmi {
     private readonly pad: NodeGamepad;
     private readonly moveInterpolation: number[][] = [
         [0, 63, 31, 127, 128, 160, 172, 255],
-        [255, 70, 20, 0, 0, -20, -70, -255],
+        [1, 70 / 255, 20 / 255, 0, 0, -20 / 255, -70 / 255, -1],
+    ];
+    private readonly zoomFocusInterpolation: number[][] = [
+        [0, 127, 128, 255],
+        [-1, 0, 0, 1],
     ];
     private readonly _connectionEmitter: StrictEventEmitter<EventEmitter, IConnection> = new EventEmitter();
     private altKeyState = eAltKeyState.default;
@@ -47,15 +51,25 @@ export class Fx10 implements IHmi {
         this.mixer = mixerFactory.get(config.VideoMixer.Connection);
 
         this.pad.on('left:move', (value) => {
-            const pan = interpolate(value.x, this.moveInterpolation[0], this.moveInterpolation[1])[0];
-            this.mixer?.pan(config.VideoMixer.MixBlock, pan);
-            const tilt = -interpolate(value.y, this.moveInterpolation[0], this.moveInterpolation[1])[0];
-            this.mixer?.tilt(config.VideoMixer.MixBlock, tilt);
+            this.mixer?.pan(
+                config.VideoMixer.MixBlock,
+                interpolate(value.x, this.moveInterpolation[0], this.moveInterpolation[1])[0]
+            );
+            this.mixer?.tilt(
+                config.VideoMixer.MixBlock,
+                -interpolate(value.y, this.moveInterpolation[0], this.moveInterpolation[1])[0]
+            );
         });
 
         this.pad.on('right:move', (value) => {
-            this.mixer?.zoom(config.VideoMixer.MixBlock, Math.round((-value.y + 127) / 16));
-            this.mixer?.focus(config.VideoMixer.MixBlock, Math.round((value.x - 127) / 200));
+            this.mixer?.zoom(
+                config.VideoMixer.MixBlock,
+                interpolate(value.x, this.zoomFocusInterpolation[0], this.zoomFocusInterpolation[1])[0]
+            );
+            this.mixer?.focus(
+                config.VideoMixer.MixBlock,
+                interpolate(value.y, this.zoomFocusInterpolation[0], this.zoomFocusInterpolation[1])[0]
+            );
         });
 
         this.pad.on('dpadLeft:press', () => {
