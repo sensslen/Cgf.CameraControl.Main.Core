@@ -38,18 +38,18 @@
         "test": "node dist/test.js"
     },
     "dependencies": {
-        "@sensslen/node-gamepad": "^0.2.1-beta.16",
-        "ajv": "^7.1.0",
-        "cgf.cameracontrol.main.core": "^1.0.2-beta.6",
+        "@sensslen/node-gamepad": "^0.2.1-beta.17",
+        "ajv": "^7.2.1",
+        "cgf.cameracontrol.main.core": "^1.0.2-beta.7",
         "everpolate": "0.0.3"
     },
     "devDependencies": {
         "del-cli": "^3.0.1",
         "semver": "^7.3.4",
-        "simple-git": "^2.36.1",
-        "sort-package-json": "^1.48.0",
+        "simple-git": "^2.36.2",
+        "sort-package-json": "^1.49.0",
         "strict-event-emitter-types": "^2.0.0",
-        "ts-json-schema-generator": "^0.84.0",
-        "typescript": "^4.1.5"
+        "ts-json-schema-generator": "^0.89.0",
+        "typescript": "^4.2.3"
     }
 }
