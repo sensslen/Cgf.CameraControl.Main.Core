@@ -36,7 +36,7 @@ export class Rumblepad2 implements IHmi {
         }
 
         const gamepadLogger: NodeGamepadLogger = {
-            Log: (tolog: string) => this.logger.log(tolog),
+            Info: (tolog: string) => this.logger.log(tolog),
         };
 
         this.pad = new NodeGamepad(padConfig, gamepadLogger);

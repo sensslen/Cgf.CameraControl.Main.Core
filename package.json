@@ -33,10 +33,12 @@
         "rumblepad2-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IRumblepad2Config -o src/logitech/Rumblepad2/IRumblepad2Config.json --tsconfig ./tsconfig.json --additional-properties true",
         "run": "npm run build && node dist/test.js",
         "presetuppublish": "sort-package-json && npm run build",
-        "setuppublish": "node dist/SetupPackage.js"
+        "setuppublish": "node dist/SetupPackage.js",
+        "pretest": "npm run build",
+        "test": "node dist/test.js"
     },
     "dependencies": {
-        "@sensslen/node-gamepad": "^0.2.1-beta.11",
+        "@sensslen/node-gamepad": "^0.2.1-beta.16",
         "ajv": "^7.1.0",
         "cgf.cameracontrol.main.core": "^1.0.2-beta.5",
         "everpolate": "0.0.3"

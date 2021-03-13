@@ -1,23 +1,8 @@
 {
-  "$ref": "#/definitions/Ilogitechf310Config",
+  "$ref": "#/definitions/ILogitechFx10Config",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
-    "ISpecialFunctionDefinition": {
-      "properties": {
-        "Index": {
-          "type": "number"
-        },
-        "Type": {
-          "$ref": "#/definitions/eSpecialFunctionType"
-        }
-      },
-      "required": [
-        "Type",
-        "Index"
-      ],
-      "type": "object"
-    },
-    "Ilogitechf310Config": {
+    "ILogitechFx10Config": {
       "properties": {
         "ConnectionChange": {
           "properties": {
@@ -166,6 +151,21 @@
         "ConnectionChange",
         "SpecialFunction",
         "VideoMixer"
+      ],
+      "type": "object"
+    },
+    "ISpecialFunctionDefinition": {
+      "properties": {
+        "Index": {
+          "type": "number"
+        },
+        "Type": {
+          "$ref": "#/definitions/eSpecialFunctionType"
+        }
+      },
+      "required": [
+        "Type",
+        "Index"
       ],
       "type": "object"
     },
