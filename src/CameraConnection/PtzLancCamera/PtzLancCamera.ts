@@ -153,24 +153,29 @@ export class PtzLancCamera implements ICameraConnection {
     }
 
     pan(value: number): void {
-        this.currentState.pan = value;
+        this.currentState.pan = this.roundAndRestrictRange(value, 255);
         this.ScheduleStateTransmission();
     }
     tilt(value: number): void {
-        this.currentState.tilt = value;
+        this.currentState.tilt = this.roundAndRestrictRange(value, 255);
         this.ScheduleStateTransmission();
     }
     zoom(value: number): void {
-        this.currentState.zoom = value;
+        this.currentState.zoom = this.roundAndRestrictRange(value, 8);
         this.ScheduleStateTransmission();
     }
     focus(value: number): void {
-        this.currentState.focus = value;
+        this.currentState.focus = this.roundAndRestrictRange(value, 1.2);
         this.ScheduleStateTransmission();
     }
 
     private ScheduleStateTransmission() {
         this.shouldTransmitState = true;
         this.transmitNextStateIfRequestedAndPossible();
+    }
+
+    private roundAndRestrictRange(value: number, maxMin: number) {
+        const restricted = Math.min(Math.max(value, maxMin), -maxMin);
+        return Math.round(restricted);
     }
 }
