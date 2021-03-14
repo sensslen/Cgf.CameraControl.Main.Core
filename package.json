@@ -26,6 +26,7 @@
     "scripts": {
         "prebuild": "npm run clean && npm run generate-config-validation-schema",
         "build": "tsc",
+        "preclean": "sort-package-json",
         "clean": "del-cli dist -f",
         "fx10-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ILogitechFx10Config -o src/logitech/Fx10/ILogitechFx10Config.json --tsconfig ./tsconfig.json --additional-properties true",
         "generate-config-validation-schema": "npm run fx10-config-schema && npm run rumblepad2-config-schema",
@@ -41,14 +42,14 @@
         "@sensslen/node-gamepad": "^0.2.1-beta.17",
         "ajv": "^7.2.1",
         "cgf.cameracontrol.main.core": "^1.0.2-beta.8",
-        "everpolate": "0.0.3"
+        "everpolate": "0.0.3",
+        "strict-event-emitter-types": "^2.0.0"
     },
     "devDependencies": {
         "del-cli": "^3.0.1",
         "semver": "^7.3.4",
         "simple-git": "^2.36.2",
         "sort-package-json": "^1.49.0",
-        "strict-event-emitter-types": "^2.0.0",
         "ts-json-schema-generator": "^0.89.0",
         "typescript": "^4.2.3"
     }
