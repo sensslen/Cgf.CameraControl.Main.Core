@@ -138,8 +138,9 @@ export class Rumblepad2 implements IHmi {
         this._connectionEmitter.removeListener('change', i.change);
     }
 
-    dispose(): void {
+    dispose(): Promise<void> {
         this.pad.stop();
+        return Promise.resolve();
     }
 
     private changeConnection(direction: eInputChangeDirection): void {

@@ -51,7 +51,9 @@ class DummyMixerBuilder implements IBuilder<IVideoMixer> {
 
             subscribe(_i: IConnection) {},
             unsubscribe(_i: IConnection) {},
-            dispose() {},
+            dispose() {
+                return Promise.resolve();
+            },
         };
     }
 }
