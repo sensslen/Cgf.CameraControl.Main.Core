@@ -132,9 +132,9 @@ export class Atem implements IVideoMixer {
         this._connectionEmitter.removeListener('change', i.change);
     }
 
-    dispose(): void {
+    async dispose(): Promise<void> {
         this.connected = false;
-        this.atem.disconnect();
+        await this.atem.disconnect();
     }
 
     private stateChange(state: AtemState): void {

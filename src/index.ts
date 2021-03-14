@@ -62,10 +62,10 @@ export class Core implements IDisposable {
         logger.error(`Core: ${error}`);
     }
 
-    public dispose(): void {
-        this._camFactory.dispose();
-        this._mixerFactory.dispose();
-        this._hmiFactory.dispose();
+    public async dispose(): Promise<void> {
+        await this._camFactory.dispose();
+        await this._mixerFactory.dispose();
+        await this._hmiFactory.dispose();
     }
 }
 

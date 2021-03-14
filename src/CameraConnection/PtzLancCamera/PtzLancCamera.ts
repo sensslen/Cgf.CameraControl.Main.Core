@@ -49,73 +49,69 @@ export class PtzLancCamera implements ICameraConnection {
         this.initialConnect();
     }
 
-    dispose(): void {
-        this.socketConnection.stop();
+    async dispose(): Promise<void> {
+        await this.socketConnection.stop();
     }
 
-    private initialConnect() {
-        this.setupRemote(() => {
-            this.socketConnection.onreconnected(() => {
-                this.logger.log(`reconnect successful (${this.config.ConnectionUrl})`);
-                this.setupRemote(() => {
-                    this.connectionSuccessfullyEstablished();
-                });
-            });
-            this.socketConnection.onreconnecting(() => {
-                this.logger.log(`connection error (${this.config.ConnectionUrl}) - trying automatic reconnect`);
-                this.connected = false;
-            });
-            this.socketConnection
-                .start()
-                .then(() => {
-                    this.connectionSuccessfullyEstablished();
-                })
-                .catch((error) => {
-                    this.logger.log('Socket connection setup failed.');
-                    this.logger.log('error:' + error);
-                    this.initialConnect();
-                });
+    private async socketReconnected() {
+        await this.setupRemote();
+        await this.connectionSuccessfullyEstablished();
+    }
+
+    private async initialConnect() {
+        await this.setupRemote();
+        this.socketConnection.onreconnected(() => {
+            this.logger.log(`reconnect successful (${this.config.ConnectionUrl})`);
+            this.socketReconnected();
         });
+        this.socketConnection.onreconnecting(() => {
+            this.logger.log(`connection error (${this.config.ConnectionUrl}) - trying automatic reconnect`);
+            this.connected = false;
+        });
+        try {
+            await this.socketConnection.start();
+            await this.connectionSuccessfullyEstablished();
+        } catch (error) {
+            this.logger.log('Socket connection setup failed.');
+            this.logger.log('error:' + error);
+            await this.initialConnect();
+        }
     }
 
-    private setupRemote(onComplete: () => void) {
-        this.axios
-            .get(this.config.ConnectionUrl + '/pantiltzoom/connections')
-            .then((response) => {
-                if (!response.data.includes(this.config.ConnectionPort)) {
-                    this.logger.log('Port:' + this.config.ConnectionPort + ' is not available.');
-                    this.logger.log('Available Ports:' + response.data);
-                    process.exit();
-                }
-                let connection = {
-                    connectionName: this.config.ConnectionPort,
-                    connected: true,
-                };
-                this.axios
-                    .put(this.config.ConnectionUrl + '/pantiltzoom/connection', connection)
-                    .then(() => {
-                        onComplete();
-                    })
-                    .catch((error) => {
-                        this.logger.log('Failed to connect to Port:' + this.config.ConnectionPort);
-                        this.logger.log('error:' + error);
-                        process.exit();
-                    });
-            })
-            .catch((error) => {
-                this.logger.log('Failed to connect:' + this.config.ConnectionUrl);
+    private async setupRemote() {
+        try {
+            const response = await this.axios.get(this.config.ConnectionUrl + '/pantiltzoom/connections');
+
+            if (!response.data.includes(this.config.ConnectionPort)) {
+                this.logger.log('Port:' + this.config.ConnectionPort + ' is not available.');
+                this.logger.log('Available Ports:' + response.data);
+                process.exit();
+            }
+            let connection = {
+                connectionName: this.config.ConnectionPort,
+                connected: true,
+            };
+            try {
+                await this.axios.put(this.config.ConnectionUrl + '/pantiltzoom/connection', connection);
+            } catch (error) {
+                this.logger.log('Failed to connect to Port:' + this.config.ConnectionPort);
                 this.logger.log('error:' + error);
-                this.setupRemote(onComplete);
-            });
+                process.exit();
+            }
+        } catch (error) {
+            this.logger.log('Failed to connect:' + this.config.ConnectionUrl);
+            this.logger.log('error:' + error);
+            await this.setupRemote();
+        }
     }
 
-    private connectionSuccessfullyEstablished() {
+    private async connectionSuccessfullyEstablished() {
         this.canTransmit = true;
         this.connected = true;
-        this.transmitNextStateIfRequestedAndPossible();
+        await this.transmitNextStateIfRequestedAndPossible();
     }
 
-    private transmitNextStateIfRequestedAndPossible() {
+    private async transmitNextStateIfRequestedAndPossible() {
         if (!this.canTransmit) {
             return;
         }
@@ -125,21 +121,19 @@ export class PtzLancCamera implements ICameraConnection {
         if (this.shouldTransmitState) {
             this.canTransmit = false;
             this.shouldTransmitState = false;
-            this.socketConnection
-                .invoke('SetState', this.currentState)
-                .then((updateSuccessful: boolean) => {
-                    if (!updateSuccessful) {
-                        this.logger.log('state update failure returned - retrying');
-                        this.shouldTransmitState = true;
-                    }
-                    this.canTransmit = true;
-                    this.transmitNextStateIfRequestedAndPossible();
-                })
-                .catch((error) => {
+            try {
+                const updateSuccessful = await this.socketConnection.invoke('SetState', this.currentState);
+                if (!updateSuccessful) {
+                    this.logger.log('state update failure returned - retrying');
                     this.shouldTransmitState = true;
-                    this.logger.log('state transmission error:');
-                    this.logger.log('error:' + error);
-                });
+                }
+                this.canTransmit = true;
+                await this.transmitNextStateIfRequestedAndPossible();
+            } catch (error) {
+                this.shouldTransmitState = true;
+                this.logger.log('state transmission error:');
+                this.logger.log('error:' + error);
+            }
         }
     }
 

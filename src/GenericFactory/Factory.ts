@@ -35,10 +35,10 @@ export class Factory<TConcrete extends IDisposable> implements IDisposable {
         });
     }
 
-    public dispose(): void {
+    public async dispose(): Promise<void> {
         for (let key in this._instances) {
             if (this._instances.hasOwnProperty(key)) {
-                this._instances[key].dispose;
+                await this._instances[key].dispose();
             }
         }
     }
