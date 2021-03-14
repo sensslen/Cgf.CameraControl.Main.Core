@@ -13,8 +13,9 @@ import { ConfigValidator } from './Configuration/ConfigValidator';
 import { IConfig } from './Configuration/IConfig';
 import { IVideoMixer } from './VideoMixer/IVideoMixer';
 import { ICameraConnection } from './CameraConnection/ICameraConnection';
+import { IDisposable } from './GenericFactory/IDisposable';
 
-export class Core {
+export class Core implements IDisposable {
     private _camFactory = new CameraConnectionFactory();
     private _mixerFactory = new VideomixerFactory();
     private _hmiFactory = new HmiFactory();
@@ -59,6 +60,12 @@ export class Core {
 
     private error(logger: ILogger, error: string): void {
         logger.error(`Core: ${error}`);
+    }
+
+    public dispose(): void {
+        this._camFactory.dispose();
+        this._mixerFactory.dispose();
+        this._hmiFactory.dispose();
     }
 }
 

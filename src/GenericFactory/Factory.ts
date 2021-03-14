@@ -1,7 +1,8 @@
 import { IBuilder } from './IBuilder';
 import { IConfig } from '../Configuration/IConfig';
+import { IDisposable } from './IDisposable';
 
-export class Factory<TConcrete> {
+export class Factory<TConcrete extends IDisposable> implements IDisposable {
     private _builders: { [key: string]: IBuilder<TConcrete> } = {};
     private _instances: { [key: number]: TConcrete } = {};
 
@@ -32,5 +33,13 @@ export class Factory<TConcrete> {
                 this._builders[type] = builder;
             }
         });
+    }
+
+    public dispose(): void {
+        for (let key in this._instances) {
+            if (this._instances.hasOwnProperty(key)) {
+                this._instances[key].dispose;
+            }
+        }
     }
 }
