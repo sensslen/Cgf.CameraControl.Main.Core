@@ -8,7 +8,6 @@ import { IVideoMixer } from '../IVideoMixer';
 import { IAtemConfig } from './IAtemConfig';
 import { EventEmitter } from 'events';
 import { IImageSelectionChange } from '../IImageSelectionChange';
-import { MixEffect } from 'atem-connection/dist/state/video';
 
 export class Atem implements IVideoMixer {
     private readonly _cameraConnections: { [key: number]: ICameraConnection } = {};
@@ -34,7 +33,7 @@ export class Atem implements IVideoMixer {
             }
         }
 
-        this.atem = new AtemConnection();
+        this.atem = new AtemConnection({ disableMultithreaded: config.disableMultithreading });
 
         this.atem.on('info', (toLog) => this.Log(toLog));
         this.atem.on('error', (toLog) => this.LogError(toLog));
