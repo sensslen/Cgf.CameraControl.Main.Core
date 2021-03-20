@@ -8,6 +8,7 @@ import { IVideoMixer } from '../IVideoMixer';
 import { IAtemConfig } from './IAtemConfig';
 import { EventEmitter } from 'events';
 import { IImageSelectionChange } from '../IImageSelectionChange';
+import { MixEffect } from 'atem-connection/dist/state/video';
 
 export class Atem implements IVideoMixer {
     private readonly _cameraConnections: { [key: number]: ICameraConnection } = {};
