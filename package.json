@@ -42,7 +42,7 @@
     "dependencies": {
         "@microsoft/signalr": "^5.0.3",
         "ajv": "^7.1.0",
-        "atem-connection": "^2.1.0",
+        "atem-connection": "2.3.0-nightly-wip-update-threadedclass-20210313-231347-ec8d035.0",
         "axios": "^0.21.1",
         "strict-event-emitter-types": "^2.0.0"
     },
