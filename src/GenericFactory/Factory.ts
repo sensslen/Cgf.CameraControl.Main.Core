@@ -27,8 +27,9 @@ export class Factory<TConcrete extends IDisposable> implements IDisposable {
         }
     }
 
-    public builderAdd(builder: IBuilder<TConcrete>) {
-        builder.Types.forEach((type) => {
+    public async builderAdd(builder: IBuilder<TConcrete>): Promise<void> {
+        const supportedTypes = await builder.supportedTypes();
+        supportedTypes.forEach((type) => {
             if (this._builders[type] === undefined) {
                 this._builders[type] = builder;
             }

@@ -1,6 +1,6 @@
 import { IConfig } from '../Configuration/IConfig';
 
 export interface IBuilder<TConcrete> {
-    readonly Types: string[];
+    supportedTypes(): Promise<string[]>;
     build(config: IConfig): TConcrete | undefined;
 }
