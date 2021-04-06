@@ -32,7 +32,7 @@ export class Core implements IDisposable {
         return this._hmiFactory;
     }
 
-    bootstrap(logger: ILogger, config: any) {
+    public async bootstrap(logger: ILogger, config: any) {
         let configValidator = new ConfigValidator();
         let validConfig = configValidator.validate<IConfigurationStructure>(config, ConfigSchema);
 
@@ -42,8 +42,8 @@ export class Core implements IDisposable {
             return;
         }
 
-        this._camFactory.builderAdd(new PtzLancCameraBuilder(logger));
-        this._mixerFactory.builderAdd(new AtemBuilder(logger, this._camFactory));
+        await this._camFactory.builderAdd(new PtzLancCameraBuilder(logger));
+        await this._mixerFactory.builderAdd(new AtemBuilder(logger, this._camFactory));
 
         for (let cam of validConfig.cams) {
             this._camFactory.parseConfig(cam);
