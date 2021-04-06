@@ -24,8 +24,8 @@
         "start": "node dist/index.js"
     },
     "dependencies": {
-        "cgf.cameracontrol.main.core": "^1.0.2-beta.6",
-        "cgf.cameracontrol.main.gamepad": "^0.9.1-beta.7",
+        "cgf.cameracontrol.main.core": "^1.0.2-beta.18",
+        "cgf.cameracontrol.main.gamepad": "^0.9.1-beta.14",
         "yargs": "^16.2.0"
     },
     "devDependencies": {
