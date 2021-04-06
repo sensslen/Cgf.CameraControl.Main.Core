@@ -11,7 +11,9 @@ export class Fx10Builder implements IBuilder<IHmi> {
 
     private readonly f310Name = 'logitech/F310';
     private readonly f710Name = 'logitech/F710';
-    public Types = [this.f310Name, this.f710Name];
+    public supportedTypes(): Promise<string[]> {
+        return Promise.resolve([this.f310Name, this.f710Name]);
+    }
 
     build(config: IConfig): IHmi | undefined {
         let configValidator = new ConfigValidator();

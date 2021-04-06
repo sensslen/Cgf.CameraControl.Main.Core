@@ -6,8 +6,9 @@ import { Rumblepad2 } from './Rumblepad2';
 
 export class Rumblepad2Builder implements IBuilder<IHmi> {
     constructor(private logger: ILogger, private mixerFactory: VideomixerFactory) {}
-
-    Types = ['logitech/Rumblepad2'];
+    supportedTypes(): Promise<string[]> {
+        return Promise.resolve(['logitech/Rumblepad2']);
+    }
 
     build(config: IConfig): IHmi | undefined {
         let configValidator = new ConfigValidator();

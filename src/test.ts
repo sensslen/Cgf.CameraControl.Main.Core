@@ -14,7 +14,9 @@ const logger: ILogger = {
 };
 
 class DummyMixerBuilder implements IBuilder<IVideoMixer> {
-    Types = ['dummy'];
+    supportedTypes(): Promise<string[]> {
+        return Promise.resolve(['dummy']);
+    }
     build(_config: IConfig): IVideoMixer | undefined {
         return {
             imageSelectionChangeGet(_meNumber: number) {

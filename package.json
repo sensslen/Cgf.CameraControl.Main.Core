@@ -41,7 +41,7 @@
     "dependencies": {
         "@sensslen/node-gamepad": "^0.2.1-beta.19",
         "ajv": "^8.0.0",
-        "cgf.cameracontrol.main.core": "^1.0.2-beta.15",
+        "cgf.cameracontrol.main.core": "^1.0.2-beta.17",
         "everpolate": "0.0.3",
         "strict-event-emitter-types": "^2.0.0"
     },
