@@ -14,19 +14,14 @@ export class PtzLancCameraBuilder implements IBuilder<ICameraConnection> {
         return Promise.resolve(['PtzLancCamera']);
     }
 
-    public build(config: IConfig): Promise<ICameraConnection | undefined> {
+    public build(config: IConfig): Promise<ICameraConnection> {
         const configValidator = new ConfigValidator();
         const validConfig = configValidator.validate<IPtzLancCameraConfiguration>(config, ConfigSchema);
 
         if (validConfig === undefined) {
-            this.error(configValidator.errorGet());
-            return Promise.resolve(undefined);
+            return Promise.reject(configValidator.errorGet());
         }
 
         return Promise.resolve(new PtzLancCamera(validConfig, this.logger));
-    }
-
-    private error(error: string): void {
-        this.logger.error(`PtzLancCameraBuilder: ${error}`);
     }
 }

@@ -1,6 +1,7 @@
 import { IBuilder } from './IBuilder';
 import { IConfig } from '../Configuration/IConfig';
 import { IDisposable } from './IDisposable';
+import { ILogger } from '../Logger/ILogger';
 
 export class Factory<TConcrete extends IDisposable> implements IDisposable {
     private _builders: { [key: string]: IBuilder<TConcrete> } = {};
@@ -10,20 +11,21 @@ export class Factory<TConcrete extends IDisposable> implements IDisposable {
         return this._instances[instance];
     }
 
-    public async parseConfig(config: IConfig): Promise<void> {
+    public async parseConfig(config: IConfig, logger: ILogger): Promise<void> {
         if (this._instances[config.instance]) {
             return;
         }
 
         const builder = this._builders[config.type];
         if (builder !== undefined) {
-            const instance = await builder.build(config);
-
-            if (instance === undefined) {
-                return;
+            try {
+                const instance = await builder.build(config);
+                this._instances[config.instance] = instance;
+            } catch (error) {
+                logger.error(
+                    `Factory: building instance from configuration(${JSON.stringify(config)}) failed with (${error})`
+                );
             }
-
-            this._instances[config.instance] = instance;
         }
     }
 
