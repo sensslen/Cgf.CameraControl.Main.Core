@@ -1,28 +1,29 @@
-import { IConfig } from '../../Configuration/IConfig';
+import * as ConfigSchema from './IPtzLancCameraConfiguration.json';
+
 import { ConfigValidator } from '../../Configuration/ConfigValidator';
 import { IBuilder } from '../../GenericFactory/IBuilder';
 import { ICameraConnection } from '../ICameraConnection';
-import { PtzLancCamera } from './PtzLancCamera';
-import { IPtzLancCameraConfiguration } from './IPtzLancCameraConfiguration';
-import * as ConfigSchema from './IPtzLancCameraConfiguration.json';
+import { IConfig } from '../../Configuration/IConfig';
 import { ILogger } from '../../Logger/ILogger';
+import { IPtzLancCameraConfiguration } from './IPtzLancCameraConfiguration';
+import { PtzLancCamera } from './PtzLancCamera';
 
 export class PtzLancCameraBuilder implements IBuilder<ICameraConnection> {
     constructor(private logger: ILogger) {}
-    supportedTypes(): Promise<string[]> {
+    public supportedTypes(): Promise<string[]> {
         return Promise.resolve(['PtzLancCamera']);
     }
 
-    build(config: IConfig): ICameraConnection | undefined {
-        let configValidator = new ConfigValidator();
-        let validConfig = configValidator.validate<IPtzLancCameraConfiguration>(config, ConfigSchema);
+    public build(config: IConfig): Promise<ICameraConnection | undefined> {
+        const configValidator = new ConfigValidator();
+        const validConfig = configValidator.validate<IPtzLancCameraConfiguration>(config, ConfigSchema);
 
         if (validConfig === undefined) {
             this.error(configValidator.errorGet());
-            return undefined;
+            return Promise.resolve(undefined);
         }
 
-        return new PtzLancCamera(validConfig, this.logger);
+        return Promise.resolve(new PtzLancCamera(validConfig, this.logger));
     }
 
     private error(error: string): void {

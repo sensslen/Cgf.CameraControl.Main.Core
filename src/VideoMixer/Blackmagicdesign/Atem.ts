@@ -1,14 +1,15 @@
 import { Atem as AtemConnection, AtemState } from 'atem-connection';
-import { StrictEventEmitter } from 'strict-event-emitter-types';
+
 import { CameraConnectionFactory } from '../../CameraConnection/CameraConnectionFactory';
+import { EventEmitter } from 'events';
+import { IAtemConfig } from './IAtemConfig';
 import { ICameraConnection } from '../../CameraConnection/ICameraConnection';
 import { IConnection } from '../../GenericFactory/IConnection';
+import { IImageSelectionChange } from '../IImageSelectionChange';
 import { ILogger } from '../../Logger/ILogger';
 import { IVideoMixer } from '../IVideoMixer';
-import { IAtemConfig } from './IAtemConfig';
-import { EventEmitter } from 'events';
-import { IImageSelectionChange } from '../IImageSelectionChange';
 import { MixEffect } from 'atem-connection/dist/state/video';
+import { StrictEventEmitter } from 'strict-event-emitter-types';
 
 export class Atem implements IVideoMixer {
     private readonly _cameraConnections: { [key: number]: ICameraConnection } = {};
@@ -22,10 +23,10 @@ export class Atem implements IVideoMixer {
     } = {};
 
     constructor(private config: IAtemConfig, private logger: ILogger, camConnectionFactory: CameraConnectionFactory) {
-        for (let key in config.CameraConnections) {
-            if (config.CameraConnections.hasOwnProperty(key)) {
+        for (const key in config.CameraConnections) {
+            if (Object.prototype.hasOwnProperty.call(config.CameraConnections, key)) {
                 const index = config.CameraConnections[key];
-                let cam = camConnectionFactory.get(index);
+                const cam = camConnectionFactory.get(index);
                 if (cam) {
                     this._cameraConnections[key] = cam;
                 } else {
@@ -77,25 +78,25 @@ export class Atem implements IVideoMixer {
     }
 
     pan(meNumber: number, value: number): void {
-        let cam = this._selectedCamera[meNumber];
+        const cam = this._selectedCamera[meNumber];
         if (cam) {
             cam.pan(value);
         }
     }
     tilt(meNumber: number, value: number): void {
-        let cam = this._selectedCamera[meNumber];
+        const cam = this._selectedCamera[meNumber];
         if (cam) {
             cam.tilt(value);
         }
     }
     zoom(meNumber: number, value: number): void {
-        let cam = this._selectedCamera[meNumber];
+        const cam = this._selectedCamera[meNumber];
         if (cam) {
             cam.zoom(value);
         }
     }
     focus(meNumber: number, value: number): void {
-        let cam = this._selectedCamera[meNumber];
+        const cam = this._selectedCamera[meNumber];
         if (cam) {
             cam.focus(value);
         }

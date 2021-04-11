@@ -3,7 +3,7 @@ import Ajv, { Schema } from 'ajv';
 export class ConfigValidator {
     private _ajv = new Ajv();
 
-    validate<TExpected>(config: any, schema: Schema | string): TExpected | undefined {
+    public validate<TExpected>(config: any, schema: Schema | string): TExpected | undefined {
         if (this._ajv.validate(schema, config)) {
             return config as TExpected;
         } else {
@@ -11,7 +11,7 @@ export class ConfigValidator {
         }
     }
 
-    errorGet(): string {
+    public errorGet(): string {
         return this._ajv.errorsText();
     }
 }

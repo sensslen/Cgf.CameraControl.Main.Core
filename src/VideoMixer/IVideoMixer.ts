@@ -1,10 +1,9 @@
-import StrictEventEmitter from 'strict-event-emitter-types';
 import { EventEmitter } from 'events';
-
 import { IConnection } from '../GenericFactory/IConnection';
 import { IDisposable } from '../GenericFactory/IDisposable';
-import { ISubscription } from '../GenericFactory/ISubscription';
 import { IImageSelectionChange } from './IImageSelectionChange';
+import { ISubscription } from '../GenericFactory/ISubscription';
+import StrictEventEmitter from 'strict-event-emitter-types';
 
 export interface IVideoMixer extends ISubscription<IConnection>, IDisposable {
     imageSelectionChangeGet(meNumber: number): StrictEventEmitter<EventEmitter, IImageSelectionChange>;

@@ -1,14 +1,15 @@
-import axios, { AxiosInstance } from 'axios';
-import { Agent as HttpsAgent } from 'https';
 import * as signalR from '@microsoft/signalr';
-import StrictEventEmitter from 'strict-event-emitter-types';
-import { EventEmitter } from 'events';
 
-import { ILogger } from '../../Logger/ILogger';
+import axios, { AxiosInstance } from 'axios';
+
+import { EventEmitter } from 'events';
+import { Agent as HttpsAgent } from 'https';
 import { ICameraConnection } from '../ICameraConnection';
+import { IConnection } from '../../GenericFactory/IConnection';
+import { ILogger } from '../../Logger/ILogger';
 import { IPtzLancCameraConfiguration } from './IPtzLancCameraConfiguration';
 import { PtzLancCameraState } from './PtzLancCameraState';
-import { IConnection } from '../../GenericFactory/IConnection';
+import StrictEventEmitter from 'strict-event-emitter-types';
 
 export class PtzLancCamera implements ICameraConnection {
     private readonly axios: AxiosInstance;
@@ -32,9 +33,6 @@ export class PtzLancCamera implements ICameraConnection {
     }
 
     constructor(private config: IPtzLancCameraConfiguration, private logger: ILogger) {
-        this.config = this.config;
-        this.logger = this.logger;
-
         this.axios = axios.create({
             httpsAgent: new HttpsAgent({
                 rejectUnauthorized: false,
@@ -87,7 +85,7 @@ export class PtzLancCamera implements ICameraConnection {
                 this.logger.log('Available Ports:' + response.data);
                 process.exit();
             }
-            let connection = {
+            const connection = {
                 connectionName: this.config.ConnectionPort,
                 connected: true,
             };

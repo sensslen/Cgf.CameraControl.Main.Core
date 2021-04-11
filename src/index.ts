@@ -1,19 +1,20 @@
-import { ILogger } from './Logger/ILogger';
-import { CameraConnectionFactory } from './CameraConnection/CameraConnectionFactory';
-import { PtzLancCameraBuilder } from './CameraConnection/PtzLancCamera/PtzLancCameraBuilder';
-import { HmiFactory } from './Hmi/HmiFactory';
-import { VideomixerFactory } from './VideoMixer/VideoMixerFactory';
-import { AtemBuilder } from './VideoMixer/Blackmagicdesign/AtemBuilder';
-import { IBuilder } from './GenericFactory/IBuilder';
-import { IHmi } from './Hmi/IHmi';
-import { IConfigurationStructure } from './Configuration/IConfigurationStructure';
 import * as ConfigSchema from './Configuration/IConfigurationStructure.json';
-import { IConnection } from './GenericFactory/IConnection';
+
+import { AtemBuilder } from './VideoMixer/Blackmagicdesign/AtemBuilder';
+import { CameraConnectionFactory } from './CameraConnection/CameraConnectionFactory';
 import { ConfigValidator } from './Configuration/ConfigValidator';
-import { IConfig } from './Configuration/IConfig';
-import { IVideoMixer } from './VideoMixer/IVideoMixer';
+import { HmiFactory } from './Hmi/HmiFactory';
+import { IBuilder } from './GenericFactory/IBuilder';
 import { ICameraConnection } from './CameraConnection/ICameraConnection';
+import { IConfig } from './Configuration/IConfig';
+import { IConfigurationStructure } from './Configuration/IConfigurationStructure';
+import { IConnection } from './GenericFactory/IConnection';
 import { IDisposable } from './GenericFactory/IDisposable';
+import { IHmi } from './Hmi/IHmi';
+import { ILogger } from './Logger/ILogger';
+import { IVideoMixer } from './VideoMixer/IVideoMixer';
+import { PtzLancCameraBuilder } from './CameraConnection/PtzLancCamera/PtzLancCameraBuilder';
+import { VideomixerFactory } from './VideoMixer/VideoMixerFactory';
 
 export class Core implements IDisposable {
     private _camFactory = new CameraConnectionFactory();
@@ -32,9 +33,9 @@ export class Core implements IDisposable {
         return this._hmiFactory;
     }
 
-    public async bootstrap(logger: ILogger, config: any) {
-        let configValidator = new ConfigValidator();
-        let validConfig = configValidator.validate<IConfigurationStructure>(config, ConfigSchema);
+    public async bootstrap(logger: ILogger, config: any): Promise<void> {
+        const configValidator = new ConfigValidator();
+        const validConfig = configValidator.validate<IConfigurationStructure>(config, ConfigSchema);
 
         if (validConfig === undefined) {
             this.error(logger, 'Failed to load configuration');
@@ -45,15 +46,15 @@ export class Core implements IDisposable {
         await this._camFactory.builderAdd(new PtzLancCameraBuilder(logger));
         await this._mixerFactory.builderAdd(new AtemBuilder(logger, this._camFactory));
 
-        for (let cam of validConfig.cams) {
+        for (const cam of validConfig.cams) {
             this._camFactory.parseConfig(cam);
         }
 
-        for (let videoMixer of validConfig.videoMixers) {
+        for (const videoMixer of validConfig.videoMixers) {
             this._mixerFactory.parseConfig(videoMixer);
         }
 
-        for (let hmi of validConfig.interfaces) {
+        for (const hmi of validConfig.interfaces) {
             this._hmiFactory.parseConfig(hmi);
         }
     }

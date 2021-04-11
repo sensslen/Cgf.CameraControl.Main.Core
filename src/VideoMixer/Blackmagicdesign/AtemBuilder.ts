@@ -1,29 +1,30 @@
-import { IConfig } from '../../Configuration/IConfig';
-import { ConfigValidator } from '../../Configuration/ConfigValidator';
-import { IBuilder } from '../../GenericFactory/IBuilder';
-import { IVideoMixer } from '../IVideoMixer';
-import { Atem } from './Atem';
-import { IAtemConfig } from './IAtemConfig';
 import * as ConfigSchema from './IAtemConfig.json';
-import { ILogger } from '../../Logger/ILogger';
+
+import { Atem } from './Atem';
 import { CameraConnectionFactory } from '../../CameraConnection/CameraConnectionFactory';
+import { ConfigValidator } from '../../Configuration/ConfigValidator';
+import { IAtemConfig } from './IAtemConfig';
+import { IBuilder } from '../../GenericFactory/IBuilder';
+import { IConfig } from '../../Configuration/IConfig';
+import { ILogger } from '../../Logger/ILogger';
+import { IVideoMixer } from '../IVideoMixer';
 
 export class AtemBuilder implements IBuilder<IVideoMixer> {
     constructor(private logger: ILogger, private cameraFactory: CameraConnectionFactory) {}
-    supportedTypes(): Promise<string[]> {
+    public supportedTypes(): Promise<string[]> {
         return Promise.resolve(['blackmagicdesign/Atem']);
     }
 
-    build(config: IConfig): IVideoMixer | undefined {
-        let configValidator = new ConfigValidator();
-        let validConfig = configValidator.validate<IAtemConfig>(config, ConfigSchema);
+    public build(config: IConfig): Promise<IVideoMixer | undefined> {
+        const configValidator = new ConfigValidator();
+        const validConfig = configValidator.validate<IAtemConfig>(config, ConfigSchema);
 
         if (validConfig === undefined) {
             this.error(configValidator.errorGet());
-            return undefined;
+            return Promise.resolve(undefined);
         }
 
-        return new Atem(validConfig, this.logger, this.cameraFactory);
+        return Promise.resolve(new Atem(validConfig, this.logger, this.cameraFactory));
     }
 
     private error(error: string): void {

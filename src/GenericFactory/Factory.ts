@@ -10,14 +10,14 @@ export class Factory<TConcrete extends IDisposable> implements IDisposable {
         return this._instances[instance];
     }
 
-    public parseConfig(config: IConfig): void {
+    public async parseConfig(config: IConfig): Promise<void> {
         if (this._instances[config.instance]) {
             return;
         }
 
-        let builder = this._builders[config.type];
+        const builder = this._builders[config.type];
         if (builder !== undefined) {
-            let instance = builder.build(config);
+            const instance = await builder.build(config);
 
             if (instance === undefined) {
                 return;
@@ -37,8 +37,8 @@ export class Factory<TConcrete extends IDisposable> implements IDisposable {
     }
 
     public async dispose(): Promise<void> {
-        for (let key in this._instances) {
-            if (this._instances.hasOwnProperty(key)) {
+        for (const key in this._instances) {
+            if (Object.prototype.hasOwnProperty.call(this._instances, key)) {
                 await this._instances[key].dispose();
             }
         }

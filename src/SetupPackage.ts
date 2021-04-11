@@ -1,9 +1,9 @@
-import fs from 'fs';
-
 import simpleGit, { SimpleGit } from 'simple-git';
-const git: SimpleGit = simpleGit();
 
-const semver = require('semver');
+import fs from 'fs';
+import { inc as semverInc } from 'semver';
+
+const git: SimpleGit = simpleGit();
 
 // DO NOT DELETE THIS FILE
 // This file is used by build system to build a clean npm package with the compiled js files in the root of the package.
@@ -20,7 +20,7 @@ async function calculateVersionNumber() {
     if (betaCount == undefined) {
         throw new Error(`Cannot convert '${split[1]}' to a number`);
     }
-    return `${semver.inc(split[0], 'patch')}-beta.${betaCount}`;
+    return `${semverInc(split[0], 'patch')}-beta.${betaCount}`;
 }
 
 async function main() {
@@ -37,7 +37,7 @@ async function main() {
         sourceObj.types = sourceObj.types.slice(5);
     }
 
-    let version = (await calculateVersionNumber()).trim();
+    const version = (await calculateVersionNumber()).trim();
     console.log(`setting version number:${version}`);
     sourceObj.version = version;
 
