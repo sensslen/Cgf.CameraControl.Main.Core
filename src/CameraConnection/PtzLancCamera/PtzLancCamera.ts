@@ -84,8 +84,9 @@ export class PtzLancCamera implements ICameraConnection {
             const response = await this.axios.get(this.config.ConnectionUrl + '/pantiltzoom/connections');
 
             if (!response.data.includes(this.config.ConnectionPort)) {
-                this.LogError(`Port: ${this.config.ConnectionPort} is not available. Available Ports:${response.data}`);
-                process.exit();
+                this.LogError(`Port:${this.config.ConnectionPort} is not available. Available Ports:${response.data}`);
+                this.LogError('Stopping camera.');
+                this.dispose();
             }
             const connection = {
                 connectionName: this.config.ConnectionPort,
@@ -95,7 +96,8 @@ export class PtzLancCamera implements ICameraConnection {
                 await this.axios.put(this.config.ConnectionUrl + '/pantiltzoom/connection', connection);
             } catch (error) {
                 this.LogError(`Failed to connect to Port: ${this.config.ConnectionPort} with error:${error}`);
-                process.exit();
+                this.LogError('Stopping camera.');
+                this.dispose();
             }
         } catch (error) {
             this.Log(`Failed to connect - ${error}`);
