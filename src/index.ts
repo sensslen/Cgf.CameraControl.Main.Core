@@ -43,8 +43,8 @@ export class Core implements IDisposable {
             return;
         }
 
-        await this._camFactory.builderAdd(new PtzLancCameraBuilder(logger));
-        await this._mixerFactory.builderAdd(new AtemBuilder(logger, this._camFactory));
+        await this._camFactory.builderAdd(new PtzLancCameraBuilder(logger), logger);
+        await this._mixerFactory.builderAdd(new AtemBuilder(logger, this._camFactory), logger);
 
         for (const cam of validConfig.cams) {
             this._camFactory.parseConfig(cam, logger);

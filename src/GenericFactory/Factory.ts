@@ -29,19 +29,27 @@ export class Factory<TConcrete extends IDisposable> implements IDisposable {
         }
     }
 
-    public async builderAdd(builder: IBuilder<TConcrete>): Promise<void> {
-        const supportedTypes = await builder.supportedTypes();
-        supportedTypes.forEach((type) => {
-            if (this._builders[type] === undefined) {
-                this._builders[type] = builder;
-            }
-        });
+    public async builderAdd(builder: IBuilder<TConcrete>, logger: ILogger): Promise<void> {
+        try {
+            const supportedTypes = await builder.supportedTypes();
+            supportedTypes.forEach((type) => {
+                if (this._builders[type] === undefined) {
+                    this._builders[type] = builder;
+                }
+            });
+        } catch (error) {
+            logger.error(`Factory: Failed to add builder - ${error}`);
+        }
     }
 
     public async dispose(): Promise<void> {
         for (const key in this._instances) {
             if (Object.prototype.hasOwnProperty.call(this._instances, key)) {
-                await this._instances[key].dispose();
+                try {
+                    await this._instances[key].dispose();
+                } catch (_error) {
+                    // catch left empty on purpose, as we dispose on best effort
+                }
             }
         }
     }

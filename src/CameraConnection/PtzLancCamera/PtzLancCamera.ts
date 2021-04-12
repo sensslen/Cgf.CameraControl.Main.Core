@@ -48,7 +48,11 @@ export class PtzLancCamera implements ICameraConnection {
     }
 
     async dispose(): Promise<void> {
-        await this.socketConnection.stop();
+        try {
+            await this.socketConnection.stop();
+        } catch (error) {
+            this.LogError(`unable to stop socket connection - ${error}`);
+        }
     }
 
     private async socketReconnected() {
@@ -59,19 +63,18 @@ export class PtzLancCamera implements ICameraConnection {
     private async initialConnect() {
         await this.setupRemote();
         this.socketConnection.onreconnected(() => {
-            this.logger.log(`reconnect successful (${this.config.ConnectionUrl})`);
+            this.Log(`reconnect successful`);
             this.socketReconnected();
         });
         this.socketConnection.onreconnecting(() => {
-            this.logger.log(`connection error (${this.config.ConnectionUrl}) - trying automatic reconnect`);
+            this.Log(`connection error - trying automatic reconnect`);
             this.connected = false;
         });
         try {
             await this.socketConnection.start();
             await this.connectionSuccessfullyEstablished();
         } catch (error) {
-            this.logger.log('Socket connection setup failed.');
-            this.logger.log('error:' + error);
+            this.LogError(`Socket connection setup failed - ${error}`);
             await this.initialConnect();
         }
     }
@@ -81,8 +84,7 @@ export class PtzLancCamera implements ICameraConnection {
             const response = await this.axios.get(this.config.ConnectionUrl + '/pantiltzoom/connections');
 
             if (!response.data.includes(this.config.ConnectionPort)) {
-                this.logger.log('Port:' + this.config.ConnectionPort + ' is not available.');
-                this.logger.log('Available Ports:' + response.data);
+                this.LogError(`Port: ${this.config.ConnectionPort} is not available. Available Ports:${response.data}`);
                 process.exit();
             }
             const connection = {
@@ -92,13 +94,11 @@ export class PtzLancCamera implements ICameraConnection {
             try {
                 await this.axios.put(this.config.ConnectionUrl + '/pantiltzoom/connection', connection);
             } catch (error) {
-                this.logger.log('Failed to connect to Port:' + this.config.ConnectionPort);
-                this.logger.log('error:' + error);
+                this.LogError(`Failed to connect to Port: ${this.config.ConnectionPort} with error:${error}`);
                 process.exit();
             }
         } catch (error) {
-            this.logger.log('Failed to connect:' + this.config.ConnectionUrl);
-            this.logger.log('error:' + error);
+            this.Log(`Failed to connect - ${error}`);
             await this.setupRemote();
         }
     }
@@ -122,16 +122,15 @@ export class PtzLancCamera implements ICameraConnection {
             try {
                 const updateSuccessful = await this.socketConnection.invoke('SetState', this.currentState);
                 if (!updateSuccessful) {
-                    this.logger.log('state update failure returned - retrying');
+                    this.Log('state update failure returned - retrying');
                     this.shouldTransmitState = true;
                 }
                 this.canTransmit = true;
-                await this.transmitNextStateIfRequestedAndPossible();
             } catch (error) {
                 this.shouldTransmitState = true;
-                this.logger.log('state transmission error:');
-                this.logger.log('error:' + error);
+                this.Log(`state transmission error - ${error}`);
             }
+            await this.transmitNextStateIfRequestedAndPossible();
         }
     }
 
@@ -169,5 +168,13 @@ export class PtzLancCamera implements ICameraConnection {
     private roundAndRestrictRange(value: number, maxMin: number) {
         const restricted = Math.min(Math.max(value, maxMin), -maxMin);
         return Math.round(restricted);
+    }
+
+    private Log(toLog: string) {
+        this.logger.log(`PtzLancCamera(${this.config.ConnectionUrl}):${toLog}`);
+    }
+
+    private LogError(toLog: string) {
+        this.logger.error(`PtzLancCamera(${this.config.ConnectionUrl}):${toLog}`);
     }
 }
