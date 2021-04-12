@@ -14,16 +14,15 @@
   ],
   "parser": "@typescript-eslint/parser",
   "rules": {
-    // enable additional rules
-    "indent": [
+    "@typescript-eslint/indent": [
       "error",
       4
     ],
-    "quotes": [
+    "@typescript-eslint/quotes": [
       "error",
       "single"
     ],
-    "semi": [
+    "@typescript-eslint/semi": [
       "error",
       "always"
     ],
