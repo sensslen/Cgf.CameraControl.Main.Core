@@ -63,11 +63,11 @@ export class PtzLancCamera implements ICameraConnection {
     private async initialConnect() {
         await this.setupRemote();
         this.socketConnection.onreconnected(() => {
-            this.Log(`reconnect successful`);
+            this.Log('reconnect successful');
             this.socketReconnected();
         });
         this.socketConnection.onreconnecting(() => {
-            this.Log(`connection error - trying automatic reconnect`);
+            this.Log('connection error - trying automatic reconnect');
             this.connected = false;
         });
         try {

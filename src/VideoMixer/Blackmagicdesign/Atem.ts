@@ -53,7 +53,7 @@ export class Atem implements IVideoMixer {
             this._connectionEmitter.emit('change', false);
         });
 
-        this.atem.on('stateChanged', (state, _pathToChange) => {
+        this.atem.on('stateChanged', (state) => {
             this.stateChange(state);
         });
     }
