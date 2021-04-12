@@ -88,20 +88,21 @@ export class PtzLancCamera implements ICameraConnection {
                 this.LogError('Stopping camera.');
                 this.dispose();
             }
-            const connection = {
-                connectionName: this.config.ConnectionPort,
-                connected: true,
-            };
-            try {
-                await this.axios.put(this.config.ConnectionUrl + '/pantiltzoom/connection', connection);
-            } catch (error) {
-                this.LogError(`Failed to connect to Port: ${this.config.ConnectionPort} with error:${error}`);
-                this.LogError('Stopping camera.');
-                this.dispose();
-            }
         } catch (error) {
             this.Log(`Failed to connect - ${error}`);
             await this.setupRemote();
+            return;
+        }
+        const connection = {
+            connectionName: this.config.ConnectionPort,
+            connected: true,
+        };
+        try {
+            await this.axios.put(this.config.ConnectionUrl + '/pantiltzoom/connection', connection);
+        } catch (error) {
+            this.LogError(`Failed to connect to Port: ${this.config.ConnectionPort} with error:${error}`);
+            this.LogError('Stopping camera.');
+            this.dispose();
         }
     }
 
