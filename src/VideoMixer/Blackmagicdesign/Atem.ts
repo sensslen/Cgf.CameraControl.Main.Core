@@ -48,7 +48,7 @@ export class Atem implements IVideoMixer {
             }
         }
 
-        this.atem = new AtemConnection();
+        this.atem = new AtemConnection({ disableMultithreaded: config.singleThreaded });
 
         this.atem.on('info', (toLog) => this.log(toLog));
         this.atem.on('error', (toLog) => this.logError(toLog));
