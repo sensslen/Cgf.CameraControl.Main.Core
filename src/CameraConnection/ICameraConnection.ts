@@ -3,6 +3,8 @@ import { IDisposable } from '../GenericFactory/IDisposable';
 import { ISubscription } from '../GenericFactory/ISubscription';
 
 export interface ICameraConnection extends ISubscription<IConnection>, IDisposable {
+    readonly connectionString: string;
+
     /**
      * Set the pan speed of the camera.
      * @param value The speed of pan in the value range of [-1 .. 1] where
@@ -27,6 +29,4 @@ export interface ICameraConnection extends ISubscription<IConnection>, IDisposab
      * -1 represents maximum speed out and 1 represents maximum speed in
      */
     focus(value: number): void;
-
-    readonly connectionString: string;
 }

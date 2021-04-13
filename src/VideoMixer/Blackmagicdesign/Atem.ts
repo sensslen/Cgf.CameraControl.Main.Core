@@ -22,51 +22,8 @@ export class Atem implements IVideoMixer {
         [key: number]: ICameraConnection;
     } = {};
 
-    constructor(private config: IAtemConfig, private logger: ILogger, camConnectionFactory: CameraConnectionFactory) {
-        for (const key in config.CameraConnections) {
-            if (Object.prototype.hasOwnProperty.call(config.CameraConnections, key)) {
-                const index = config.CameraConnections[key];
-                const cam = camConnectionFactory.get(index);
-                if (cam) {
-                    this._cameraConnections[key] = cam;
-                } else {
-                    this.LogError(`Failed to get camera with index:${index}`);
-                }
-            }
-        }
-
-        this.atem = new AtemConnection();
-
-        this.atem.on('info', (toLog) => this.Log(toLog));
-        this.atem.on('error', (toLog) => this.LogError(toLog));
-
-        this.atem.connect(config.IP);
-
-        this.atem.on('connected', () => {
-            this._connectionEmitter.emit('change', true);
-            if (this.atem.state) {
-                this.stateChange(this.atem.state);
-            }
-        });
-
-        this.atem.on('disconnected', () => {
-            this._connectionEmitter.emit('change', false);
-        });
-
-        this.atem.on('stateChanged', (state) => {
-            this.stateChange(state);
-        });
-    }
-
-    imageSelectionChangeGet(me: number): StrictEventEmitter<EventEmitter, IImageSelectionChange> {
-        if (!this._imageSelectionEmitters[me]) {
-            this._imageSelectionEmitters[me] = new EventEmitter();
-        }
-        return this._imageSelectionEmitters[me];
-    }
-
     public get connectionString(): string {
-        return this.config.IP;
+        return this.config.ip;
     }
 
     private _connected = false;
@@ -74,44 +31,94 @@ export class Atem implements IVideoMixer {
         return this._connected;
     }
     public set connected(v: boolean) {
+        this._connectionEmitter.emit('change', v);
         this._connected = v;
     }
 
-    pan(meNumber: number, value: number): void {
+    constructor(private config: IAtemConfig, private logger: ILogger, camConnectionFactory: CameraConnectionFactory) {
+        for (const key in config.cameraConnections) {
+            if (Object.prototype.hasOwnProperty.call(config.cameraConnections, key)) {
+                const index = config.cameraConnections[key];
+                const cam = camConnectionFactory.get(index);
+                if (cam) {
+                    this._cameraConnections[key] = cam;
+                } else {
+                    this.logError(`Failed to get camera with index:${index}`);
+                }
+            }
+        }
+
+        this.atem = new AtemConnection();
+
+        this.atem.on('info', (toLog) => this.log(toLog));
+        this.atem.on('error', (toLog) => this.logError(toLog));
+
+        this.atem.connect(config.ip);
+
+        this.atem.on('connected', () => {
+            this.connected = true;
+            if (this.atem.state) {
+                this.stateChange(this.atem.state);
+            }
+        });
+
+        this.atem.on('disconnected', () => {
+            this.connected = false;
+        });
+
+        this.atem.on('stateChanged', (state, _pathToChange) => {
+            this.stateChange(state);
+        });
+    }
+
+    public imageSelectionChangeGet(me: number): StrictEventEmitter<EventEmitter, IImageSelectionChange> {
+        if (!this._imageSelectionEmitters[me]) {
+            this._imageSelectionEmitters[me] = new EventEmitter();
+        }
+        return this._imageSelectionEmitters[me];
+    }
+
+    public pan(meNumber: number, value: number): void {
         const cam = this._selectedCamera[meNumber];
         if (cam) {
             cam.pan(value);
         }
     }
-    tilt(meNumber: number, value: number): void {
+    public tilt(meNumber: number, value: number): void {
         const cam = this._selectedCamera[meNumber];
         if (cam) {
             cam.tilt(value);
         }
     }
-    zoom(meNumber: number, value: number): void {
+    public zoom(meNumber: number, value: number): void {
         const cam = this._selectedCamera[meNumber];
         if (cam) {
             cam.zoom(value);
         }
     }
-    focus(meNumber: number, value: number): void {
+    public focus(meNumber: number, value: number): void {
         const cam = this._selectedCamera[meNumber];
         if (cam) {
             cam.focus(value);
         }
     }
-    cut(meNumber: number): void {
-        this.atem.cut(meNumber);
+    public cut(meNumber: number): void {
+        if(this.connected) {
+            this.atem.cut(meNumber);
+        }
     }
-    auto(meNumber: number): void {
-        this.atem.autoTransition(meNumber);
+    public auto(meNumber: number): void {
+        if(this.connected) {
+            this.atem.autoTransition(meNumber);
+        }
     }
-    changeInput(meNumber: number, newInput: number): void {
-        this.atem.changePreviewInput(newInput, meNumber);
+    public changeInput(meNumber: number, newInput: number): void {
+        if(this.connected) {
+            this.atem.changePreviewInput(newInput, meNumber);
+        }
     }
-    toggleKey(meNumber: number, key: number): void {
-        if (this.atem.state !== undefined) {
+    public toggleKey(meNumber: number, key: number): void {
+        if (this.connected && this.atem.state !== undefined) {
             const meState = this.atem.state.video.mixEffects[meNumber];
             if (meState !== undefined) {
                 const keyState = meState.upstreamKeyers[key];
@@ -121,24 +128,26 @@ export class Atem implements IVideoMixer {
             }
         }
     }
-    runMacro(macro: number): void {
-        this.atem.macroRun(macro);
+    public runMacro(macro: number): void {
+        if(this.connected) {
+            this.atem.macroRun(macro);
+        }
     }
 
-    subscribe(i: IConnection): void {
+    public subscribe(i: IConnection): void {
         i.change(this._connected);
         this._connectionEmitter.on('change', i.change);
     }
-    unsubscribe(i: IConnection): void {
+    public unsubscribe(i: IConnection): void {
         this._connectionEmitter.removeListener('change', i.change);
     }
 
     async dispose(): Promise<void> {
-        this.connected = false;
         try {
             await this.atem.disconnect();
+            this.connected = false;
         } catch (error) {
-            this.LogError(`Failed to disconnect from mixer - ${error}`);
+            this.logError(`Failed to disconnect from mixer - ${error}`);
         }
     }
 
@@ -162,11 +171,11 @@ export class Atem implements IVideoMixer {
         this._selectedCamera[index] = this._cameraConnections[state.previewInput];
     }
 
-    private LogError(toLog: string) {
+    private logError(toLog: string) {
         this.logger.error(`Atem: ${toLog}`);
     }
 
-    private Log(toLog: string) {
+    private log(toLog: string) {
         this.logger.log(`Atem: ${toLog}`);
     }
 }

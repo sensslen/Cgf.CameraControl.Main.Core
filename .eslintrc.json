@@ -18,11 +18,11 @@
       "error",
       4
     ],
-    "@typescript-eslint/quotes": [
+    "quotes": [
       "error",
       "single"
     ],
-    "@typescript-eslint/semi": [
+    "semi": [
       "error",
       "always"
     ],
@@ -31,6 +31,26 @@
       {
         "argsIgnorePattern": "^_"
       }
+    ],
+    "sort-imports": [
+      "error",
+      {
+        "memberSyntaxSortOrder": [
+          "none",
+          "all",
+          "multiple",
+          "single"
+        ]
+      }
+    ],
+    "@typescript-eslint/member-ordering": [
+      "error"
+    ],
+    "@typescript-eslint/naming-convention": [
+      "error"
+    ],
+    "no-trailing-spaces": [
+      "error"
     ]
   }
 }

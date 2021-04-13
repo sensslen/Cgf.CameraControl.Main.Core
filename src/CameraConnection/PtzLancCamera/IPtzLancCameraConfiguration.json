@@ -4,10 +4,10 @@
   "definitions": {
     "IPtzLancCameraConfiguration": {
       "properties": {
-        "ConnectionPort": {
+        "connectionPort": {
           "type": "string"
         },
-        "ConnectionUrl": {
+        "connectionUrl": {
           "type": "string"
         },
         "instance": {
@@ -18,8 +18,8 @@
         }
       },
       "required": [
-        "ConnectionPort",
-        "ConnectionUrl",
+        "connectionPort",
+        "connectionUrl",
         "instance",
         "type"
       ],

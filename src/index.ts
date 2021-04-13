@@ -21,21 +21,24 @@ export class Core implements IDisposable {
     private _mixerFactory = new VideomixerFactory();
     private _hmiFactory = new HmiFactory();
 
-    public get CameraFactory(): CameraConnectionFactory {
+    public get cameraFactory(): CameraConnectionFactory {
         return this._camFactory;
     }
 
-    public get MixerFactory(): VideomixerFactory {
+    public get mixerFactory(): VideomixerFactory {
         return this._mixerFactory;
     }
 
-    public get HmiFactory(): HmiFactory {
+    public get hmiFactory(): HmiFactory {
         return this._hmiFactory;
     }
 
     public async bootstrap(logger: ILogger, config: any): Promise<void> {
         const configValidator = new ConfigValidator();
-        const validConfig = configValidator.validate<IConfigurationStructure>(config, ConfigSchema);
+        const validConfig = configValidator.validate<IConfigurationStructure>(
+            config,
+            ConfigSchema
+        );
 
         if (validConfig === undefined) {
             this.error(logger, 'Failed to load configuration');
@@ -44,7 +47,10 @@ export class Core implements IDisposable {
         }
 
         await this._camFactory.builderAdd(new PtzLancCameraBuilder(logger), logger);
-        await this._mixerFactory.builderAdd(new AtemBuilder(logger, this._camFactory), logger);
+        await this._mixerFactory.builderAdd(
+            new AtemBuilder(logger, this._camFactory),
+            logger
+        );
 
         for (const cam of validConfig.cams) {
             this._camFactory.parseConfig(cam, logger);
@@ -59,14 +65,14 @@ export class Core implements IDisposable {
         }
     }
 
-    private error(logger: ILogger, error: string): void {
-        logger.error(`Core: ${error}`);
-    }
-
     public async dispose(): Promise<void> {
         await this._camFactory.dispose();
         await this._mixerFactory.dispose();
         await this._hmiFactory.dispose();
+    }
+
+    private error(logger: ILogger, error: string): void {
+        logger.error(`Core: ${error}`);
     }
 }
 

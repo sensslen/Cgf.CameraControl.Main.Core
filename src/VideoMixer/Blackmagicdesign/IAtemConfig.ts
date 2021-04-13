@@ -1,6 +1,6 @@
 import { IConfig } from '../../Configuration/IConfig';
 
 export interface IAtemConfig extends IConfig {
-    IP: string;
-    CameraConnections: { [key: number]: number };
+    ip: string;
+    cameraConnections: { [key: number]: number };
 }

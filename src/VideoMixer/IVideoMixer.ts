@@ -6,6 +6,12 @@ import { ISubscription } from '../GenericFactory/ISubscription';
 import StrictEventEmitter from 'strict-event-emitter-types';
 
 export interface IVideoMixer extends ISubscription<IConnection>, IDisposable {
+    connectionString: string;
+
+    /**
+     * Get the event emitter that allows to register for image selection changes
+     * @param meNumber the Mix Effect block for which the image change emitter should be received
+     */
     imageSelectionChangeGet(meNumber: number): StrictEventEmitter<EventEmitter, IImageSelectionChange>;
 
     /**
@@ -46,6 +52,4 @@ export interface IVideoMixer extends ISubscription<IConnection>, IDisposable {
     changeInput(meNumber: number, newInput: number): void;
     toggleKey(meNumber: number, key: number): void;
     runMacro(macro: number): void;
-
-    connectionString: string;
 }

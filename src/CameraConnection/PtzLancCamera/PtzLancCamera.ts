@@ -19,7 +19,7 @@ export class PtzLancCamera implements ICameraConnection {
     private canTransmit = false;
 
     public get connectionString(): string {
-        return this.config.ConnectionUrl;
+        return this.config.connectionUrl;
     }
 
     private _connected = false;
@@ -41,18 +41,44 @@ export class PtzLancCamera implements ICameraConnection {
 
         this.socketConnection = new signalR.HubConnectionBuilder()
             .withAutomaticReconnect()
-            .withUrl(this.config.ConnectionUrl + '/pantiltzoom/statehub')
+            .withUrl(`${this.config.connectionUrl}/pantiltzoom/statehub`)
             .build();
 
         this.initialConnect();
     }
 
-    async dispose(): Promise<void> {
+    public async dispose(): Promise<void> {
         try {
             await this.socketConnection.stop();
         } catch (error) {
-            this.LogError(`unable to stop socket connection - ${error}`);
+            this.logError(`unable to stop socket connection - ${error}`);
         }
+    }
+
+    public subscribe(i: IConnection): void {
+        this._connectionEmitter.on('change', i.change);
+        i.change(this.connected);
+    }
+
+    public unsubscribe(i: IConnection): void {
+        this._connectionEmitter.removeListener('change', i.change);
+    }
+
+    public  pan(value: number): void {
+        this.currentState.pan = this.roundAndRestrictRange(value, 255);
+        this.scheduleStateTransmission();
+    }
+    public tilt(value: number): void {
+        this.currentState.tilt = this.roundAndRestrictRange(value, 255);
+        this.scheduleStateTransmission();
+    }
+    public   zoom(value: number): void {
+        this.currentState.zoom = this.roundAndRestrictRange(value, 8);
+        this.scheduleStateTransmission();
+    }
+    public    focus(value: number): void {
+        this.currentState.focus = this.roundAndRestrictRange(value, 1.2);
+        this.scheduleStateTransmission();
     }
 
     private async socketReconnected() {
@@ -63,45 +89,45 @@ export class PtzLancCamera implements ICameraConnection {
     private async initialConnect() {
         await this.setupRemote();
         this.socketConnection.onreconnected(() => {
-            this.Log('reconnect successful');
+            this.log('reconnect successful');
             this.socketReconnected();
         });
         this.socketConnection.onreconnecting(() => {
-            this.Log('connection error - trying automatic reconnect');
+            this.log('connection error - trying automatic reconnect');
             this.connected = false;
         });
         try {
             await this.socketConnection.start();
             await this.connectionSuccessfullyEstablished();
         } catch (error) {
-            this.LogError(`Socket connection setup failed - ${error}`);
+            this.logError(`Socket connection setup failed - ${error}`);
             await this.initialConnect();
         }
     }
 
     private async setupRemote() {
         try {
-            const response = await this.axios.get(this.config.ConnectionUrl + '/pantiltzoom/connections');
+            const response = await this.axios.get(this.config.connectionUrl + '/pantiltzoom/connections');
 
-            if (!response.data.includes(this.config.ConnectionPort)) {
-                this.LogError(`Port:${this.config.ConnectionPort} is not available. Available Ports:${response.data}`);
-                this.LogError('Stopping camera.');
+            if (!response.data.includes(this.config.connectionPort)) {
+                this.logError(`Port:${this.config.connectionPort} is not available. Available Ports:${response.data}`);
+                this.logError('Stopping camera.');
                 this.dispose();
             }
         } catch (error) {
-            this.Log(`Failed to connect - ${error}`);
+            this.log(`Failed to connect - ${error}`);
             await this.setupRemote();
             return;
         }
         const connection = {
-            connectionName: this.config.ConnectionPort,
+            connectionName: this.config.connectionPort,
             connected: true,
         };
         try {
-            await this.axios.put(this.config.ConnectionUrl + '/pantiltzoom/connection', connection);
+            await this.axios.put(`${this.config.connectionUrl}/pantiltzoom/connection`, connection);
         } catch (error) {
-            this.LogError(`Failed to connect to Port: ${this.config.ConnectionPort} with error:${error}`);
-            this.LogError('Stopping camera.');
+            this.logError(`Failed to connect to Port:${this.config.connectionPort} with error:${error}`);
+            this.logError('Stopping camera.');
             this.dispose();
         }
     }
@@ -125,45 +151,19 @@ export class PtzLancCamera implements ICameraConnection {
             try {
                 const updateSuccessful = await this.socketConnection.invoke('SetState', this.currentState);
                 if (!updateSuccessful) {
-                    this.Log('state update failure returned - retrying');
+                    this.log('state update failure returned - retrying');
                     this.shouldTransmitState = true;
                 }
                 this.canTransmit = true;
             } catch (error) {
                 this.shouldTransmitState = true;
-                this.Log(`state transmission error - ${error}`);
+                this.log(`state transmission error - ${error}`);
             }
             await this.transmitNextStateIfRequestedAndPossible();
         }
     }
 
-    subscribe(i: IConnection): void {
-        this._connectionEmitter.on('change', i.change);
-        i.change(this.connected);
-    }
-
-    unsubscribe(i: IConnection): void {
-        this._connectionEmitter.removeListener('change', i.change);
-    }
-
-    pan(value: number): void {
-        this.currentState.pan = this.roundAndRestrictRange(value, 255);
-        this.ScheduleStateTransmission();
-    }
-    tilt(value: number): void {
-        this.currentState.tilt = this.roundAndRestrictRange(value, 255);
-        this.ScheduleStateTransmission();
-    }
-    zoom(value: number): void {
-        this.currentState.zoom = this.roundAndRestrictRange(value, 8);
-        this.ScheduleStateTransmission();
-    }
-    focus(value: number): void {
-        this.currentState.focus = this.roundAndRestrictRange(value, 1.2);
-        this.ScheduleStateTransmission();
-    }
-
-    private ScheduleStateTransmission() {
+    private scheduleStateTransmission() {
         this.shouldTransmitState = true;
         this.transmitNextStateIfRequestedAndPossible();
     }
@@ -173,11 +173,11 @@ export class PtzLancCamera implements ICameraConnection {
         return Math.round(restricted);
     }
 
-    private Log(toLog: string) {
-        this.logger.log(`PtzLancCamera(${this.config.ConnectionUrl}):${toLog}`);
+    private log(toLog: string) {
+        this.logger.log(`PtzLancCamera(${this.config.connectionUrl}):${toLog}`);
     }
 
-    private LogError(toLog: string) {
-        this.logger.error(`PtzLancCamera(${this.config.ConnectionUrl}):${toLog}`);
+    private logError(toLog: string) {
+        this.logger.error(`PtzLancCamera(${this.config.connectionUrl}):${toLog}`);
     }
 }

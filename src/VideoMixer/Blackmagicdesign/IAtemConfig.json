@@ -4,26 +4,26 @@
   "definitions": {
     "IAtemConfig": {
       "properties": {
-        "CameraConnections": {
+        "cameraConnections": {
           "additionalProperties": {
             "type": "number"
           },
           "type": "object"
         },
-        "IP": {
-          "type": "string"
-        },
         "instance": {
           "type": "number"
+        },
+        "ip": {
+          "type": "string"
         },
         "type": {
           "type": "string"
         }
       },
       "required": [
-        "CameraConnections",
-        "IP",
+        "cameraConnections",
         "instance",
+        "ip",
         "type"
       ],
       "type": "object"
