@@ -27,16 +27,17 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
-        "lint": "eslint --ext .ts src",
+        "lint": "eslint --ext .ts .",
+        "sort": "sort-package-json package.json",
         "atem-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IAtemConfig -o src/VideoMixer/Blackmagicdesign/IAtemConfig.json --tsconfig ./tsconfig.json --additional-properties true",
         "prebuild": "npm run clean && npm run generate-config-validation-schema",
         "build": "npm run lint && tsc",
-        "preclean": "sort-package-json",
+        "preclean": "npm run sort",
         "clean": "del-cli dist -f",
         "generate-config-validation-schema": "npm run ptz-camera-config-schema && npm run atem-config-schema&& npm run main-config-schema",
-        "postinstall": "sort-package-json",
+        "postinstall": "npm run sort",
         "main-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IConfigurationStructure -o src/Configuration/IConfigurationStructure.json --tsconfig ./tsconfig.json --additional-properties true",
-        "presetuppublish": "sort-package-json && npm run build",
+        "presetuppublish": "npm run sort && npm run build",
         "setuppublish": "node dist/SetupPackage.js",
         "ptz-camera-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IPtzLancCameraConfiguration -o src/CameraConnection/PtzLancCamera/IPtzLancCameraConfiguration.json --tsconfig ./tsconfig.json --additional-properties true"
     },
@@ -59,7 +60,7 @@
         "prettier": "^2.2.1",
         "semver": "^7.3.5",
         "simple-git": "^2.37.0",
-        "sort-package-json": "^1.48.0",
+        "sort-package-json": "^1.49.0",
         "ts-json-schema-generator": "^0.89.1",
         "typescript": "^4.1.5"
     }
