@@ -103,17 +103,17 @@ export class Atem implements IVideoMixer {
         }
     }
     public cut(meNumber: number): void {
-        if(this.connected) {
+        if (this.connected) {
             this.atem.cut(meNumber);
         }
     }
     public auto(meNumber: number): void {
-        if(this.connected) {
+        if (this.connected) {
             this.atem.autoTransition(meNumber);
         }
     }
     public changeInput(meNumber: number, newInput: number): void {
-        if(this.connected) {
+        if (this.connected) {
             this.atem.changePreviewInput(newInput, meNumber);
         }
     }
@@ -129,7 +129,7 @@ export class Atem implements IVideoMixer {
         }
     }
     public runMacro(macro: number): void {
-        if(this.connected) {
+        if (this.connected) {
             this.atem.macroRun(macro);
         }
     }

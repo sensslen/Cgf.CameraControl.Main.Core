@@ -64,7 +64,7 @@ export class PtzLancCamera implements ICameraConnection {
         this._connectionEmitter.removeListener('change', i.change);
     }
 
-    public  pan(value: number): void {
+    public pan(value: number): void {
         this.currentState.pan = this.roundAndRestrictRange(value, 255);
         this.scheduleStateTransmission();
     }
@@ -72,11 +72,11 @@ export class PtzLancCamera implements ICameraConnection {
         this.currentState.tilt = this.roundAndRestrictRange(value, 255);
         this.scheduleStateTransmission();
     }
-    public   zoom(value: number): void {
+    public zoom(value: number): void {
         this.currentState.zoom = this.roundAndRestrictRange(value, 8);
         this.scheduleStateTransmission();
     }
-    public    focus(value: number): void {
+    public focus(value: number): void {
         this.currentState.focus = this.roundAndRestrictRange(value, 1.2);
         this.scheduleStateTransmission();
     }

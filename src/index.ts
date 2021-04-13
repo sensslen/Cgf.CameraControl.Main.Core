@@ -33,13 +33,9 @@ export class Core implements IDisposable {
         return this._hmiFactory;
     }
 
-    public async bootstrap(logger: ILogger, config: any): Promise<void> {
+    public async bootstrap(logger: ILogger, config: unknown): Promise<void> {
         const configValidator = new ConfigValidator();
-        const validConfig = configValidator.validate<IConfigurationStructure>(
-            config,
-            ConfigSchema
-        );
-
+        const validConfig = configValidator.validate<IConfigurationStructure>(config, ConfigSchema);
         if (validConfig === undefined) {
             this.error(logger, 'Failed to load configuration');
             this.error(logger, configValidator.errorGet());
@@ -47,10 +43,7 @@ export class Core implements IDisposable {
         }
 
         await this._camFactory.builderAdd(new PtzLancCameraBuilder(logger), logger);
-        await this._mixerFactory.builderAdd(
-            new AtemBuilder(logger, this._camFactory),
-            logger
-        );
+        await this._mixerFactory.builderAdd(new AtemBuilder(logger, this._camFactory), logger);
 
         for (const cam of validConfig.cams) {
             this._camFactory.parseConfig(cam, logger);
