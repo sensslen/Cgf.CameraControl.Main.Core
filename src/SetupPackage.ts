@@ -1,6 +1,7 @@
 import simpleGit, { SimpleGit } from 'simple-git';
 
 import fs from 'fs';
+import path from 'path';
 import { inc as semverInc } from 'semver';
 
 const git: SimpleGit = simpleGit();
@@ -12,12 +13,12 @@ const git: SimpleGit = simpleGit();
 async function calculateVersionNumber() {
     const gitDescribeVersion = await git.raw('describe', '--tags', '--dirty', '--always');
     const split = gitDescribeVersion.split('-');
-    if (split.length == 1) {
+    if (split.length === 1) {
         return split[0];
     }
 
     const betaCount = Number(split[1]);
-    if (betaCount == undefined) {
+    if (betaCount === undefined) {
         throw new Error(`Cannot convert '${split[1]}' to a number`);
     }
     return `${semverInc(split[0], 'patch')}-beta.${betaCount}`;
@@ -26,7 +27,7 @@ async function calculateVersionNumber() {
 async function main() {
     console.log('preparing build by cleaning package.json');
 
-    const source = fs.readFileSync(__dirname + '/../package.json').toString('utf-8');
+    const source = fs.readFileSync(path.join(__dirname, '../package.json')).toString('utf-8');
     const sourceObj = JSON.parse(source);
     sourceObj.scripts = {};
     sourceObj.devDependencies = {};
