@@ -13,10 +13,14 @@ export class Factory<TConcrete extends IDisposable> implements IDisposable {
 
     public async parseConfig(config: IConfig, logger: ILogger): Promise<void> {
         if (this._instances[config.instance]) {
+            logger.log(`Factory: Instance for index:${config.instance} is already available`);
             return;
         }
 
         const builder = this._builders[config.type];
+        if (builder === undefined) {
+            logger.error(`Factory: Could not fin bilder for type:${config.type}`);
+        }
         if (builder !== undefined) {
             try {
                 const instance = await builder.build(config);
