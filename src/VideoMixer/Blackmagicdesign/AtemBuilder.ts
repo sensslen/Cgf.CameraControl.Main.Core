@@ -12,7 +12,7 @@ import { IVideoMixer } from '../IVideoMixer';
 export class AtemBuilder implements IBuilder<IVideoMixer> {
     constructor(private logger: ILogger, private cameraFactory: CameraConnectionFactory) {}
     public supportedTypes(): Promise<string[]> {
-        return Promise.resolve(['blackmagicdesign/Atem']);
+        return Promise.resolve(['blackmagicdesign/atem']);
     }
 
     public build(config: IConfig): Promise<IVideoMixer> {

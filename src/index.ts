@@ -46,15 +46,15 @@ export class Core implements IDisposable {
         await this._mixerFactory.builderAdd(new AtemBuilder(logger, this._camFactory), logger);
 
         for (const cam of validConfig.cams) {
-            this._camFactory.parseConfig(cam, logger);
+            await this._camFactory.parseConfig(cam, logger);
         }
 
         for (const videoMixer of validConfig.videoMixers) {
-            this._mixerFactory.parseConfig(videoMixer, logger);
+            await this._mixerFactory.parseConfig(videoMixer, logger);
         }
 
         for (const hmi of validConfig.interfaces) {
-            this._hmiFactory.parseConfig(hmi, logger);
+            await this._hmiFactory.parseConfig(hmi, logger);
         }
     }
 
