@@ -11,7 +11,7 @@ const git: SimpleGit = simpleGit();
 // It will not be included in the npm package.
 
 async function calculateVersionNumber() {
-    const gitDescribeVersion = await git.raw('describe', '--tags', '--dirty', '--always');
+    const gitDescribeVersion = await git.raw('describe', '--tags', '--always');
     const split = gitDescribeVersion.split('-');
     if (split.length === 1) {
         return split[0];
