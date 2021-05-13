@@ -1,24 +1,26 @@
-import { Core } from 'cgf.cameracontrol.main.core';
-import { Fx10Builder, Rumblepad2Builder } from 'cgf.cameracontrol.main.gamepad';
-import { Logger } from './Logger';
 import * as fs from 'fs';
 import * as path from 'path';
+
+import { Fx10Builder, Rumblepad2Builder } from 'cgf.cameracontrol.main.gamepad';
+
+import { Core } from 'cgf.cameracontrol.main.core';
+import { Logger } from './Logger';
 import yargs = require('yargs/yargs');
 
-async function run() {
-    let logger = new Logger();
-    let core = new Core();
+async function run(configPath: string) {
+    const config = JSON.parse(fs.readFileSync(configPath).toString());
 
-    await core.HmiFactory.builderAdd(new Fx10Builder(logger, core.MixerFactory));
-    await core.HmiFactory.builderAdd(new Rumblepad2Builder(logger, core.MixerFactory));
+    const logger = new Logger();
+    const core = new Core();
 
-    const argv = yargs(process.argv.slice(2)).options({
-        config: { type: 'string', default: path.join(__dirname, 'config.json') },
-    }).argv;
-
-    let config = JSON.parse(fs.readFileSync(argv.config).toString());
+    await core.hmiFactory.builderAdd(new Fx10Builder(logger, core.mixerFactory), logger);
+    await core.hmiFactory.builderAdd(new Rumblepad2Builder(logger, core.mixerFactory), logger);
 
     await core.bootstrap(logger, config);
 }
 
-run();
+const argv = yargs(process.argv.slice(2)).options({
+    config: { type: 'string', default: path.join(__dirname, 'config.json') },
+}).argv;
+
+run(argv.config);

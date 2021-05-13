@@ -18,20 +18,28 @@
     "author": "Simon Ensslen",
     "main": "index.js",
     "scripts": {
-        "build": "tsc",
+        "lint": "eslint --ext .ts src",
+        "build": "npm run lint && tsc",
         "postinstall": "sort-package-json",
         "prestart": "npm run build && cpy src/config.json dist",
         "start": "node dist/index.js"
     },
     "dependencies": {
-        "cgf.cameracontrol.main.core": "^1.0.2-beta.18",
-        "cgf.cameracontrol.main.gamepad": "^0.9.1-beta.14",
-        "yargs": "^16.2.0"
+        "cgf.cameracontrol.main.core": "^1.0.2",
+        "cgf.cameracontrol.main.gamepad": "^0.9.1-beta.15",
+        "yargs": "^17.0.1"
     },
     "devDependencies": {
-        "@types/yargs": "^16.0.0",
+        "@types/yargs": "^16.0.1",
+        "@typescript-eslint/eslint-plugin": "^4.21.0",
+        "@typescript-eslint/parser": "^4.21.0",
         "cpy-cli": "^3.1.1",
-        "sort-package-json": "^1.49.0",
-        "typescript": "^4.2.3"
+        "eslint": "^7.24.0",
+        "eslint-config-prettier": "^8.1.0",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-prettier": "^3.3.1",
+        "prettier": "^2.2.1",
+        "sort-package-json": "^1.50.0",
+        "typescript": "^4.2.4"
     }
 }
