@@ -1,4 +1,4 @@
-export enum eInputChangeDirection {
+export enum EInputChangeDirection {
     up = 'up',
     down = 'down',
     left = 'left',

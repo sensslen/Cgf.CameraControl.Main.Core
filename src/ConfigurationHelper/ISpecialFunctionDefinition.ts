@@ -1,6 +1,6 @@
-import { eSpecialFunctionType } from './eSpecialFunctionType';
+import { ESpecialFunctionType } from './ESpecialFunctionType';
 
 export interface ISpecialFunctionDefinition {
-    Type: eSpecialFunctionType;
-    Index: number;
+    type: ESpecialFunctionType;
+    index: number;
 }

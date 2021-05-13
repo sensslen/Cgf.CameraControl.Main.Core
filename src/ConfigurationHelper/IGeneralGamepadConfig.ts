@@ -1,11 +1,11 @@
-import { eInputChangeDirection } from './eInputChangeDirection';
+import { EInputChangeDirection } from './EInputChangeDirection';
 
 export interface IGeneralGamepadConfig {
-    SerialNumber?: string;
-    VideoMixer: { Connection: number; MixBlock: number };
-    ConnectionChange: {
-        Default: { [key in eInputChangeDirection]?: number };
-        Alt?: { [key in eInputChangeDirection]?: number };
-        AltLower?: { [key in eInputChangeDirection]?: number };
+    serialNumber?: string;
+    videoMixer: { connection: number; mixBlock: number };
+    connectionChange: {
+        default: { [key in EInputChangeDirection]?: number };
+        alt?: { [key in EInputChangeDirection]?: number };
+        altLower?: { [key in EInputChangeDirection]?: number };
     };
 }

@@ -1,4 +1,4 @@
-export enum eSpecialFunctionType {
+export enum ESpecialFunctionType {
     key = 'key',
     macro = 'macro',
 }

@@ -1,18 +1,17 @@
-import { NodeGamepad } from '@sensslen/node-gamepad';
-import { IConfig as IGamepadConfig } from '@sensslen/node-gamepad';
-import { ILogger as NodeGamepadLogger } from '@sensslen/node-gamepad';
-import { IHmi, ILogger, VideomixerFactory } from 'cgf.cameracontrol.main.core';
-import { IConnection } from 'cgf.cameracontrol.main.core';
-import { StrictEventEmitter } from 'strict-event-emitter-types';
+import { IConnection, IHmi, ILogger, IVideoMixer, VideomixerFactory } from 'cgf.cameracontrol.main.core';
+import { IConfig as IGamepadConfig, NodeGamepad, ILogger as NodeGamepadLogger } from '@sensslen/node-gamepad';
+
+import { EFx10SpecialFunctionKey } from './EFx10SpecialFunctionKey';
+import { EInputChangeDirection } from '../../ConfigurationHelper/EInputChangeDirection';
+import { ESpecialFunctionType } from '../../ConfigurationHelper/ESpecialFunctionType';
 import { EventEmitter } from 'events';
-import { IVideoMixer } from 'cgf.cameracontrol.main.core';
-import { eInputChangeDirection } from '../../ConfigurationHelper/eInputChangeDirection';
-import { eFx10SpecialFunctionKey } from './eFx10SpecialFunctionKey';
-import { eSpecialFunctionType } from '../../ConfigurationHelper/eSpecialFunctionType';
 import { ILogitechFx10Config } from './ILogitechFx10Config';
+import { StrictEventEmitter } from 'strict-event-emitter-types';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const interpolate = require('everpolate').linear;
 
-enum eAltKeyState {
+enum EAltKeyState {
     default,
     alt,
     altLower,
@@ -29,8 +28,9 @@ export class Fx10 implements IHmi {
         [-1, 0, 0, 1],
     ];
     private readonly _connectionEmitter: StrictEventEmitter<EventEmitter, IConnection> = new EventEmitter();
-    private altKeyState = eAltKeyState.default;
+    private altKeyState = EAltKeyState.default;
     private readonly mixer?: IVideoMixer;
+    private _connected = false;
 
     constructor(
         private config: ILogitechFx10Config,
@@ -38,108 +38,107 @@ export class Fx10 implements IHmi {
         mixerFactory: VideomixerFactory,
         gamepadConfig: IGamepadConfig
     ) {
-        if (config.SerialNumber) {
-            gamepadConfig.serialNumber = config.SerialNumber;
+        if (config.serialNumber) {
+            gamepadConfig.serialNumber = config.serialNumber;
         }
 
         const gamepadLogger: NodeGamepadLogger = {
-            Info: (tolog: string) => this.logger.log(tolog),
+            info: (tolog: string) => this.logger.log(tolog),
         };
 
         this.pad = new NodeGamepad(gamepadConfig, gamepadLogger);
 
-        this.mixer = mixerFactory.get(config.VideoMixer.Connection);
+        this.mixer = mixerFactory.get(config.videoMixer.connection);
 
         this.pad.on('left:move', (value) => {
             this.mixer?.pan(
-                config.VideoMixer.MixBlock,
+                config.videoMixer.mixBlock,
                 interpolate(value.x, this.moveInterpolation[0], this.moveInterpolation[1])[0]
             );
             this.mixer?.tilt(
-                config.VideoMixer.MixBlock,
+                config.videoMixer.mixBlock,
                 -interpolate(value.y, this.moveInterpolation[0], this.moveInterpolation[1])[0]
             );
         });
 
         this.pad.on('right:move', (value) => {
             this.mixer?.zoom(
-                config.VideoMixer.MixBlock,
+                config.videoMixer.mixBlock,
                 interpolate(value.x, this.zoomFocusInterpolation[0], this.zoomFocusInterpolation[1])[0]
             );
             this.mixer?.focus(
-                config.VideoMixer.MixBlock,
+                config.videoMixer.mixBlock,
                 interpolate(value.y, this.zoomFocusInterpolation[0], this.zoomFocusInterpolation[1])[0]
             );
         });
 
         this.pad.on('dpadLeft:press', () => {
-            this.changeConnection(eInputChangeDirection.left);
+            this.changeConnection(EInputChangeDirection.left);
         });
 
         this.pad.on('dpadUp:press', () => {
-            this.changeConnection(eInputChangeDirection.up);
+            this.changeConnection(EInputChangeDirection.up);
         });
 
         this.pad.on('dpadRight:press', () => {
-            this.changeConnection(eInputChangeDirection.right);
+            this.changeConnection(EInputChangeDirection.right);
         });
 
         this.pad.on('dpadDown:press', () => {
-            this.changeConnection(eInputChangeDirection.down);
+            this.changeConnection(EInputChangeDirection.down);
         });
 
         this.pad.on('RB:press', () => {
-            this.mixer?.cut(config.VideoMixer.MixBlock);
+            this.mixer?.cut(config.videoMixer.mixBlock);
         });
 
         this.pad.on('RT:press', () => {
-            this.mixer?.auto(config.VideoMixer.MixBlock);
+            this.mixer?.auto(config.videoMixer.mixBlock);
         });
 
         this.pad.on('LB:press', () => {
-            if (this.altKeyState == eAltKeyState.default) {
-                this.altKeyState = eAltKeyState.alt;
+            if (this.altKeyState == EAltKeyState.default) {
+                this.altKeyState = EAltKeyState.alt;
             }
         });
 
         this.pad.on('LB:release', () => {
-            if (this.altKeyState == eAltKeyState.alt) {
-                this.altKeyState = eAltKeyState.default;
+            if (this.altKeyState == EAltKeyState.alt) {
+                this.altKeyState = EAltKeyState.default;
             }
         });
 
         this.pad.on('LT:press', () => {
-            if (this.altKeyState == eAltKeyState.default) {
-                this.altKeyState = eAltKeyState.altLower;
+            if (this.altKeyState == EAltKeyState.default) {
+                this.altKeyState = EAltKeyState.altLower;
             }
         });
 
         this.pad.on('LT:release', () => {
-            if (this.altKeyState == eAltKeyState.altLower) {
-                this.altKeyState = eAltKeyState.default;
+            if (this.altKeyState == EAltKeyState.altLower) {
+                this.altKeyState = EAltKeyState.default;
             }
         });
 
         this.pad.on('A:press', () => {
-            this.specialFunction(eFx10SpecialFunctionKey.a);
+            this.specialFunction(EFx10SpecialFunctionKey.a);
         });
 
         this.pad.on('B:press', () => {
-            this.specialFunction(eFx10SpecialFunctionKey.b);
+            this.specialFunction(EFx10SpecialFunctionKey.b);
         });
 
         this.pad.on('X:press', () => {
-            this.specialFunction(eFx10SpecialFunctionKey.x);
+            this.specialFunction(EFx10SpecialFunctionKey.x);
         });
 
         this.pad.on('Y:press', () => {
-            this.specialFunction(eFx10SpecialFunctionKey.y);
+            this.specialFunction(EFx10SpecialFunctionKey.y);
         });
 
         this.pad.start();
     }
 
-    private _connected = false;
     public get connected(): boolean {
         return this._connected;
     }
@@ -160,17 +159,17 @@ export class Fx10 implements IHmi {
         return Promise.resolve();
     }
 
-    private changeConnection(direction: eInputChangeDirection): void {
-        let nextInput = this.config.ConnectionChange.Default[direction];
+    private changeConnection(direction: EInputChangeDirection): void {
+        let nextInput = this.config.connectionChange.default[direction];
         switch (this.altKeyState) {
-            case eAltKeyState.alt:
-                if (this.config.ConnectionChange.Alt) {
-                    nextInput = this.config.ConnectionChange.Alt[direction];
+            case EAltKeyState.alt:
+                if (this.config.connectionChange.alt) {
+                    nextInput = this.config.connectionChange.alt[direction];
                 }
                 break;
-            case eAltKeyState.altLower:
-                if (this.config.ConnectionChange.AltLower) {
-                    nextInput = this.config.ConnectionChange.AltLower[direction];
+            case EAltKeyState.altLower:
+                if (this.config.connectionChange.altLower) {
+                    nextInput = this.config.connectionChange.altLower[direction];
                 }
                 break;
             default:
@@ -178,21 +177,21 @@ export class Fx10 implements IHmi {
         }
 
         if (nextInput) {
-            this.mixer?.changeInput(this.config.VideoMixer.MixBlock, nextInput);
+            this.mixer?.changeInput(this.config.videoMixer.mixBlock, nextInput);
         }
     }
 
-    private specialFunction(key: eFx10SpecialFunctionKey): void {
-        let specialFunction = this.config.SpecialFunction.Default[key];
+    private specialFunction(key: EFx10SpecialFunctionKey): void {
+        let specialFunction = this.config.specialFunction.default[key];
         switch (this.altKeyState) {
-            case eAltKeyState.alt:
-                if (this.config.SpecialFunction.Alt) {
-                    specialFunction = this.config.SpecialFunction.Alt[key];
+            case EAltKeyState.alt:
+                if (this.config.specialFunction.alt) {
+                    specialFunction = this.config.specialFunction.alt[key];
                 }
                 break;
-            case eAltKeyState.altLower:
-                if (this.config.SpecialFunction.AltLower) {
-                    specialFunction = this.config.SpecialFunction.AltLower[key];
+            case EAltKeyState.altLower:
+                if (this.config.specialFunction.altLower) {
+                    specialFunction = this.config.specialFunction.altLower[key];
                 }
                 break;
             default:
@@ -200,12 +199,12 @@ export class Fx10 implements IHmi {
         }
 
         if (specialFunction) {
-            switch (specialFunction.Type) {
-                case eSpecialFunctionType.key:
-                    this.mixer?.toggleKey(this.config.VideoMixer.MixBlock, specialFunction.Index);
+            switch (specialFunction.type) {
+                case ESpecialFunctionType.key:
+                    this.mixer?.toggleKey(this.config.videoMixer.mixBlock, specialFunction.index);
                     break;
-                case eSpecialFunctionType.macro:
-                    this.mixer?.runMacro(specialFunction.Index);
+                case ESpecialFunctionType.macro:
+                    this.mixer?.runMacro(specialFunction.index);
                     break;
             }
         }

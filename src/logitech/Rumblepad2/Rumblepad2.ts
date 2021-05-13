@@ -1,19 +1,19 @@
-import { NodeGamepad } from '@sensslen/node-gamepad';
-import { IConfig as IGamepadConfig } from '@sensslen/node-gamepad';
-import { ILogger as NodeGamepadLogger } from '@sensslen/node-gamepad';
-import { IHmi, ILogger, VideomixerFactory } from 'cgf.cameracontrol.main.core';
-import { IConnection } from 'cgf.cameracontrol.main.core';
-import { IRumblepad2Config } from './IRumblepad2Config';
-import { eSpecialFunctionType } from '../../ConfigurationHelper/eSpecialFunctionType';
-import { eRumblepadSpecialFunctionKey } from './eRumblepadSpecialFunctionKey';
-import { eInputChangeDirection } from '../../ConfigurationHelper/eInputChangeDirection';
 import * as gamepadConfig from '@sensslen/node-gamepad/controllers/logitech/rumblepad2.json';
-import { StrictEventEmitter } from 'strict-event-emitter-types';
+
+import { IConnection, IHmi, ILogger, IVideoMixer, VideomixerFactory } from 'cgf.cameracontrol.main.core';
+import { IConfig as IGamepadConfig, NodeGamepad, ILogger as NodeGamepadLogger } from '@sensslen/node-gamepad';
+
+import { EInputChangeDirection } from '../../ConfigurationHelper/EInputChangeDirection';
+import { ERumblepadSpecialFunctionKey } from './ERumblepadSpecialFunctionKey';
+import { ESpecialFunctionType } from '../../ConfigurationHelper/ESpecialFunctionType';
 import { EventEmitter } from 'events';
-import { IVideoMixer } from 'cgf.cameracontrol.main.core';
+import { IRumblepad2Config } from './IRumblepad2Config';
+import { StrictEventEmitter } from 'strict-event-emitter-types';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const interpolate = require('everpolate').linear;
 
-enum eAltKeyState {
+enum EAltKeyState {
     default,
     alt,
     altLower,
@@ -26,101 +26,8 @@ export class Rumblepad2 implements IHmi {
         [255, 70, 20, 0, 0, -20, -70, -255],
     ];
     private readonly _connectionEmitter: StrictEventEmitter<EventEmitter, IConnection> = new EventEmitter();
-    private altKeyState = eAltKeyState.default;
+    private altKeyState = EAltKeyState.default;
     private readonly mixer?: IVideoMixer;
-
-    constructor(private config: IRumblepad2Config, private logger: ILogger, mixerFactory: VideomixerFactory) {
-        let padConfig = gamepadConfig as IGamepadConfig;
-        if (config.SerialNumber) {
-            padConfig.serialNumber = config.SerialNumber;
-        }
-
-        const gamepadLogger: NodeGamepadLogger = {
-            Info: (tolog: string) => this.logger.log(tolog),
-        };
-
-        this.pad = new NodeGamepad(padConfig, gamepadLogger);
-
-        this.mixer = mixerFactory.get(config.VideoMixer.Connection);
-
-        this.pad.on('left:move', (value) => {
-            const pan = interpolate(value.x, this.moveInterpolation[0], this.moveInterpolation[1])[0];
-            this.mixer?.pan(config.VideoMixer.MixBlock, pan);
-            const tilt = -interpolate(value.y, this.moveInterpolation[0], this.moveInterpolation[1])[0];
-            this.mixer?.tilt(config.VideoMixer.MixBlock, tilt);
-        });
-
-        this.pad.on('right:move', (value) => {
-            this.mixer?.zoom(config.VideoMixer.MixBlock, Math.round((-value.y + 127) / 16));
-            this.mixer?.focus(config.VideoMixer.MixBlock, Math.round((value.x - 127) / 200));
-        });
-
-        this.pad.on('dpadLeft:press', () => {
-            this.changeConnection(eInputChangeDirection.left);
-        });
-
-        this.pad.on('dpadUp:press', () => {
-            this.changeConnection(eInputChangeDirection.up);
-        });
-
-        this.pad.on('dpadRight:press', () => {
-            this.changeConnection(eInputChangeDirection.right);
-        });
-
-        this.pad.on('dpadDown:press', () => {
-            this.changeConnection(eInputChangeDirection.down);
-        });
-
-        this.pad.on('r1:press', () => {
-            this.mixer?.cut(config.VideoMixer.MixBlock);
-        });
-
-        this.pad.on('r2:press', () => {
-            this.mixer?.auto(config.VideoMixer.MixBlock);
-        });
-
-        this.pad.on('l1:press', () => {
-            if (this.altKeyState == eAltKeyState.default) {
-                this.altKeyState = eAltKeyState.alt;
-            }
-        });
-
-        this.pad.on('l1:release', () => {
-            if (this.altKeyState == eAltKeyState.alt) {
-                this.altKeyState = eAltKeyState.default;
-            }
-        });
-
-        this.pad.on('l2:press', () => {
-            if (this.altKeyState == eAltKeyState.default) {
-                this.altKeyState = eAltKeyState.altLower;
-            }
-        });
-
-        this.pad.on('l2:release', () => {
-            if (this.altKeyState == eAltKeyState.altLower) {
-                this.altKeyState = eAltKeyState.default;
-            }
-        });
-
-        this.pad.on('1:press', () => {
-            this.specialFunction(eRumblepadSpecialFunctionKey._1);
-        });
-
-        this.pad.on('2:press', () => {
-            this.specialFunction(eRumblepadSpecialFunctionKey._2);
-        });
-
-        this.pad.on('3:press', () => {
-            this.specialFunction(eRumblepadSpecialFunctionKey._3);
-        });
-
-        this.pad.on('4:press', () => {
-            this.specialFunction(eRumblepadSpecialFunctionKey._4);
-        });
-
-        this.pad.start();
-    }
 
     private _connected = false;
     public get connected(): boolean {
@@ -128,6 +35,99 @@ export class Rumblepad2 implements IHmi {
     }
     public set connected(v: boolean) {
         this._connected = v;
+    }
+
+    constructor(private config: IRumblepad2Config, private logger: ILogger, mixerFactory: VideomixerFactory) {
+        const padConfig = gamepadConfig as IGamepadConfig;
+        if (config.serialNumber) {
+            padConfig.serialNumber = config.serialNumber;
+        }
+
+        const gamepadLogger: NodeGamepadLogger = {
+            info: (tolog: string) => this.logger.log(tolog),
+        };
+
+        this.pad = new NodeGamepad(padConfig, gamepadLogger);
+
+        this.mixer = mixerFactory.get(config.videoMixer.connection);
+
+        this.pad.on('left:move', (value) => {
+            const pan = interpolate(value.x, this.moveInterpolation[0], this.moveInterpolation[1])[0];
+            this.mixer?.pan(config.videoMixer.mixBlock, pan);
+            const tilt = -interpolate(value.y, this.moveInterpolation[0], this.moveInterpolation[1])[0];
+            this.mixer?.tilt(config.videoMixer.mixBlock, tilt);
+        });
+
+        this.pad.on('right:move', (value) => {
+            this.mixer?.zoom(config.videoMixer.mixBlock, Math.round((-value.y + 127) / 16));
+            this.mixer?.focus(config.videoMixer.mixBlock, Math.round((value.x - 127) / 200));
+        });
+
+        this.pad.on('dpadLeft:press', () => {
+            this.changeConnection(EInputChangeDirection.left);
+        });
+
+        this.pad.on('dpadUp:press', () => {
+            this.changeConnection(EInputChangeDirection.up);
+        });
+
+        this.pad.on('dpadRight:press', () => {
+            this.changeConnection(EInputChangeDirection.right);
+        });
+
+        this.pad.on('dpadDown:press', () => {
+            this.changeConnection(EInputChangeDirection.down);
+        });
+
+        this.pad.on('r1:press', () => {
+            this.mixer?.cut(config.videoMixer.mixBlock);
+        });
+
+        this.pad.on('r2:press', () => {
+            this.mixer?.auto(config.videoMixer.mixBlock);
+        });
+
+        this.pad.on('l1:press', () => {
+            if (this.altKeyState == EAltKeyState.default) {
+                this.altKeyState = EAltKeyState.alt;
+            }
+        });
+
+        this.pad.on('l1:release', () => {
+            if (this.altKeyState == EAltKeyState.alt) {
+                this.altKeyState = EAltKeyState.default;
+            }
+        });
+
+        this.pad.on('l2:press', () => {
+            if (this.altKeyState == EAltKeyState.default) {
+                this.altKeyState = EAltKeyState.altLower;
+            }
+        });
+
+        this.pad.on('l2:release', () => {
+            if (this.altKeyState == EAltKeyState.altLower) {
+                this.altKeyState = EAltKeyState.default;
+            }
+        });
+
+        this.pad.on('1:press', () => {
+            this.specialFunction(ERumblepadSpecialFunctionKey._1);
+        });
+
+        this.pad.on('2:press', () => {
+            this.specialFunction(ERumblepadSpecialFunctionKey._2);
+        });
+
+        this.pad.on('3:press', () => {
+            this.specialFunction(ERumblepadSpecialFunctionKey._3);
+        });
+
+        this.pad.on('4:press', () => {
+            this.specialFunction(ERumblepadSpecialFunctionKey._4);
+        });
+
+        this.pad.start();
     }
 
     subscribe(i: IConnection): void {
@@ -143,17 +143,17 @@ export class Rumblepad2 implements IHmi {
         return Promise.resolve();
     }
 
-    private changeConnection(direction: eInputChangeDirection): void {
-        let nextInput = this.config.ConnectionChange.Default[direction];
+    private changeConnection(direction: EInputChangeDirection): void {
+        let nextInput = this.config.connectionChange.default[direction];
         switch (this.altKeyState) {
-            case eAltKeyState.alt:
-                if (this.config.ConnectionChange.Alt) {
-                    nextInput = this.config.ConnectionChange.Alt[direction];
+            case EAltKeyState.alt:
+                if (this.config.connectionChange.alt) {
+                    nextInput = this.config.connectionChange.alt[direction];
                 }
                 break;
-            case eAltKeyState.altLower:
-                if (this.config.ConnectionChange.AltLower) {
-                    nextInput = this.config.ConnectionChange.AltLower[direction];
+            case EAltKeyState.altLower:
+                if (this.config.connectionChange.altLower) {
+                    nextInput = this.config.connectionChange.altLower[direction];
                 }
                 break;
             default:
@@ -161,21 +161,21 @@ export class Rumblepad2 implements IHmi {
         }
 
         if (nextInput) {
-            this.mixer?.changeInput(this.config.VideoMixer.MixBlock, nextInput);
+            this.mixer?.changeInput(this.config.videoMixer.mixBlock, nextInput);
         }
     }
 
-    private specialFunction(key: eRumblepadSpecialFunctionKey): void {
-        let specialFunction = this.config.SpecialFunction.Default[key];
+    private specialFunction(key: ERumblepadSpecialFunctionKey): void {
+        let specialFunction = this.config.specialFunction.default[key];
         switch (this.altKeyState) {
-            case eAltKeyState.alt:
-                if (this.config.SpecialFunction.Alt) {
-                    specialFunction = this.config.SpecialFunction.Alt[key];
+            case EAltKeyState.alt:
+                if (this.config.specialFunction.alt) {
+                    specialFunction = this.config.specialFunction.alt[key];
                 }
                 break;
-            case eAltKeyState.altLower:
-                if (this.config.SpecialFunction.AltLower) {
-                    specialFunction = this.config.SpecialFunction.AltLower[key];
+            case EAltKeyState.altLower:
+                if (this.config.specialFunction.altLower) {
+                    specialFunction = this.config.specialFunction.altLower[key];
                 }
                 break;
             default:
@@ -183,12 +183,12 @@ export class Rumblepad2 implements IHmi {
         }
 
         if (specialFunction) {
-            switch (specialFunction.Type) {
-                case eSpecialFunctionType.key:
-                    this.mixer?.toggleKey(this.config.VideoMixer.MixBlock, specialFunction.Index);
+            switch (specialFunction.type) {
+                case ESpecialFunctionType.key:
+                    this.mixer?.toggleKey(this.config.videoMixer.mixBlock, specialFunction.index);
                     break;
-                case eSpecialFunctionType.macro:
-                    this.mixer?.runMacro(specialFunction.Index);
+                case ESpecialFunctionType.macro:
+                    this.mixer?.runMacro(specialFunction.index);
                     break;
             }
         }
