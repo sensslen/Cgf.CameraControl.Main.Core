@@ -168,6 +168,10 @@ export class Atem implements IVideoMixer {
     }
 
     private updateCameraSelection(index: number, state: MixEffect) {
+        this._selectedCamera[index]?.pan(0);
+        this._selectedCamera[index]?.tilt(0);
+        this._selectedCamera[index]?.zoom(0);
+        this._selectedCamera[index]?.focus(0);
         this._selectedCamera[index] = this._cameraConnections[state.previewInput];
     }
 
