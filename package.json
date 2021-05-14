@@ -40,20 +40,20 @@
         "test": "node dist/test.js"
     },
     "dependencies": {
-        "@sensslen/node-gamepad": "^0.2.1-beta.20",
+        "@sensslen/node-gamepad": "^1.0.0",
         "ajv": "^8.3.0",
         "cgf.cameracontrol.main.core": "^1.0.3",
         "everpolate": "0.0.3",
         "strict-event-emitter-types": "^2.0.0"
     },
     "devDependencies": {
-        "@types/semver": "^7.3.4",
+        "@types/semver": "^7.3.6",
         "@typescript-eslint/eslint-plugin": "^4.23.0",
         "@typescript-eslint/parser": "^4.23.0",
         "del-cli": "^3.0.1",
         "eslint": "^7.26.0",
         "eslint-config-prettier": "^8.1.0",
-        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-import": "^2.23.0",
         "eslint-plugin-prettier": "^3.3.1",
         "prettier": "^2.3.0",
         "semver": "^7.3.5",
