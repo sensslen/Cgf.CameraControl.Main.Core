@@ -65,19 +65,19 @@ export class PtzLancCamera implements ICameraConnection {
     }
 
     public pan(value: number): void {
-        this.currentState.pan = this.roundAndRestrictRange(value, 255);
+        this.currentState.pan = this.restrictRangeAndRound(value * 255, 255);
         this.scheduleStateTransmission();
     }
     public tilt(value: number): void {
-        this.currentState.tilt = this.roundAndRestrictRange(value, 255);
+        this.currentState.tilt = this.restrictRangeAndRound(value * 255, 255);
         this.scheduleStateTransmission();
     }
     public zoom(value: number): void {
-        this.currentState.zoom = this.roundAndRestrictRange(value, 8);
+        this.currentState.zoom = this.restrictRangeAndRound(value * 8, 8);
         this.scheduleStateTransmission();
     }
     public focus(value: number): void {
-        this.currentState.focus = this.roundAndRestrictRange(value, 1.2);
+        this.currentState.focus = this.restrictRangeAndRound(value * 1.2, 1.2);
         this.scheduleStateTransmission();
     }
 
@@ -168,8 +168,8 @@ export class PtzLancCamera implements ICameraConnection {
         this.transmitNextStateIfRequestedAndPossible();
     }
 
-    private roundAndRestrictRange(value: number, maxMin: number) {
-        const restricted = Math.min(Math.max(value, maxMin), -maxMin);
+    private restrictRangeAndRound(value: number, maxMin: number) {
+        const restricted = Math.max(Math.min(value, maxMin), -maxMin);
         return Math.round(restricted);
     }
 
