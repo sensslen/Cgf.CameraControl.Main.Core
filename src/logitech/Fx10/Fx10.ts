@@ -57,7 +57,7 @@ export class Fx10 implements IHmi {
             );
             this.mixer?.tilt(
                 config.videoMixer.mixBlock,
-                -interpolate(value.y, this.moveInterpolation[0], this.moveInterpolation[1])[0]
+                interpolate(value.y, this.moveInterpolation[0], this.moveInterpolation[1])[0]
             );
         });
 
