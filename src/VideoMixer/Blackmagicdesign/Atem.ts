@@ -1,5 +1,6 @@
 import { Atem as AtemConnection, AtemState } from 'atem-connection';
 
+import { AtemConnectionFactory } from '../../Services/AtemConnectionFactory';
 import { CameraConnectionFactory } from '../../CameraConnection/CameraConnectionFactory';
 import { EventEmitter } from 'events';
 import { IAtemConfig } from './IAtemConfig';
@@ -48,12 +49,7 @@ export class Atem implements IVideoMixer {
             }
         }
 
-        this.atem = new AtemConnection({ disableMultithreaded: config.singleThreaded });
-
-        this.atem.on('info', (toLog) => this.log(toLog));
-        this.atem.on('error', (toLog) => this.logError(toLog));
-
-        this.atem.connect(config.ip);
+        this.atem = AtemConnectionFactory.get(config.ip, logger);
 
         this.atem.on('connected', () => {
             this.connected = true;
@@ -179,10 +175,6 @@ export class Atem implements IVideoMixer {
     }
 
     private logError(toLog: string) {
-        this.logger.error(`Atem: ${toLog}`);
-    }
-
-    private log(toLog: string) {
-        this.logger.log(`Atem: ${toLog}`);
+        this.logger.error(`AtemMixer: ${toLog}`);
     }
 }

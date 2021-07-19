@@ -42,26 +42,26 @@
         "ptz-camera-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IPtzLancCameraConfiguration -o src/CameraConnection/PtzLancCamera/IPtzLancCameraConfiguration.json --tsconfig ./tsconfig.json --additional-properties true"
     },
     "dependencies": {
-        "@microsoft/signalr": "^5.0.3",
-        "ajv": "^8.0.0",
-        "atem-connection": "^2.2.0",
+        "@microsoft/signalr": "^5.0.8",
+        "ajv": "^8.6.2",
+        "atem-connection": "^2.3.0",
         "axios": "^0.21.1",
         "strict-event-emitter-types": "^2.0.0"
     },
     "devDependencies": {
-        "@types/semver": "^7.3.4",
-        "@typescript-eslint/eslint-plugin": "^4.21.0",
-        "@typescript-eslint/parser": "^4.21.0",
+        "@types/semver": "^7.3.7",
+        "@typescript-eslint/eslint-plugin": "^4.28.4",
+        "@typescript-eslint/parser": "^4.28.4",
         "del-cli": "^3.0.1",
-        "eslint": "^7.24.0",
-        "eslint-config-prettier": "^8.1.0",
-        "eslint-plugin-import": "^2.22.1",
-        "eslint-plugin-prettier": "^3.3.1",
-        "prettier": "^2.2.1",
+        "eslint": "^7.31.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-import": "^2.23.4",
+        "eslint-plugin-prettier": "^3.4.0",
+        "prettier": "^2.3.2",
         "semver": "^7.3.5",
-        "simple-git": "^2.37.0",
-        "sort-package-json": "^1.49.0",
+        "simple-git": "^2.41.1",
+        "sort-package-json": "^1.50.0",
         "ts-json-schema-generator": "^0.89.1",
-        "typescript": "^4.1.5"
+        "typescript": "^4.3.5"
     }
 }
