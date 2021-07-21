@@ -16,9 +16,6 @@
         "ip": {
           "type": "string"
         },
-        "singleThreaded": {
-          "type": "boolean"
-        },
         "type": {
           "type": "string"
         }
