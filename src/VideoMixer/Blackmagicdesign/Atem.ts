@@ -139,12 +139,9 @@ export class Atem implements IVideoMixer {
     }
 
     async dispose(): Promise<void> {
-        try {
-            await this.atem.disconnect();
-            this.connected = false;
-        } catch (error) {
-            this.logError(`Failed to disconnect from mixer - ${error}`);
-        }
+        // Promise cannot fail - so no need for try catch
+        await AtemConnectionFactory.lose(this.atem, this.logger);
+        this.connected = false;
     }
 
     private stateChange(state: AtemState): void {

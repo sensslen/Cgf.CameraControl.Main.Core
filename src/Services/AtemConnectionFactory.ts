@@ -19,24 +19,28 @@ export class AtemConnectionFactory {
             const atem = new Atem();
             atem.on('info', (toLog) => AtemConnectionFactory.log(toLog, logger));
             atem.on('error', (toLog) => AtemConnectionFactory.logError(toLog, logger));
-            atem.connect(ip);
+            atem.connect(ip).catch((error) => AtemConnectionFactory.logError(`Atem connection error:${error}`, logger));
             AtemConnectionFactory._connections.push({ ip: ip, atem: atem, instanceCount: 1 });
             return atem;
         }
     }
 
-    public static lose(atem: Atem): void {
+    public static async lose(atem: Atem, logger: ILogger): Promise<void> {
         const connection = AtemConnectionFactory.connectionByAtem(atem);
         if (connection) {
             connection.instanceCount--;
             if (connection.instanceCount < 1) {
-                AtemConnectionFactory.disconnectAndRemove(connection);
+                await AtemConnectionFactory.disconnectAndRemove(connection, logger);
             }
         }
     }
 
-    private static disconnectAndRemove(connection: AtemConnection) {
-        connection.atem.disconnect();
+    private static async disconnectAndRemove(connection: AtemConnection, logger: ILogger): Promise<void> {
+        try {
+            await connection.atem.disconnect();
+        } catch (error) {
+            AtemConnectionFactory.logError(`Atem disconnection error:${error}`, logger);
+        }
         const index = AtemConnectionFactory._connections.indexOf(connection, 0);
         if (index > -1) {
             AtemConnectionFactory._connections.splice(index, 1);

@@ -20,8 +20,7 @@ export class Factory<TConcrete extends IDisposable> implements IDisposable {
         const builder = this._builders[config.type];
         if (builder === undefined) {
             logger.error(`Factory: Could not find builder for type:${config.type}`);
-        }
-        if (builder !== undefined) {
+        } else {
             try {
                 const instance = await builder.build(config);
                 this._instances[config.instance] = instance;
