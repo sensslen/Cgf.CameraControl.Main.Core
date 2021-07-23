@@ -13,8 +13,8 @@ import StrictEventEmitter from 'strict-event-emitter-types';
 
 export class PtzLancCamera implements ICameraConnection {
     private readonly axios: AxiosInstance;
-    private socketConnection: signalR.HubConnection;
-    private currentState = new PtzLancCameraState();
+    private readonly socketConnection: signalR.HubConnection;
+    private readonly currentState = new PtzLancCameraState();
     private shouldTransmitState = false;
     private canTransmit = false;
 
@@ -100,7 +100,7 @@ export class PtzLancCamera implements ICameraConnection {
             await this.socketConnection.start();
             await this.connectionSuccessfullyEstablished();
         } catch (error) {
-            this.logError(`Socket connection setup failed - ${error}`);
+            this.logError(`Socket connection setup failed with error:${error} - retrying`);
             await this.initialConnect();
         }
     }
