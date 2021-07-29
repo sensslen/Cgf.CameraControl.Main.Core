@@ -29,17 +29,16 @@
     "scripts": {
         "lint": "eslint --ext .ts .",
         "sort": "sort-package-json package.json",
-        "atem-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IAtemConfig -o src/VideoMixer/Blackmagicdesign/IAtemConfig.json --tsconfig ./tsconfig.json --additional-properties true",
         "prebuild": "npm run clean && npm run generate-config-validation-schema",
         "build": "npm run lint && tsc",
         "preclean": "npm run sort",
         "clean": "del-cli dist -f",
-        "generate-config-validation-schema": "npm run ptz-camera-config-schema && npm run atem-config-schema&& npm run main-config-schema",
+        "generate-config-validation-schema": "npm run cgf-ptz-camera-config-schema && npm run main-config-schema",
         "postinstall": "npm run sort",
         "main-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IConfigurationStructure -o src/Configuration/IConfigurationStructure.json --tsconfig ./tsconfig.json --additional-properties true",
         "presetuppublish": "npm run sort && npm run build",
         "setuppublish": "node dist/SetupPackage.js",
-        "ptz-camera-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IPtzLancCameraConfiguration -o src/CameraConnection/PtzLancCamera/IPtzLancCameraConfiguration.json --tsconfig ./tsconfig.json --additional-properties true"
+        "cgf-ptz-camera-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ICgfPtzCameraConfiguration -o src/CameraConnection/CgfPtzCamera/ICgfPtzCameraConfiguration.json --tsconfig ./tsconfig.json --additional-properties true"
     },
     "dependencies": {
         "@microsoft/signalr": "^5.0.8",

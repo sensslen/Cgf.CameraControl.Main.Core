@@ -2,19 +2,19 @@ import * as signalR from '@microsoft/signalr';
 
 import axios, { AxiosInstance } from 'axios';
 
+import { CgfPtzCameraState } from './CgfPtzCameraState';
 import { EventEmitter } from 'events';
 import { Agent as HttpsAgent } from 'https';
 import { ICameraConnection } from '../ICameraConnection';
+import { ICgfPtzCameraConfiguration } from './ICgfPtzCameraConfiguration';
 import { IConnection } from '../../GenericFactory/IConnection';
 import { ILogger } from '../../Logger/ILogger';
-import { IPtzLancCameraConfiguration } from './IPtzLancCameraConfiguration';
-import { PtzLancCameraState } from './PtzLancCameraState';
 import StrictEventEmitter from 'strict-event-emitter-types';
 
-export class PtzLancCamera implements ICameraConnection {
+export class CgfPtzCamera implements ICameraConnection {
     private readonly axios: AxiosInstance;
     private readonly socketConnection: signalR.HubConnection;
-    private readonly currentState = new PtzLancCameraState();
+    private readonly currentState = new CgfPtzCameraState();
     private shouldTransmitState = false;
     private canTransmit = false;
 
@@ -32,7 +32,7 @@ export class PtzLancCamera implements ICameraConnection {
         this._connectionEmitter.emit('change', v);
     }
 
-    constructor(private config: IPtzLancCameraConfiguration, private logger: ILogger) {
+    constructor(private config: ICgfPtzCameraConfiguration, private logger: ILogger) {
         this.axios = axios.create({
             httpsAgent: new HttpsAgent({
                 rejectUnauthorized: false,
@@ -44,7 +44,7 @@ export class PtzLancCamera implements ICameraConnection {
             .withUrl(`${this.config.connectionUrl}/pantiltzoom/statehub`)
             .build();
 
-        this.initialConnect();
+        this.initialConnect().catch((error) => this.logError(`Initial connection error:${error}`));
     }
 
     public async dispose(): Promise<void> {
@@ -65,19 +65,19 @@ export class PtzLancCamera implements ICameraConnection {
     }
 
     public pan(value: number): void {
-        this.currentState.pan = this.restrictRangeAndRound(value * 255, 255);
+        this.currentState.pan = value;
         this.scheduleStateTransmission();
     }
     public tilt(value: number): void {
-        this.currentState.tilt = this.restrictRangeAndRound(value * 255, 255);
+        this.currentState.tilt = value;
         this.scheduleStateTransmission();
     }
     public zoom(value: number): void {
-        this.currentState.zoom = this.restrictRangeAndRound(value * 8, 8);
+        this.currentState.zoom = value;
         this.scheduleStateTransmission();
     }
     public focus(value: number): void {
-        this.currentState.focus = this.restrictRangeAndRound(value * 1.2, 1.2);
+        this.currentState.focus = value;
         this.scheduleStateTransmission();
     }
 
@@ -107,7 +107,7 @@ export class PtzLancCamera implements ICameraConnection {
 
     private async setupRemote() {
         try {
-            const response = await this.axios.get(this.config.connectionUrl + '/pantiltzoom/connections');
+            const response = await this.axios.get(this.config.connectionUrl + '/connections');
 
             if (!response.data.includes(this.config.connectionPort)) {
                 this.logError(`Port:${this.config.connectionPort} is not available. Available Ports:${response.data}`);
@@ -124,7 +124,7 @@ export class PtzLancCamera implements ICameraConnection {
             connected: true,
         };
         try {
-            await this.axios.put(`${this.config.connectionUrl}/pantiltzoom/connection`, connection);
+            await this.axios.put(`${this.config.connectionUrl}/connection`, connection);
         } catch (error) {
             this.logError(`Failed to connect to Port:${this.config.connectionPort} with error:${error}`);
             this.logError('Stopping camera.');
@@ -166,11 +166,6 @@ export class PtzLancCamera implements ICameraConnection {
     private scheduleStateTransmission() {
         this.shouldTransmitState = true;
         this.transmitNextStateIfRequestedAndPossible();
-    }
-
-    private restrictRangeAndRound(value: number, maxMin: number) {
-        const restricted = Math.max(Math.min(value, maxMin), -maxMin);
-        return Math.round(restricted);
     }
 
     private log(toLog: string) {

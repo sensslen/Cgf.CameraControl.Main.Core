@@ -1,7 +1,7 @@
 import * as ConfigSchema from './Configuration/IConfigurationStructure.json';
 
-import { AtemBuilder } from './VideoMixer/Blackmagicdesign/AtemBuilder';
 import { CameraConnectionFactory } from './CameraConnection/CameraConnectionFactory';
+import { CgfPtzCameraBuilder } from './CameraConnection/PtzLancCamera/PtzLancCameraBuilder';
 import { ConfigValidator } from './Configuration/ConfigValidator';
 import { HmiFactory } from './Hmi/HmiFactory';
 import { IBuilder } from './GenericFactory/IBuilder';
@@ -13,7 +13,6 @@ import { IDisposable } from './GenericFactory/IDisposable';
 import { IHmi } from './Hmi/IHmi';
 import { ILogger } from './Logger/ILogger';
 import { IVideoMixer } from './VideoMixer/IVideoMixer';
-import { PtzLancCameraBuilder } from './CameraConnection/PtzLancCamera/PtzLancCameraBuilder';
 import { VideomixerFactory } from './VideoMixer/VideoMixerFactory';
 
 export class Core implements IDisposable {
@@ -42,8 +41,7 @@ export class Core implements IDisposable {
             return;
         }
 
-        await this._camFactory.builderAdd(new PtzLancCameraBuilder(logger), logger);
-        await this._mixerFactory.builderAdd(new AtemBuilder(logger, this._camFactory), logger);
+        await this._camFactory.builderAdd(new CgfPtzCameraBuilder(logger), logger);
 
         for (const cam of validConfig.cams) {
             await this._camFactory.parseConfig(cam, logger);
