@@ -14,6 +14,7 @@ import { IHmi } from './Hmi/IHmi';
 import { ILogger } from './Logger/ILogger';
 import { IVideoMixer } from './VideoMixer/IVideoMixer';
 import { VideomixerFactory } from './VideoMixer/VideoMixerFactory';
+import { IImageSelectionChange } from '../dist/VideoMixer/IImageSelectionChange';
 
 export class Core implements IDisposable {
     private _camFactory = new CameraConnectionFactory();
@@ -75,4 +76,5 @@ export { VideomixerFactory };
 export { CameraConnectionFactory };
 export { IConnection };
 export { IVideoMixer };
+export { IImageSelectionChange };
 export { ICameraConnection };
