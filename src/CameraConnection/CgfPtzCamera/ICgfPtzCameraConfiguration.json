@@ -1,8 +1,8 @@
 {
-  "$ref": "#/definitions/IPtzLancCameraConfiguration",
+  "$ref": "#/definitions/ICgfPtzCameraConfiguration",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
-    "IPtzLancCameraConfiguration": {
+    "ICgfPtzCameraConfiguration": {
       "properties": {
         "connectionPort": {
           "type": "string"
