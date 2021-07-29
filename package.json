@@ -1,0 +1,45 @@
+{
+    "name": "cgf.cameracontrol.main.cli",
+    "version": "1.3.0",
+    "description": "Software that allows to contorl Blackmagicdesign ATEM Switcher and it's associated cameras",
+    "keywords": [
+        "camera",
+        "control"
+    ],
+    "homepage": "https://github.com/sensslen/Cgf.CameraControl.Main.Cli#readme",
+    "bugs": {
+        "url": "https://github.com/sensslen/Cgf.CameraControl.Main.Cli/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sensslen/Cgf.CameraControl.Main.Cli.git"
+    },
+    "license": "MIT",
+    "author": "Simon Ensslen",
+    "main": "index.js",
+    "scripts": {
+        "lint": "eslint --ext .ts src",
+        "build": "npm run lint && tsc",
+        "postinstall": "sort-package-json",
+        "prestart": "npm run build && cpy src/config.json dist",
+        "start": "node dist/index.js"
+    },
+    "dependencies": {
+        "cgf.cameracontrol.main.core": "^1.0.7",
+        "cgf.cameracontrol.main.gamepad": "^1.0.2",
+        "yargs": "^17.0.1"
+    },
+    "devDependencies": {
+        "@types/yargs": "^17.0.0",
+        "@typescript-eslint/eslint-plugin": "^4.28.4",
+        "@typescript-eslint/parser": "^4.28.4",
+        "cpy-cli": "^3.1.1",
+        "eslint": "^7.31.0",
+        "eslint-config-prettier": "^8.1.0",
+        "eslint-plugin-import": "^2.23.4",
+        "eslint-plugin-prettier": "^3.3.1",
+        "prettier": "^2.3.2",
+        "sort-package-json": "^1.50.0",
+        "typescript": "^4.3.5"
+    }
+}
