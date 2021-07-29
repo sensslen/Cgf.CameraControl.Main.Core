@@ -1,0 +1,29 @@
+{
+  "$ref": "#/definitions/ISpecialFunctionConnectionChangeConfig",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ESpecialFunctionType": {
+      "enum": [
+        "key",
+        "macro",
+        "connectionChange"
+      ],
+      "type": "string"
+    },
+    "ISpecialFunctionConnectionChangeConfig": {
+      "properties": {
+        "index": {
+          "type": "number"
+        },
+        "type": {
+          "$ref": "#/definitions/ESpecialFunctionType"
+        }
+      },
+      "required": [
+        "index",
+        "type"
+      ],
+      "type": "object"
+    }
+  }
+}
