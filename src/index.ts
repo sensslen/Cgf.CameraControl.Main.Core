@@ -11,10 +11,10 @@ import { IConfigurationStructure } from './Configuration/IConfigurationStructure
 import { IConnection } from './GenericFactory/IConnection';
 import { IDisposable } from './GenericFactory/IDisposable';
 import { IHmi } from './Hmi/IHmi';
+import { IImageSelectionChange } from './VideoMixer/IImageSelectionChange';
 import { ILogger } from './Logger/ILogger';
 import { IVideoMixer } from './VideoMixer/IVideoMixer';
 import { VideomixerFactory } from './VideoMixer/VideoMixerFactory';
-import { IImageSelectionChange } from '../dist/VideoMixer/IImageSelectionChange';
 
 export class Core implements IDisposable {
     private _camFactory = new CameraConnectionFactory();
