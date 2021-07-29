@@ -1,7 +1,7 @@
 import * as ConfigSchema from './Configuration/IConfigurationStructure.json';
 
 import { CameraConnectionFactory } from './CameraConnection/CameraConnectionFactory';
-import { CgfPtzCameraBuilder } from './CameraConnection/PtzLancCamera/PtzLancCameraBuilder';
+import { CgfPtzCameraBuilder } from './CameraConnection/CgfPtzCamera/CgfPtzCameraBuilder';
 import { ConfigValidator } from './Configuration/ConfigValidator';
 import { HmiFactory } from './Hmi/HmiFactory';
 import { IBuilder } from './GenericFactory/IBuilder';
