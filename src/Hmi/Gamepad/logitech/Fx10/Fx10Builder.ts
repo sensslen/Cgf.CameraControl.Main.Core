@@ -10,7 +10,7 @@ import {
     ILogger,
     VideomixerFactory,
 } from 'cgf.cameracontrol.main.core';
-import { ConfigValidator } from '../../ConfigValidator';
+import { ConfigValidator } from '../../../../ConfigValidator';
 import { Fx10 } from './Fx10';
 import { ILogitechFx10Config } from './ILogitechFx10Config';
 

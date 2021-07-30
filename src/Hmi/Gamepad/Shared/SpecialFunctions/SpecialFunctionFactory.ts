@@ -4,7 +4,7 @@ import * as MacroSchema from './ISpecialFunctionMacroConfig.json';
 
 import { ESpecialFunctionType, ISpecialFunctionDefinition } from './ISpecialFunctionDefinition';
 
-import { ConfigValidator } from '../../ConfigValidator';
+import { ConfigValidator } from '../../../../ConfigValidator';
 import { ConnectionChangeSpecialFunction } from './ConnectionChangeSpecialFunction';
 import { ISpecialFunction } from './ISpecialFunction';
 import { ISpecialFunctionConnectionChangeConfig } from './ISpecialFunctionConnectionChangeConfig';

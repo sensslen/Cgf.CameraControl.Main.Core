@@ -8,7 +8,7 @@ import {
     ILogger,
     VideomixerFactory,
 } from 'cgf.cameracontrol.main.core';
-import { ConfigValidator } from '../../ConfigValidator';
+import { ConfigValidator } from '../../../../ConfigValidator';
 import { IRumblepad2Config } from './IRumblepad2Config';
 import { Rumblepad2 } from './Rumblepad2';
 
