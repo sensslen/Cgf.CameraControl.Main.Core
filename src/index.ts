@@ -13,6 +13,7 @@ import { IDisposable } from './GenericFactory/IDisposable';
 import { IHmi } from './Hmi/IHmi';
 import { IImageSelectionChange } from './VideoMixer/IImageSelectionChange';
 import { ILogger } from './Logger/ILogger';
+import { ISubscription } from './GenericFactory/ISubscription';
 import { IVideoMixer } from './VideoMixer/IVideoMixer';
 import { VideomixerFactory } from './VideoMixer/VideoMixerFactory';
 
@@ -78,3 +79,4 @@ export { IConnection };
 export { IVideoMixer };
 export { IImageSelectionChange };
 export { ICameraConnection };
+export { ISubscription };
