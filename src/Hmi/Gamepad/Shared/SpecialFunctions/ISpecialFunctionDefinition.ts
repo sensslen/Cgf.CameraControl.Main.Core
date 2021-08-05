@@ -1,7 +1,8 @@
 export enum ESpecialFunctionType {
     key = 'key',
-    macro = 'macro',
+    macroLoop = 'macroLoop',
     connectionChange = 'connectionChange',
+    macroToggle = 'macroToggle',
 }
 
 export interface ISpecialFunctionDefinition {

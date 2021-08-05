@@ -5,8 +5,9 @@
     "ESpecialFunctionType": {
       "enum": [
         "key",
-        "macro",
-        "connectionChange"
+        "macroLoop",
+        "connectionChange",
+        "macroToggle"
       ],
       "type": "string"
     },

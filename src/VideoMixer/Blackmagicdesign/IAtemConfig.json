@@ -4,26 +4,23 @@
   "definitions": {
     "IAtemConfig": {
       "properties": {
-        "cameraConnections": {
-          "additionalProperties": {
-            "type": "number"
-          },
-          "type": "object"
-        },
         "instance": {
           "type": "number"
         },
         "ip": {
           "type": "string"
         },
+        "mixEffectBlock": {
+          "type": "number"
+        },
         "type": {
           "type": "string"
         }
       },
       "required": [
-        "cameraConnections",
         "instance",
         "ip",
+        "mixEffectBlock",
         "type"
       ],
       "type": "object"

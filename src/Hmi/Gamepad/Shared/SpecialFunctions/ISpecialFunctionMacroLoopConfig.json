@@ -1,16 +1,17 @@
 {
-  "$ref": "#/definitions/ISpecialFunctionMacroConfig",
+  "$ref": "#/definitions/ISpecialFunctionMacroLoopConfig",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
     "ESpecialFunctionType": {
       "enum": [
         "key",
-        "macro",
-        "connectionChange"
+        "macroLoop",
+        "connectionChange",
+        "macroToggle"
       ],
       "type": "string"
     },
-    "ISpecialFunctionMacroConfig": {
+    "ISpecialFunctionMacroLoopConfig": {
       "properties": {
         "indexes": {
           "items": {

@@ -1,10 +1,10 @@
 import { ISpecialFunction } from './ISpecialFunction';
-import { ISpecialFunctionMacroConfig } from './ISpecialFunctionMacroConfig';
+import { ISpecialFunctionMacroLoopConfig } from './ISpecialFunctionMacroLoopConfig';
 import { IVideoMixer } from 'cgf.cameracontrol.main.core';
 
 export class MacroSpecialFunction implements ISpecialFunction {
     private nextIndex = 0;
-    constructor(private config: ISpecialFunctionMacroConfig) {}
+    constructor(private config: ISpecialFunctionMacroLoopConfig) {}
 
     run(mixer: IVideoMixer): void {
         mixer.runMacro(this.config.indexes[this.nextIndex]);

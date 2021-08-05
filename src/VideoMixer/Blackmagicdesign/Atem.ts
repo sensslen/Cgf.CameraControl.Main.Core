@@ -84,13 +84,13 @@ export class Atem implements IVideoMixer {
 
     private stateChange(state: AtemState): void {
         state.video.mixEffects.forEach((state, index) => {
-            if (state !== undefined) {
-                this.updatePreview(index, state);
+            if (state !== undefined && index === this.config.mixEffectBlock) {
+                this.updatePreview(state);
             }
         });
     }
 
-    private updatePreview(index: number, state: MixEffect) {
+    private updatePreview(state: MixEffect) {
         const onAirInputs = this.connection.atem.listVisibleInputs('program');
         const newPreviewIsOnAir = onAirInputs.some((input) => input === state.previewInput);
         this._selectedChangeEmitter.emit('previewChange', state.previewInput, newPreviewIsOnAir);

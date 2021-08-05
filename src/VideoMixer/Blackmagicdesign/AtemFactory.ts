@@ -10,17 +10,13 @@ class AtemConnectionmanager implements ISubscription<IConnection> {
     public get connected(): boolean {
         return this._connected;
     }
-    private set connected(v: boolean) {
-        this._connectionEmitter.emit('change', v);
-        this._connected = v;
-    }
 
     constructor(atem: Atem) {
         atem.on('connected', () => {
-            this.connected = true;
+            this.setConnected(true);
         });
         atem.on('disconnected', () => {
-            this.connected = false;
+            this.setConnected(false);
         });
     }
 
@@ -31,12 +27,17 @@ class AtemConnectionmanager implements ISubscription<IConnection> {
     unsubscribe(i: IConnection): void {
         this._connectionEmitter.removeListener('change', i.change);
     }
+
+    private setConnected(value: boolean) {
+        this._connectionEmitter.emit('change', value);
+        this._connected = value;
+    }
 }
 
 export interface IAtemConnection {
-    get atem(): Atem;
-    get connected(): boolean;
-    get connection(): ISubscription<IConnection>;
+    readonly atem: Atem;
+    readonly connected: boolean;
+    readonly connection: ISubscription<IConnection>;
     startup(): Promise<void>;
 }
 
