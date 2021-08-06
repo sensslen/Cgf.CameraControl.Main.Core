@@ -4,22 +4,11 @@ import { CameraConnectionFactory, ILogger, VideomixerFactory } from 'cgf.camerac
 import { IConfig as IGamepadConfig, NodeGamepad, ILogger as NodeGamepadLogger } from '@sensslen/node-gamepad';
 
 import { EButtonDirection } from '../../Shared/IGamepadConfiguration';
-import { Gamepad } from '../../Shared/Gampepad';
 import { IRumblepad2Config } from './IRumblepad2Config';
+import { LogitechGamepad } from '../LogitechGamepad';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const interpolate = require('everpolate').linear;
-
-export class Rumblepad2 extends Gamepad {
+export class Rumblepad2 extends LogitechGamepad {
     private readonly pad: NodeGamepad;
-    private readonly moveInterpolation: number[][] = [
-        [0, 63, 95, 127, 128, 160, 192, 255],
-        [1, 0.27, 0.08, 0, 0, -0.08, -0.27, -1],
-    ];
-    private readonly zoomFocusInterpolation: number[][] = [
-        [0, 127, 128, 255],
-        [-1, 0, 0, 1],
-    ];
 
     constructor(
         config: IRumblepad2Config,
@@ -40,13 +29,11 @@ export class Rumblepad2 extends Gamepad {
         this.pad = new NodeGamepad(padConfig, gamepadLogger);
 
         this.pad.on('left:move', (value) => {
-            this.pan(interpolate(value.x, this.moveInterpolation[0], this.moveInterpolation[1])[0]);
-            this.tilt(interpolate(value.y, this.moveInterpolation[0], this.moveInterpolation[1])[0]);
+            this.leftJoystickMove(value);
         });
 
         this.pad.on('right:move', (value) => {
-            this.zoom(interpolate(value.x, this.zoomFocusInterpolation[0], this.zoomFocusInterpolation[1])[0]);
-            this.focus(interpolate(value.y, this.zoomFocusInterpolation[0], this.zoomFocusInterpolation[1])[0]);
+            this.rightJoystickMove(value);
         });
 
         this.pad.on('dpadLeft:press', () => {
