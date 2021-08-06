@@ -19,27 +19,41 @@
     "main": "index.js",
     "scripts": {
         "lint": "eslint --ext .ts src",
-        "build": "npm run lint && tsc",
+        "clean": "del-cli dist -f",
+        "atem-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IAtemConfig -o src/VideoMixer/Blackmagicdesign/IAtemConfig.json --tsconfig ./tsconfig.json --additional-properties true",
+        "special-function-key-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ISpecialFunctionKeyConfig -o src/Hmi/Gamepad/Shared/SpecialFunctions/ISpecialFunctionKeyConfig.json --tsconfig ./tsconfig.json --additional-properties true",
+        "special-function-change-connection-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ISpecialFunctionConnectionChangeConfig -o src/Hmi/Gamepad/Shared/SpecialFunctions/ISpecialFunctionConnectionChangeConfig.json --tsconfig ./tsconfig.json --additional-properties true",
+        "special-function-macro-loop-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ISpecialFunctionMacroLoopConfig -o src/Hmi/Gamepad/Shared/SpecialFunctions/Macro/ISpecialFunctionMacroLoopConfig.json --tsconfig ./tsconfig.json --additional-properties true",
+        "special-function-macro-toggle-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ISpecialFunctionMacroToggleConfig -o src/Hmi/Gamepad/Shared/SpecialFunctions/Macro/Toggle/ISpecialFunctionMacroToggleConfig.json --tsconfig ./tsconfig.json --additional-properties true && ts-json-schema-generator --path \"./src/**/*.ts\" --type ISpecialFunctionMacroToggleConfigConditionAuxSelection -o src/Hmi/Gamepad/Shared/SpecialFunctions/Macro/Toggle/ISpecialFunctionMacroToggleConfigConditionAuxSelection.json --tsconfig ./tsconfig.json --additional-properties true && ts-json-schema-generator --path \"./src/**/*.ts\" --type ISpecialFunctionMacroToggleConfigConditionKey -o src/Hmi/Gamepad/Shared/SpecialFunctions/Macro/Toggle/ISpecialFunctionMacroToggleConfigConditionKey.json --tsconfig ./tsconfig.json --additional-properties true",
+        "prebuild": "npm run atem-config-schema && npm run special-function-key-config-schema && npm run special-function-change-connection-config-schema && npm run special-function-macro-loop-config-schema && npm run special-function-macro-toggle-config-schema",
+        "build": "npm run clean && npm run lint && tsc",
         "postinstall": "sort-package-json",
         "prestart": "npm run build && cpy src/config.json dist",
         "start": "node dist/index.js"
     },
     "dependencies": {
-        "cgf.cameracontrol.main.core": "^1.0.7",
-        "cgf.cameracontrol.main.gamepad": "^1.0.2",
-        "yargs": "^17.0.1"
+        "@sensslen/node-gamepad": "^1.0.2",
+        "ajv": "^6.9.1",
+        "cgf.cameracontrol.main.core": "^1.1.5",
+        "everpolate": "0.0.3",
+        "strict-event-emitter-types": "^2.0.0",
+        "yargs": "^17.1.0"
     },
     "devDependencies": {
         "@types/yargs": "^17.0.0",
-        "@typescript-eslint/eslint-plugin": "^4.28.4",
-        "@typescript-eslint/parser": "^4.28.4",
+        "@typescript-eslint/eslint-plugin": "^4.29.0",
+        "@typescript-eslint/parser": "^4.29.0",
         "cpy-cli": "^3.1.1",
-        "eslint": "^7.31.0",
+        "del-cli": "^4.0.1",
+        "eslint": "^7.32.0",
         "eslint-config-prettier": "^8.1.0",
         "eslint-plugin-import": "^2.23.4",
+        "eslint-plugin-jsx-a11y": "^6.4.1",
         "eslint-plugin-prettier": "^3.3.1",
+        "eslint-plugin-react": "^7.24.0",
         "prettier": "^2.3.2",
         "sort-package-json": "^1.50.0",
+        "ts-json-schema-generator": "^0.95.0",
         "typescript": "^4.3.5"
     }
 }

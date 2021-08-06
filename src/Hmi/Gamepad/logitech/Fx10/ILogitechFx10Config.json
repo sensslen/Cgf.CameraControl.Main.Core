@@ -1,0 +1,180 @@
+{
+  "$ref": "#/definitions/ILogitechFx10Config",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ESpecialFunctionType": {
+      "enum": [
+        "key",
+        "macro"
+      ],
+      "type": "string"
+    },
+    "ILogitechFx10Config": {
+      "properties": {
+        "connectionChange": {
+          "properties": {
+            "alt": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "type": "number"
+                },
+                "left": {
+                  "type": "number"
+                },
+                "right": {
+                  "type": "number"
+                },
+                "up": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            },
+            "altLower": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "type": "number"
+                },
+                "left": {
+                  "type": "number"
+                },
+                "right": {
+                  "type": "number"
+                },
+                "up": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            },
+            "default": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "type": "number"
+                },
+                "left": {
+                  "type": "number"
+                },
+                "right": {
+                  "type": "number"
+                },
+                "up": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "default"
+          ],
+          "type": "object"
+        },
+        "serialNumber": {
+          "type": "string"
+        },
+        "specialFunction": {
+          "properties": {
+            "alt": {
+              "additionalProperties": false,
+              "properties": {
+                "A": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "B": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "X": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "Y": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                }
+              },
+              "type": "object"
+            },
+            "altLower": {
+              "additionalProperties": false,
+              "properties": {
+                "A": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "B": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "X": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "Y": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                }
+              },
+              "type": "object"
+            },
+            "default": {
+              "additionalProperties": false,
+              "properties": {
+                "A": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "B": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "X": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "Y": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "default"
+          ],
+          "type": "object"
+        },
+        "videoMixer": {
+          "properties": {
+            "connection": {
+              "type": "number"
+            },
+            "mixBlock": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "connection",
+            "mixBlock"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "connectionChange",
+        "specialFunction",
+        "videoMixer"
+      ],
+      "type": "object"
+    },
+    "ISpecialFunctionDefinition": {
+      "properties": {
+        "index": {
+          "type": "number"
+        },
+        "type": {
+          "$ref": "#/definitions/ESpecialFunctionType"
+        }
+      },
+      "required": [
+        "type",
+        "index"
+      ],
+      "type": "object"
+    }
+  }
+}

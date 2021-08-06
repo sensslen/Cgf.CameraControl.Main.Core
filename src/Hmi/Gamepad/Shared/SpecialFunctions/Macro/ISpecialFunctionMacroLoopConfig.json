@@ -1,0 +1,34 @@
+{
+  "$ref": "#/definitions/ISpecialFunctionMacroLoopConfig",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ESpecialFunctionType": {
+      "enum": [
+        "key",
+        "macroLoop",
+        "connectionChange",
+        "macroToggle"
+      ],
+      "type": "string"
+    },
+    "ISpecialFunctionMacroLoopConfig": {
+      "properties": {
+        "indexes": {
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "type": {
+          "$ref": "#/definitions/ESpecialFunctionType"
+        }
+      },
+      "required": [
+        "indexes",
+        "type"
+      ],
+      "type": "object"
+    }
+  }
+}
