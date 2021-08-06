@@ -23,7 +23,7 @@ export interface IGamepadConfiguration extends IConfig {
     /**
      * This map maps camera indexes to the mixer's input channel.
      * In the map the key is the input number on the mixer and the value is
-     * the camera number
+     * the camera index in the configuration
      */
     cameraMap: { [key: number]: number };
 }
