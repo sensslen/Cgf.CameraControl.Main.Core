@@ -26,6 +26,21 @@ export class Atem implements IVideoMixer {
         });
     }
 
+    public async isKeySet(key: number): Promise<boolean> {
+        const atemState = await this.resolveStateOnce();
+        return this.isKeySetInState(atemState, key);
+    }
+
+    public async getAuxilarySelection(aux: number): Promise<number> {
+        const atemState = await this.resolveStateOnce();
+        const auxSelection = this.getAuxSelectionInState(atemState, aux);
+        if (auxSelection !== undefined) {
+            return auxSelection;
+        } else {
+            throw new Error('could not find proper aux selection');
+        }
+    }
+
     public startup(): Promise<void> {
         return this.connection.startup();
     }
@@ -83,16 +98,45 @@ export class Atem implements IVideoMixer {
     }
 
     private stateChange(state: AtemState): void {
-        state.video.mixEffects.forEach((state, index) => {
-            if (state !== undefined && index === this.config.mixEffectBlock) {
-                this.updatePreview(state);
-            }
-        });
+        const meState = state.video.mixEffects[this.config.mixEffectBlock];
+        if (meState !== undefined) {
+            this.updatePreview(meState);
+        }
     }
 
     private updatePreview(state: MixEffect) {
         const onAirInputs = this.connection.atem.listVisibleInputs('program');
         const newPreviewIsOnAir = onAirInputs.some((input) => input === state.previewInput);
         this._selectedChangeEmitter.emit('previewChange', state.previewInput, newPreviewIsOnAir);
+    }
+
+    private isKeySetInState(state: AtemState, key: number): boolean {
+        const meState = state.video.mixEffects[this.config.mixEffectBlock];
+        if (meState !== undefined) {
+            const keyState = meState.upstreamKeyers[key];
+            if (keyState !== undefined) {
+                return keyState.onAir;
+            }
+        }
+        return false;
+    }
+
+    private getAuxSelectionInState(state: AtemState, aux: number): number | undefined {
+        return state.video.auxilliaries[aux];
+    }
+
+    private resolveStateOnce(): Promise<AtemState> {
+        return new Promise((resolve, reject) => {
+            if (this.connection.connection === undefined) {
+                reject('no connection');
+            }
+            if (this.connection.atem.state !== undefined) {
+                resolve(this.connection.atem.state);
+            } else {
+                this.connection.atem.once('stateChanged', (state, _pathToChange) => {
+                    resolve(state);
+                });
+            }
+        });
     }
 }
