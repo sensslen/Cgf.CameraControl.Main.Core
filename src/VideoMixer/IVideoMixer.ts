@@ -18,4 +18,16 @@ export interface IVideoMixer extends ISubscription<IConnection>, IDisposable {
     changeInput(newInput: number): void;
     toggleKey(key: number): void;
     runMacro(macro: number): void;
+
+    /**
+     * This function allows to get whether the key is set or not
+     * @param key The key which's state is requested
+     */
+    isKeySet(key: number): Promise<boolean>;
+
+    /**
+     * Get the current selected output for the given auxilary output
+     * @param aux The aux output which's selected source is of interest
+     */
+    getAuxilarySelection(aux: number): Promise<number>;
 }
