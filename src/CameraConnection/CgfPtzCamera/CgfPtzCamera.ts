@@ -41,7 +41,7 @@ export class CgfPtzCamera implements ICameraConnection {
 
         this.socketConnection = new signalR.HubConnectionBuilder()
             .withAutomaticReconnect()
-            .withUrl(`${this.config.connectionUrl}/pantiltzoom/statehub`)
+            .withUrl(`${this.config.connectionUrl}/pantiltzoom/state`)
             .build();
 
         this.initialConnect().catch((error) => this.logError(`Initial connection error:${error}`));
