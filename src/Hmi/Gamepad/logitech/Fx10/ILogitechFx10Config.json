@@ -1,16 +1,25 @@
 {
-  "$ref": "#/definitions/ILogitechFx10Config",
+  "$ref": "#/definitions/IRumblepad2Config",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
     "ESpecialFunctionType": {
       "enum": [
         "key",
-        "macro"
+        "macroLoop",
+        "connectionChange",
+        "macroToggle"
       ],
       "type": "string"
     },
-    "ILogitechFx10Config": {
+    "IRumblepad2Config": {
       "properties": {
+        "cameraMap": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "This map maps camera indexes to the mixer's input channel. In the map the key is the input number on the mixer and the value is the camera index in the configuration",
+          "type": "object"
+        },
         "connectionChange": {
           "properties": {
             "alt": {
@@ -73,6 +82,9 @@
           ],
           "type": "object"
         },
+        "instance": {
+          "type": "number"
+        },
         "serialNumber": {
           "type": "string"
         },
@@ -81,16 +93,16 @@
             "alt": {
               "additionalProperties": false,
               "properties": {
-                "A": {
+                "down": {
                   "$ref": "#/definitions/ISpecialFunctionDefinition"
                 },
-                "B": {
+                "left": {
                   "$ref": "#/definitions/ISpecialFunctionDefinition"
                 },
-                "X": {
+                "right": {
                   "$ref": "#/definitions/ISpecialFunctionDefinition"
                 },
-                "Y": {
+                "up": {
                   "$ref": "#/definitions/ISpecialFunctionDefinition"
                 }
               },
@@ -99,16 +111,16 @@
             "altLower": {
               "additionalProperties": false,
               "properties": {
-                "A": {
+                "down": {
                   "$ref": "#/definitions/ISpecialFunctionDefinition"
                 },
-                "B": {
+                "left": {
                   "$ref": "#/definitions/ISpecialFunctionDefinition"
                 },
-                "X": {
+                "right": {
                   "$ref": "#/definitions/ISpecialFunctionDefinition"
                 },
-                "Y": {
+                "up": {
                   "$ref": "#/definitions/ISpecialFunctionDefinition"
                 }
               },
@@ -117,16 +129,16 @@
             "default": {
               "additionalProperties": false,
               "properties": {
-                "A": {
+                "down": {
                   "$ref": "#/definitions/ISpecialFunctionDefinition"
                 },
-                "B": {
+                "left": {
                   "$ref": "#/definitions/ISpecialFunctionDefinition"
                 },
-                "X": {
+                "right": {
                   "$ref": "#/definitions/ISpecialFunctionDefinition"
                 },
-                "Y": {
+                "up": {
                   "$ref": "#/definitions/ISpecialFunctionDefinition"
                 }
               },
@@ -138,41 +150,31 @@
           ],
           "type": "object"
         },
+        "type": {
+          "type": "string"
+        },
         "videoMixer": {
-          "properties": {
-            "connection": {
-              "type": "number"
-            },
-            "mixBlock": {
-              "type": "number"
-            }
-          },
-          "required": [
-            "connection",
-            "mixBlock"
-          ],
-          "type": "object"
+          "type": "number"
         }
       },
       "required": [
+        "cameraMap",
         "connectionChange",
+        "instance",
         "specialFunction",
+        "type",
         "videoMixer"
       ],
       "type": "object"
     },
     "ISpecialFunctionDefinition": {
       "properties": {
-        "index": {
-          "type": "number"
-        },
         "type": {
           "$ref": "#/definitions/ESpecialFunctionType"
         }
       },
       "required": [
-        "type",
-        "index"
+        "type"
       ],
       "type": "object"
     }

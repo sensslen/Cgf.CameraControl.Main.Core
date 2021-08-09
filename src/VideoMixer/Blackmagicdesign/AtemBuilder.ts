@@ -15,7 +15,7 @@ export class AtemBuilder implements IBuilder<IVideoMixer> {
         return Promise.resolve(['blackmagicdesign/atem']);
     }
 
-    public build(config: IConfig): Promise<IVideoMixer> {
+    public async build(config: IConfig): Promise<IVideoMixer> {
         const configValidator = new ConfigValidator();
         const validConfig = configValidator.validate<IAtemConfig>(config, ConfigSchema);
 
@@ -23,6 +23,8 @@ export class AtemBuilder implements IBuilder<IVideoMixer> {
             return Promise.reject(configValidator.errorGet());
         }
 
-        return Promise.resolve(new Atem(validConfig, this.atemFactory));
+        const atem = new Atem(validConfig, this.atemFactory);
+        await atem.startup();
+        return atem;
     }
 }

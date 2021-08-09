@@ -49,8 +49,8 @@ class AtemConnection implements IAtemConnection {
     constructor(private ip: string, private logger: ILogger) {
         this.atem = new Atem();
 
-        this.atem.on('error', this.error);
-        this.atem.on('info', this.log);
+        this.atem.on('error', (error) => this.error(error));
+        this.atem.on('info', (log) => this.log(log));
 
         this.connection = new AtemConnectionmanager(this.atem);
     }
@@ -58,7 +58,7 @@ class AtemConnection implements IAtemConnection {
         return this.connection.connected;
     }
 
-    startup(): Promise<void> {
+    async startup(): Promise<void> {
         if (this.startupResult === undefined) {
             this.startupResult = this.atem.connect(this.ip);
         }

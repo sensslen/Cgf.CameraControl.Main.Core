@@ -13,6 +13,10 @@ export class Atem implements IVideoMixer {
         EventEmitter,
         IImageSelectionChange
     >;
+    private readonly _currentConnection: { selectedInput: number; onAir: boolean } = {
+        selectedInput: -1,
+        onAir: false,
+    };
 
     public get connectionString(): string {
         return `${this.config.ip}:${this.config.mixEffectBlock}`;
@@ -107,7 +111,17 @@ export class Atem implements IVideoMixer {
     private updatePreview(state: MixEffect) {
         const onAirInputs = this.connection.atem.listVisibleInputs('program');
         const newPreviewIsOnAir = onAirInputs.some((input) => input === state.previewInput);
+
+        if (
+            this._currentConnection.selectedInput === state.previewInput &&
+            this._currentConnection.onAir === newPreviewIsOnAir
+        ) {
+            return;
+        }
         this._selectedChangeEmitter.emit('previewChange', state.previewInput, newPreviewIsOnAir);
+
+        this._currentConnection.selectedInput = state.previewInput;
+        this._currentConnection.onAir = newPreviewIsOnAir;
     }
 
     private isKeySetInState(state: AtemState, key: number): boolean {
