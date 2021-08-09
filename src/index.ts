@@ -9,9 +9,15 @@ import { Rumblepad2Builder } from './Hmi/Gamepad/logitech/Rumblepad2/Rumblepad2B
 import yargs from 'yargs/yargs';
 
 async function run(configPath: string) {
-    const config = JSON.parse(fs.readFileSync(configPath).toString());
-
     const logger = new Logger();
+    let config: undefined;
+    try {
+        config = JSON.parse(fs.readFileSync(configPath).toString());
+    } catch (error) {
+        logger.error(error);
+        return;
+    }
+
     const core = new Core();
 
     await core.mixerFactory.builderAdd(new AtemBuilder(logger), logger);
