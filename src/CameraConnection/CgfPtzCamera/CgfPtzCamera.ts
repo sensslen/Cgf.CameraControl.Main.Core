@@ -65,19 +65,19 @@ export class CgfPtzCamera implements ICameraConnection {
     }
 
     public pan(value: number): void {
-        this.currentState.pan = value;
+        this.currentState.pan = this.multiplyRoundAndCrop(value * 255, 255);
         this.scheduleStateTransmission();
     }
     public tilt(value: number): void {
-        this.currentState.tilt = value;
+        this.currentState.tilt = this.multiplyRoundAndCrop(value * 255, 255);
         this.scheduleStateTransmission();
     }
     public zoom(value: number): void {
-        this.currentState.zoom = value;
+        this.currentState.zoom = this.multiplyRoundAndCrop(value * 8, 8);
         this.scheduleStateTransmission();
     }
     public focus(value: number): void {
-        this.currentState.focus = value;
+        this.currentState.focus = this.multiplyRoundAndCrop(value * 1.2, 1);
         this.scheduleStateTransmission();
     }
 
@@ -174,5 +174,9 @@ export class CgfPtzCamera implements ICameraConnection {
 
     private logError(toLog: string) {
         this.logger.error(`PtzLancCamera(${this.config.connectionUrl}):${toLog}`);
+    }
+    private multiplyRoundAndCrop(value: number, maximumAbsolute: number): number {
+        const maximized = Math.max(-maximumAbsolute, Math.min(maximumAbsolute, value));
+        return Math.round(maximized);
     }
 }
