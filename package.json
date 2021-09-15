@@ -37,11 +37,13 @@
         "@sensslen/node-gamepad": "^1.0.3-beta.3",
         "ajv": "^6.9.1",
         "cgf.cameracontrol.main.core": "^1.2.0",
+        "death": "^1.1.0",
         "everpolate": "0.0.3",
         "strict-event-emitter-types": "^2.0.0",
         "yargs": "^17.1.1"
     },
     "devDependencies": {
+        "@types/death": "^1.1.2",
         "@types/yargs": "^17.0.0",
         "@typescript-eslint/eslint-plugin": "^4.31.1",
         "@typescript-eslint/parser": "^4.31.1",

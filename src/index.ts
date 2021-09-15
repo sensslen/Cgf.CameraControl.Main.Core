@@ -5,6 +5,7 @@ import { AtemBuilder } from './VideoMixer/Blackmagicdesign/AtemBuilder';
 import { Core } from 'cgf.cameracontrol.main.core';
 import { Fx10Builder } from './Hmi/Gamepad/logitech/Fx10/Fx10Builder';
 import { Logger } from './Logger';
+import ON_DEATH from 'death';
 import { Rumblepad2Builder } from './Hmi/Gamepad/logitech/Rumblepad2/Rumblepad2Builder';
 import yargs from 'yargs/yargs';
 
@@ -27,11 +28,12 @@ async function run(configPath: string) {
 
     await core.bootstrap(logger, config);
 
-    process.on('SIGINT', () => {
+    ON_DEATH({
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        SIGINT: true,
+    })((_signal) => {
         console.log('Caught interrupt signal');
-
         core.dispose();
-
         process.exit();
     });
 }
