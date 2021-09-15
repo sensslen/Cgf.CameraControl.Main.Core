@@ -34,7 +34,7 @@
         "start": "node dist/index.js"
     },
     "dependencies": {
-        "@sensslen/node-gamepad": "^1.0.3-beta.2",
+        "@sensslen/node-gamepad": "^1.0.3-beta.3",
         "ajv": "^6.9.1",
         "cgf.cameracontrol.main.core": "^1.2.0",
         "everpolate": "0.0.3",
