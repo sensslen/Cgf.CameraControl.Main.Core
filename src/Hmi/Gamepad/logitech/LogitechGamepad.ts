@@ -20,7 +20,7 @@ export abstract class LogitechGamepad extends Gamepad {
 
     protected leftJoystickMove(value: JoyStickValue): void {
         this.pan(interpolate(value.x, this.moveInterpolation[0], this.moveInterpolation[1])[0]);
-        this.tilt(interpolate(-value.y, this.moveInterpolation[0], this.moveInterpolation[1])[0]);
+        this.tilt(-interpolate(value.y, this.moveInterpolation[0], this.moveInterpolation[1])[0]);
     }
 
     protected rightJoystickMove(value: JoyStickValue): void {
