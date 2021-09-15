@@ -169,11 +169,11 @@ export class CgfPtzCamera implements ICameraConnection {
     }
 
     private log(toLog: string) {
-        this.logger.log(`PtzLancCamera(${this.config.connectionUrl}):${toLog}`);
+        this.logger.log(`CgfPtzCamera(${this.config.connectionUrl}):${toLog}`);
     }
 
     private logError(toLog: string) {
-        this.logger.error(`PtzLancCamera(${this.config.connectionUrl}):${toLog}`);
+        this.logger.error(`CgfPtzCamera(${this.config.connectionUrl}):${toLog}`);
     }
     private multiplyRoundAndCrop(value: number, maximumAbsolute: number): number {
         const maximized = Math.max(-maximumAbsolute, Math.min(maximumAbsolute, value));
