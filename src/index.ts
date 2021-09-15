@@ -14,7 +14,8 @@ async function run(configPath: string) {
     try {
         config = JSON.parse(fs.readFileSync(configPath).toString());
     } catch (error) {
-        logger.error(error);
+        const typedError = error as Error;
+        logger.error(typedError.message);
         return;
     }
 
