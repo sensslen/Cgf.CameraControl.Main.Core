@@ -26,6 +26,14 @@ async function run(configPath: string) {
     await core.hmiFactory.builderAdd(new Rumblepad2Builder(logger, core.mixerFactory, core.cameraFactory), logger);
 
     await core.bootstrap(logger, config);
+
+    process.on('SIGINT', () => {
+        console.log('Caught interrupt signal');
+
+        core.dispose();
+
+        process.exit();
+    });
 }
 
 const argv = yargs(process.argv.slice(2))
