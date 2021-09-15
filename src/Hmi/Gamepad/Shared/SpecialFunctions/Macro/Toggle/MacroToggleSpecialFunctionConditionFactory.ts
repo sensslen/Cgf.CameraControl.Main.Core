@@ -3,7 +3,7 @@ import * as ISpecialFunctionMacroToggleConfigConditionKeySchema from './ISpecial
 
 import {
     EMacroToggleConditionType,
-    ISpecialFunctionMacroToggleConfig,
+    ISpecialFunctionMacroToggleConfigCondition,
     ISpecialFunctionMacroToggleConfigConditionAuxSelection,
     ISpecialFunctionMacroToggleConfigConditionKey,
 } from './ISpecialFunctionMacroToggleConfig';
@@ -13,8 +13,10 @@ import { MacroToggleSpecialFunctionConditionAuxSelection } from './MacroToggleSp
 import { MacroToggleSpecialFunctionConditionKey } from './MacroToggleSpecialFunctionConditionKey';
 
 export class MacroToggleSpecialFunctionConditionFactory {
-    public static get(config: ISpecialFunctionMacroToggleConfig): IMacroToggleSpecialFunctionCondition | undefined {
-        switch (config.condition.type) {
+    public static get(
+        config: ISpecialFunctionMacroToggleConfigCondition
+    ): IMacroToggleSpecialFunctionCondition | undefined {
+        switch (config.type) {
             case EMacroToggleConditionType.key:
                 return MacroToggleSpecialFunctionConditionFactory.getKeyCondition(config);
             case EMacroToggleConditionType.auxSelection:
@@ -25,7 +27,7 @@ export class MacroToggleSpecialFunctionConditionFactory {
     }
 
     private static getKeyCondition(
-        config: ISpecialFunctionMacroToggleConfig
+        config: ISpecialFunctionMacroToggleConfigCondition
     ): IMacroToggleSpecialFunctionCondition | undefined {
         const configValidator = new ConfigValidator();
         const validConfig = configValidator.validate<ISpecialFunctionMacroToggleConfigConditionKey>(
@@ -40,7 +42,7 @@ export class MacroToggleSpecialFunctionConditionFactory {
     }
 
     private static getAuxSelectionCondition(
-        config: ISpecialFunctionMacroToggleConfig
+        config: ISpecialFunctionMacroToggleConfigCondition
     ): IMacroToggleSpecialFunctionCondition | undefined {
         const configValidator = new ConfigValidator();
         const validConfig = configValidator.validate<ISpecialFunctionMacroToggleConfigConditionAuxSelection>(
