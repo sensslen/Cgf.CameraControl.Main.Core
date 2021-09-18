@@ -21,7 +21,6 @@ export class MacroToggleSpecialFunction implements ISpecialFunction {
 
     private runMacro(isActive: boolean, mixer: IVideoMixer) {
         const index = isActive ? this.config.indexOff : this.config.indexOn;
-        console.log(`running macro ${index}`);
         mixer.runMacro(index);
     }
 }
