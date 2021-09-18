@@ -10,7 +10,8 @@ To start using this project use the following steps:
 -   clone the repository (`git clone https://github.com/sensslen/Cgf.CameraControl.Main.Cli.git`)
 -   install dependencies by calling `npm install`
 -   edit [src/config.json](./src/config.json) to match your setup or just create a new configuration and run the application with the config parameter.
--   run the application using `npm start` or alternatively with a custom configuration using `npm start -- --config path/to/my/specail/config.json`
+-   compile the app : `npm run build`
+-   run the application using `node dist/index.js --config path/to/my/specail/config.json` or use one of the starter scripts available for Windows and Mac
 
 > **⚠ WARNING: Under Construction.**  
 > The following chapters need to be rebuilt. These reflect the configuration of version 1 and do no longer apply
