@@ -15,7 +15,7 @@ export abstract class LogitechGamepad extends Gamepad {
     ];
     private readonly zoomFocusInterpolation: number[][] = [
         [0, 127, 128, 255],
-        [-1, 0, 0, 1],
+        [1, 0, 0, -1],
     ];
 
     protected leftJoystickMove(value: JoyStickValue): void {

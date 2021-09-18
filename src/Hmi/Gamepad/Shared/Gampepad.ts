@@ -193,8 +193,15 @@ export abstract class Gamepad implements IHmi {
 
     private mixerPreviewChange(preview: number, onAir: boolean): void {
         const selectedCamera = this.cameras[preview];
+        if (selectedCamera !== this.selectedCamera) {
+            this.zoom(0);
+            this.focus(0);
+            this.pan(0);
+            this.tilt(0);
+        }
+
+        this.selectedCamera = selectedCamera;
         if (selectedCamera !== undefined) {
-            this.selectedCamera = selectedCamera;
             this.printConnectionMessage(preview, selectedCamera.connectionString, onAir);
         } else {
             this.printConnectionMessage(preview, 'not a camera', onAir);
