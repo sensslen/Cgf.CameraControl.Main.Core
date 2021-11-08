@@ -27,40 +27,40 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
-        "lint": "eslint --ext .ts .",
-        "sort": "sort-package-json package.json",
         "prebuild": "npm run clean && npm run generate-config-validation-schema",
         "build": "npm run lint && tsc",
+        "cgf-ptz-camera-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ICgfPtzCameraConfiguration -o src/CameraConnection/CgfPtzCamera/ICgfPtzCameraConfiguration.json --tsconfig ./tsconfig.json --additional-properties true",
         "preclean": "npm run sort",
         "clean": "del-cli dist -f",
         "generate-config-validation-schema": "npm run cgf-ptz-camera-config-schema && npm run main-config-schema",
         "postinstall": "npm run sort",
+        "lint": "eslint --ext .ts .",
         "main-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IConfigurationStructure -o src/Configuration/IConfigurationStructure.json --tsconfig ./tsconfig.json --additional-properties true",
         "presetuppublish": "npm run sort && npm run build",
         "setuppublish": "node dist/SetupPackage.js",
-        "cgf-ptz-camera-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ICgfPtzCameraConfiguration -o src/CameraConnection/CgfPtzCamera/ICgfPtzCameraConfiguration.json --tsconfig ./tsconfig.json --additional-properties true"
+        "sort": "sort-package-json package.json"
     },
     "dependencies": {
-        "@microsoft/signalr": "^5.0.10",
-        "ajv": "^6.9.1",
-        "atem-connection": "^2.3.0",
-        "axios": "^0.21.4",
+        "@microsoft/signalr": "^6.0.0",
+        "ajv": "^8.6.3",
+        "atem-connection": "^2.3.1",
+        "axios": "^0.24.0",
         "strict-event-emitter-types": "^2.0.0"
     },
     "devDependencies": {
-        "@types/semver": "^7.3.8",
-        "@typescript-eslint/eslint-plugin": "^4.31.1",
-        "@typescript-eslint/parser": "^4.31.1",
+        "@types/semver": "^7.3.9",
+        "@typescript-eslint/eslint-plugin": "^5.3.1",
+        "@typescript-eslint/parser": "^5.3.1",
         "del-cli": "^4.0.1",
-        "eslint": "^7.32.0",
+        "eslint": "^8.2.0",
         "eslint-config-prettier": "^8.3.0",
-        "eslint-plugin-import": "^2.24.2",
+        "eslint-plugin-import": "^2.25.2",
         "eslint-plugin-prettier": "^4.0.0",
-        "prettier": "^2.4.0",
+        "prettier": "^2.4.1",
         "semver": "^7.3.5",
-        "simple-git": "^2.45.1",
-        "sort-package-json": "^1.51.0",
-        "ts-json-schema-generator": "^0.95.0",
-        "typescript": "^4.4.3"
+        "simple-git": "^2.47.0",
+        "sort-package-json": "^1.52.0",
+        "ts-json-schema-generator": "^0.97.0",
+        "typescript": "^4.4.4"
     }
 }
