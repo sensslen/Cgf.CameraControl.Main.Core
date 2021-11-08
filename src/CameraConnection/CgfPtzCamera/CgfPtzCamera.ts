@@ -17,20 +17,8 @@ export class CgfPtzCamera implements ICameraConnection {
     private readonly currentState = new CgfPtzCameraState();
     private shouldTransmitState = false;
     private canTransmit = false;
-
-    public get connectionString(): string {
-        return this.config.connectionUrl;
-    }
-
     private _connected = false;
     private _connectionEmitter: StrictEventEmitter<EventEmitter, IConnection> = new EventEmitter();
-    public get connected(): boolean {
-        return this._connected;
-    }
-    public set connected(v: boolean) {
-        this._connected = v;
-        this._connectionEmitter.emit('change', v);
-    }
 
     constructor(private config: ICgfPtzCameraConfiguration, private logger: ILogger) {
         this.axios = axios.create({
@@ -45,6 +33,18 @@ export class CgfPtzCamera implements ICameraConnection {
             .build();
 
         this.initialConnect().catch((error) => this.logError(`Initial connection error:${error}`));
+    }
+
+    public get connectionString(): string {
+        return this.config.connectionUrl;
+    }
+
+    public get connected(): boolean {
+        return this._connected;
+    }
+    public set connected(v: boolean) {
+        this._connected = v;
+        this._connectionEmitter.emit('change', v);
     }
 
     public async dispose(): Promise<void> {
