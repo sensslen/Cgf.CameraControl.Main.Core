@@ -7,9 +7,6 @@ class AtemConnectionmanager implements ISubscription<IConnection> {
     private readonly _connectionEmitter: StrictEventEmitter<EventEmitter, IConnection> = new EventEmitter();
 
     private _connected = false;
-    public get connected(): boolean {
-        return this._connected;
-    }
 
     constructor(atem: Atem) {
         atem.on('connected', () => {
@@ -18,6 +15,10 @@ class AtemConnectionmanager implements ISubscription<IConnection> {
         atem.on('disconnected', () => {
             this.setConnected(false);
         });
+    }
+
+    public get connected(): boolean {
+        return this._connected;
     }
 
     subscribe(i: IConnection): void {

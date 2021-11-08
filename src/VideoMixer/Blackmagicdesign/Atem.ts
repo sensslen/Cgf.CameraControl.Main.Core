@@ -18,16 +18,16 @@ export class Atem implements IVideoMixer {
         onAir: false,
     };
 
-    public get connectionString(): string {
-        return `${this.config.ip}:${this.config.mixEffectBlock}`;
-    }
-
     constructor(private config: IAtemConfig, private atemFactory: AtemFactory) {
         this.connection = atemFactory.get(config.ip);
 
         this.connection.atem.on('stateChanged', (state, _pathToChange) => {
             this.stateChange(state);
         });
+    }
+
+    public get connectionString(): string {
+        return `${this.config.ip}:${this.config.mixEffectBlock}`;
     }
 
     public async isKeySet(key: number): Promise<boolean> {
