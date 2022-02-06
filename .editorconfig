@@ -1,0 +1,2 @@
+[*.cs]
+csharp_space_before_colon_in_inheritance_clause=true
