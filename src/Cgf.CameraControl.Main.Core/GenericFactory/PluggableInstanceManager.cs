@@ -51,12 +51,14 @@ public class PluggableInstanceManager<T> : PluggableFactory<T>, IDisposable wher
     {
         if (document.RootElement.TryGetProperty(InstanceNumberIdentifier, out var instanceNumberProperty))
         {
-            if (instanceNumberProperty.TryGetInt32(out var instanceNumber))
+            if (instanceNumberProperty.ValueKind == JsonValueKind.Number &&
+                instanceNumberProperty.TryGetInt32(out var instanceNumber))
             {
                 return instanceNumber;
             }
 
-            throw new PluggableFactoryException("Failed to read instance number property");
+            throw new PluggableFactoryException(
+                $"Instance number property must be an integer. --{FormatJsonElement(instanceNumberProperty)}-- is not an integer.");
         }
 
         throw new PluggableFactoryException("Instance number property not found");

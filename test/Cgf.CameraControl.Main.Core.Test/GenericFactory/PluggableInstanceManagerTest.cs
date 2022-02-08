@@ -9,30 +9,27 @@ using NUnit.Framework;
 
 namespace Cgf.CameraControl.Main.Core.Test.GenericFactory;
 
-[TestFixture(typeof(string))]
+[TestFixture(typeof(FactoryTestClass2))]
 [TestFixture(typeof(FactoryTestClass))]
-internal class PluggableFactoryTest<T>
+internal class PluggableInstanceManagerTest<T> where T : IDisposable
 {
     [SetUp]
     public void SetUp()
     {
         _logger = new Mock<ILogger>();
-        _testLogModuleIdentifier = Guid.NewGuid().ToString();
         _fixture = new Fixture();
         _uut
-            = new PluggableFactory<T>(new Dictionary<string, IFactoryPlugin<T>>(), _logger.Object,
-                _testLogModuleIdentifier);
+            = new PluggableInstanceManager<T>(_logger.Object);
     }
 
-    private PluggableFactory<T>? _uut;
+    private PluggableInstanceManager<T>? _uut;
     private Mock<ILogger>? _logger;
-    private string? _testLogModuleIdentifier;
     private Fixture? _fixture;
 
-    [TestCase("{\"type\":\"blabla\"}", "blabla")]
-    [TestCase("{\"type\":\"1\"}", "1")]
-    [TestCase("{\"type\":\"string\"}", "string")]
-    [TestCase("{\"type\":\"abc\"}", "abc")]
+    [TestCase("{\"type\":\"blabla\", \"instance\":1}", "blabla")]
+    [TestCase("{\"type\":\"1\", \"instance\":1}", "1")]
+    [TestCase("{\"type\":\"string\", \"instance\":1}", "string")]
+    [TestCase("{\"type\":\"abc\", \"instance\":1}", "abc")]
     public void Create_Should_ThrowErrorWhenCreating_If_NoPluginRegistered(string inputJson,
         string typeString)
     {
@@ -58,15 +55,15 @@ internal class PluggableFactoryTest<T>
         await _uut!.RegisterPlugin(pluginMock.Object);
         await _uut!.RegisterPlugin(pluginMock2.Object);
 
-        _logger!.Verify(m => m.Log(_testLogModuleIdentifier!,
+        _logger!.Verify(m => m.Log(typeof(PluggableInstanceManager<T>).FullName!,
             $"Already a factory plugin registered that creates {twiceSupportedType}. Doing nothing.",
             LogLevel.Warning));
     }
 
-    [TestCase("{\"type\":\"blabla\"}", "blabla")]
-    [TestCase("{\"type\":\"1\"}", "1")]
-    [TestCase("{\"type\":\"string\"}", "string")]
-    [TestCase("{\"type\":\"abc\"}", "abc")]
+    [TestCase("{\"type\":\"blabla\", \"instance\":1}", "blabla")]
+    [TestCase("{\"type\":\"1\", \"instance\":1}", "1")]
+    [TestCase("{\"type\":\"string\", \"instance\":1}", "string")]
+    [TestCase("{\"type\":\"abc\", \"instance\":1}", "abc")]
     public async Task Create_Should_ThrowErrorWhenCreating_If_RequestingPluginOfDifferentType(string inputJson,
         string typeString)
     {
@@ -91,20 +88,33 @@ internal class PluggableFactoryTest<T>
 
         await _uut!.RegisterPlugin(pluginMock.Object);
 
-        using var document = JsonDocument.Parse("{\"abc\":\"cde\"}");
+        using var document = JsonDocument.Parse("{\"abc\":\"cde\", \"instance\":1}");
         var exception = Assert.ThrowsAsync<PluggableFactoryException>(async () => await _uut!.Create(document));
         Assert.AreEqual("Type property not found", exception!.Message);
         Assert.AreEqual(null, exception.InnerException);
     }
 
-    [TestCase("{\"type\":1}", "1")]
-    [TestCase("{\"type\":[]}", "[]")]
-    [TestCase("{\"type\":[1,2,3]}", "[1,2,3]")]
-    [TestCase("{\"type\":{}}", "{}")]
-    [TestCase("{\"type\":{\"abc\":\"cde\"}}", "{\"abc\":\"cde\"}")]
-    [TestCase("{\"type\":false}", "False")]
-    [TestCase("{\"type\":true}", "True")]
-    [TestCase("{\"type\":null}", "null")]
+    [Test]
+    public async Task Create_Should_ThrowErrorWhenCreating_If_InstanceNumberIsMissing()
+    {
+        var pluginMock = new Mock<IFactoryPlugin<T>>();
+        pluginMock.Setup(m => m.GetSupportedTypeIdentifiers())
+            .Returns(_fixture.CreateMany<string>().AsAsyncEnumerable());
+
+        await _uut!.RegisterPlugin(pluginMock.Object);
+
+        using var document = JsonDocument.Parse("{\"type\":\"abc\", \"abc\":\"cde\"}");
+        var exception = Assert.ThrowsAsync<PluggableFactoryException>(async () => await _uut!.Create(document));
+        Assert.AreEqual("Instance number property not found", exception!.Message);
+        Assert.AreEqual(null, exception.InnerException);
+    }
+
+    [TestCase("{\"type\":1, \"instance\":1}", "1")]
+    [TestCase("{\"type\":[], \"instance\":1}", "[]")]
+    [TestCase("{\"type\":{}, \"instance\":1}", "{}")]
+    [TestCase("{\"type\":false, \"instance\":1}", "False")]
+    [TestCase("{\"type\":true, \"instance\":1}", "True")]
+    [TestCase("{\"type\":null, \"instance\":1}", "null")]
     public async Task Create_Should_ThrowErrorWhenCreating_If_TypeIdentifierIsNotString(string inputJson,
         string typePropertyAsString)
     {
@@ -117,6 +127,31 @@ internal class PluggableFactoryTest<T>
         using var document = JsonDocument.Parse(inputJson);
         var exception = Assert.ThrowsAsync<PluggableFactoryException>(async () => await _uut!.Create(document));
         Assert.AreEqual($"Type property must be a string. --{typePropertyAsString}-- is not a string.",
+            exception!.Message);
+        Assert.AreEqual(null, exception.InnerException);
+    }
+
+    [TestCase("{\"instance\":\"blablabla\",  \"type\":\"string\"}", "\"blablabla\"")]
+    [TestCase("{\"instance\":\"1\",  \"type\":\"string\"}", "\"1\"")]
+    [TestCase("{\"instance\":1.5,  \"type\":\"string\"}", "1.5")]
+    [TestCase("{\"instance\":[], \"type\":\"string\"}", "[]")]
+    [TestCase("{\"instance\":{}, \"type\":\"string\"}", "{}")]
+    [TestCase("{\"instance\":false, \"type\":\"string\"}", "False")]
+    [TestCase("{\"instance\":true, \"type\":\"string\"}", "True")]
+    [TestCase("{\"instance\":null, \"type\":\"string\"}", "null")]
+    public async Task Create_Should_ThrowErrorWhenCreating_If_InstancePropertyIdentifierIsNotInteger(string inputJson,
+        string instancePropertyAsString)
+    {
+        var pluginMock = new Mock<IFactoryPlugin<T>>();
+        pluginMock.Setup(m => m.GetSupportedTypeIdentifiers())
+            .Returns(_fixture.CreateMany<string>().AsAsyncEnumerable());
+
+        await _uut!.RegisterPlugin(pluginMock.Object);
+
+        using var document = JsonDocument.Parse(inputJson);
+        var exception = Assert.ThrowsAsync<PluggableFactoryException>(async () => await _uut!.Create(document));
+        Assert.AreEqual(
+            $"Instance number property must be an integer. --{instancePropertyAsString}-- is not an integer.",
             exception!.Message);
         Assert.AreEqual(null, exception.InnerException);
     }
@@ -144,10 +179,11 @@ internal class PluggableFactoryTest<T>
 
             foreach (var type in typesOfEnumerator)
             {
-                var json = $"{{\"type\":\"{type}\"}}";
+                var instance = _fixture.Create<int>();
+                var json = $"{{\"type\":\"{type}\", \"instance\":{instance}}}";
 
                 using var document = JsonDocument.Parse(json);
-                _ = await _uut!.Create(document);
+                await _uut!.Create(document);
 
                 pluginMock.Verify(m => m.Create(document, type), Times.Once);
             }
@@ -179,7 +215,8 @@ internal class PluggableFactoryTest<T>
 
             foreach (var type in typesOfEnumerator)
             {
-                var json = $"{{\"type\":\"{type}\"}}";
+                var instance = _fixture.Create<int>();
+                var json = $"{{\"type\":\"{type}\",\"instance\":{instance}}}";
 
                 using var document = JsonDocument.Parse(json);
                 var exception = Assert.ThrowsAsync<PluggableFactoryException>(async () => await _uut!.Create(document));

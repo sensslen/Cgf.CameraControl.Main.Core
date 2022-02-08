@@ -25,7 +25,8 @@ public class PluggableFactory<T> : WillLog
             }
             catch (Exception e)
             {
-                throw new PluggableFactoryException($"Failed to create type {concreteType} from :\n{document}", e);
+                throw new PluggableFactoryException(
+                    $"Failed to create type {concreteType} from: {JsonSerializer.Serialize(document)}", e);
             }
         }
 
@@ -36,16 +37,31 @@ public class PluggableFactory<T> : WillLog
     {
         if (document.RootElement.TryGetProperty(TypeIdentifier, out var typeProperty))
         {
-            var typePropertyAsString = typeProperty.GetString();
-            if (typePropertyAsString == null)
+            if (typeProperty.ValueKind == JsonValueKind.String)
             {
-                throw new PluggableFactoryException("Failed to read type property");
+                return typeProperty.GetString()!;
             }
 
-            return typePropertyAsString;
+            throw new PluggableFactoryException(
+                $"Type property must be a string. --{FormatJsonElement(typeProperty)}-- is not a string.");
         }
 
         throw new PluggableFactoryException("Type property not found");
+    }
+
+    protected static string FormatJsonElement(JsonElement element)
+    {
+        switch (element.ValueKind)
+        {
+            case JsonValueKind.Null:
+                return "null";
+            case JsonValueKind.Undefined:
+                return "undefined";
+            case JsonValueKind.String:
+                return $"\"{element.ToString()}\"";
+            default:
+                return element.ToString();
+        }
     }
 
     public async ValueTask RegisterPlugin(IFactoryPlugin<T> newPlugin)

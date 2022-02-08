@@ -105,3 +105,4 @@ dist
 .vs
 src/Cgf.CameraControl.Main.Core/bin
 obj
+*.deps.json

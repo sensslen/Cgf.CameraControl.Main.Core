@@ -1,5 +1,15 @@
 ﻿namespace Cgf.CameraControl.Main.Core.Test.GenericFactory;
 
-internal class FactoryTestClass
+public class FactoryTestClass : IDisposable
 {
+    public void Dispose()
+    {
+    }
+}
+
+public class FactoryTestClass2 : IDisposable
+{
+    public void Dispose()
+    {
+    }
 }
