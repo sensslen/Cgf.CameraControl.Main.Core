@@ -1,55 +1,48 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Concurrent;
+using System.Text.Json;
+using Cgf.CameraControl.Main.Core.Extensions;
 using Cgf.CameraControl.Main.Core.Logging;
 
 namespace Cgf.CameraControl.Main.Core.GenericFactory;
 
-public class PluggableInstanceManager<T> : PluggableFactory<T>, IDisposable where T : IDisposable
+public class PluggableInstanceManager<T> : PluggableFactory<T>, IAsyncDisposable where T : IAsyncDisposable
 {
     private const string InstanceNumberIdentifier = "instance";
-    private readonly Dictionary<int, T> _instances = new();
+    private readonly ConcurrentDictionary<int, T> _instances = new();
 
     public PluggableInstanceManager(ILogger logger) : base(new Dictionary<string, IFactoryPlugin<T>>(), logger,
         typeof(PluggableInstanceManager<T>).FullName)
     {
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         foreach (var instance in _instances)
         {
-            instance.Value.Dispose();
+            await instance.Value.DisposeAsync();
         }
 
         _instances.Clear();
     }
 
-    public T? Get(int instanceNumber)
+    public T? Get(int instanceNumber) => _instances.TryGetValue(instanceNumber, out var instance) ? instance : default;
+
+    public new async ValueTask Create(JsonElement config)
     {
-        lock (_instances)
+        var instanceNumber = ReadInstanceNumber(config);
+        var newInstance = await base.Create(config);
+
+        var success = _instances.TryAdd(instanceNumber, newInstance);
+        if (!success)
         {
-            return _instances.TryGetValue(instanceNumber, out var instance) ? instance : default;
+            throw new ConfigurationException(
+                $"There was already an instance created with number {instanceNumber}");
         }
     }
 
-    public new async ValueTask Create(JsonDocument document)
+    private static int ReadInstanceNumber(JsonElement config)
     {
-        var instanceNumber = ReadInstanceNumber(document);
-        var newInstance = await base.Create(document);
-        lock (_instances)
-        {
-            if (_instances.ContainsKey(instanceNumber))
-            {
-                throw new PluggableFactoryException(
-                    $"There was already an instance created with number {instanceNumber}");
-            }
-
-            _instances[instanceNumber] = newInstance;
-        }
-    }
-
-    private static int ReadInstanceNumber(JsonDocument document)
-    {
-        if (document.RootElement.TryGetProperty(InstanceNumberIdentifier, out var instanceNumberProperty))
+        if (config.TryGetProperty(InstanceNumberIdentifier, out var instanceNumberProperty))
         {
             if (instanceNumberProperty.ValueKind == JsonValueKind.Number &&
                 instanceNumberProperty.TryGetInt32(out var instanceNumber))
@@ -57,10 +50,10 @@ public class PluggableInstanceManager<T> : PluggableFactory<T>, IDisposable wher
                 return instanceNumber;
             }
 
-            throw new PluggableFactoryException(
-                $"Instance number property must be an integer. --{FormatJsonElement(instanceNumberProperty)}-- is not an integer.");
+            throw new ConfigurationException(
+                $"Instance number property must be an integer. --{instanceNumberProperty.Format()}-- is not an integer.");
         }
 
-        throw new PluggableFactoryException("Instance number property not found");
+        throw new ConfigurationException("Instance number property not found");
     }
 }

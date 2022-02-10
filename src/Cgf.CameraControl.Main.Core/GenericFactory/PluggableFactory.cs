@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Cgf.CameraControl.Main.Core.Extensions;
 using Cgf.CameraControl.Main.Core.Logging;
 
 namespace Cgf.CameraControl.Main.Core.GenericFactory;
@@ -14,54 +15,39 @@ public class PluggableFactory<T> : WillLog
         _plugins = initialPlugins;
     }
 
-    public async ValueTask<T> Create(JsonDocument document)
+    public async ValueTask<T> Create(JsonElement config)
     {
-        var concreteType = ReadTypeIdentifier(document);
+        var concreteType = ReadTypeIdentifier(config);
         if (_plugins.TryGetValue(concreteType, out var plugin))
         {
             try
             {
-                return await plugin.Create(document, concreteType);
+                return await plugin.Create(config, concreteType);
             }
             catch (Exception e)
             {
-                throw new PluggableFactoryException(
-                    $"Failed to create type {concreteType} from: {JsonSerializer.Serialize(document)}", e);
+                throw new ConfigurationException(
+                    $"Failed to create type {concreteType} from: {JsonSerializer.Serialize(config)}", e);
             }
         }
 
-        throw new PluggableFactoryException($"Could not find plugin for type {concreteType}");
+        throw new ConfigurationException($"Could not find plugin for type {concreteType}");
     }
 
-    private static string ReadTypeIdentifier(JsonDocument document)
+    private static string ReadTypeIdentifier(JsonElement config)
     {
-        if (document.RootElement.TryGetProperty(TypeIdentifier, out var typeProperty))
+        if (config.TryGetProperty(TypeIdentifier, out var typeProperty))
         {
             if (typeProperty.ValueKind == JsonValueKind.String)
             {
                 return typeProperty.GetString()!;
             }
 
-            throw new PluggableFactoryException(
-                $"Type property must be a string. --{FormatJsonElement(typeProperty)}-- is not a string.");
+            throw new ConfigurationException(
+                $"Type property must be a string. --{typeProperty.Format()}-- is not a string.");
         }
 
-        throw new PluggableFactoryException("Type property not found");
-    }
-
-    protected static string FormatJsonElement(JsonElement element)
-    {
-        switch (element.ValueKind)
-        {
-            case JsonValueKind.Null:
-                return "null";
-            case JsonValueKind.Undefined:
-                return "undefined";
-            case JsonValueKind.String:
-                return $"\"{element.ToString()}\"";
-            default:
-                return element.ToString();
-        }
+        throw new ConfigurationException("Type property not found");
     }
 
     public async ValueTask RegisterPlugin(IFactoryPlugin<T> newPlugin)

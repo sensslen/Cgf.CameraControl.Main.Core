@@ -1,6 +1,6 @@
 ﻿namespace Cgf.CameraControl.Main.Core.Test.GenericFactory;
 
-public record FactoryTestClass(string Id) : ITestAsyncDisposable
+public record FactoryTestClass2(string Id) : ITestAsyncDisposable
 {
     public ValueTask DisposeAsync()
     {

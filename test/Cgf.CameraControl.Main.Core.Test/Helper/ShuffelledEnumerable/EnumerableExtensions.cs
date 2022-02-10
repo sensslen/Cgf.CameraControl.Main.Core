@@ -1,40 +1,36 @@
-﻿namespace NuGetUtility.Test.Helper.ShuffelledEnumerable
+﻿namespace Cgf.CameraControl.Main.Core.Test.Helper.ShuffelledEnumerable;
+
+/// <summary>
+///     credit: https://stackoverflow.com/a/5807238/1199089
+/// </summary>
+public static class EnumerableExtensions
 {
-    /// <summary>
-    ///     credit: https://stackoverflow.com/a/5807238/1199089
-    /// </summary>
-    public static class EnumerableExtensions
+    public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) => source.Shuffle(new Random());
+
+    public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source, Random rng)
     {
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
+        if (source == null)
         {
-            return source.Shuffle(new Random());
+            throw new ArgumentNullException(nameof(source));
         }
 
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source, Random rng)
+        if (rng == null)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (rng == null)
-            {
-                throw new ArgumentNullException(nameof(rng));
-            }
-
-            return source.ShuffleIterator(rng);
+            throw new ArgumentNullException(nameof(rng));
         }
 
-        private static IEnumerable<T> ShuffleIterator<T>(this IEnumerable<T> source, Random rng)
-        {
-            var buffer = source.ToList();
-            for (var i = 0; i < buffer.Count; i++)
-            {
-                var j = rng.Next(i, buffer.Count);
-                yield return buffer[j];
+        return source.ShuffleIterator(rng);
+    }
 
-                buffer[j] = buffer[i];
-            }
+    private static IEnumerable<T> ShuffleIterator<T>(this IEnumerable<T> source, Random rng)
+    {
+        var buffer = source.ToList();
+        for (var i = 0; i < buffer.Count; i++)
+        {
+            var j = rng.Next(i, buffer.Count);
+            yield return buffer[j];
+
+            buffer[j] = buffer[i];
         }
     }
 }

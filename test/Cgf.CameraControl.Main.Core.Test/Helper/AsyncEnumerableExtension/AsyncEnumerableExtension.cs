@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace Cgf.CameraControl.Main.Core.Test.Helper.AsyncEnumerableExtension;
+﻿namespace Cgf.CameraControl.Main.Core.Test.Helper.AsyncEnumerableExtension;
 
 internal static class AsyncEnumerableExtension
 {

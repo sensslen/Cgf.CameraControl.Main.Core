@@ -3,14 +3,16 @@ using AutoFixture;
 using Cgf.CameraControl.Main.Core.GenericFactory;
 using Cgf.CameraControl.Main.Core.Logging;
 using Cgf.CameraControl.Main.Core.Test.Helper.AsyncEnumerableExtension;
+using Cgf.CameraControl.Main.Core.Test.Helper.ShuffelledEnumerable;
 using Moq;
-using NuGetUtility.Test.Helper.ShuffelledEnumerable;
 using NUnit.Framework;
 
 namespace Cgf.CameraControl.Main.Core.Test.GenericFactory;
 
+[TestFixture(typeof(int))]
 [TestFixture(typeof(string))]
 [TestFixture(typeof(FactoryTestClass))]
+[TestFixture(typeof(FactoryTestClass2))]
 internal class PluggableFactoryTest<T>
 {
     [SetUp]
@@ -33,11 +35,12 @@ internal class PluggableFactoryTest<T>
     [TestCase("{\"type\":\"1\"}", "1")]
     [TestCase("{\"type\":\"string\"}", "string")]
     [TestCase("{\"type\":\"abc\"}", "abc")]
-    public void Create_Should_ThrowErrorWhenCreating_If_NoPluginRegistered(string inputJson,
+    public void Create_Should_ThrowError_If_NoPluginRegistered(string inputJson,
         string typeString)
     {
         using var document = JsonDocument.Parse(inputJson);
-        var exception = Assert.ThrowsAsync<PluggableFactoryException>(async () => await _uut!.Create(document));
+        var exception =
+            Assert.ThrowsAsync<ConfigurationException>(async () => await _uut!.Create(document.RootElement));
         Assert.AreEqual($"Could not find plugin for type {typeString}", exception!.Message);
         Assert.AreEqual(null, exception.InnerException);
     }
@@ -67,7 +70,7 @@ internal class PluggableFactoryTest<T>
     [TestCase("{\"type\":\"1\"}", "1")]
     [TestCase("{\"type\":\"string\"}", "string")]
     [TestCase("{\"type\":\"abc\"}", "abc")]
-    public async Task Create_Should_ThrowErrorWhenCreating_If_RequestingPluginOfDifferentType(string inputJson,
+    public async Task Create_Should_ThrowError_If_RequestingPluginOfDifferentType(string inputJson,
         string typeString)
     {
         var pluginMock = new Mock<IFactoryPlugin<T>>();
@@ -77,13 +80,14 @@ internal class PluggableFactoryTest<T>
         await _uut!.RegisterPlugin(pluginMock.Object);
 
         using var document = JsonDocument.Parse(inputJson);
-        var exception = Assert.ThrowsAsync<PluggableFactoryException>(async () => await _uut!.Create(document));
+        var exception =
+            Assert.ThrowsAsync<ConfigurationException>(async () => await _uut!.Create(document.RootElement));
         Assert.AreEqual($"Could not find plugin for type {typeString}", exception!.Message);
         Assert.AreEqual(null, exception.InnerException);
     }
 
     [Test]
-    public async Task Create_Should_ThrowErrorWhenCreating_If_TypeIdentifierIsMissing()
+    public async Task Create_Should_ThrowError_If_TypeIdentifierIsMissing()
     {
         var pluginMock = new Mock<IFactoryPlugin<T>>();
         pluginMock.Setup(m => m.GetSupportedTypeIdentifiers())
@@ -92,7 +96,8 @@ internal class PluggableFactoryTest<T>
         await _uut!.RegisterPlugin(pluginMock.Object);
 
         using var document = JsonDocument.Parse("{\"abc\":\"cde\"}");
-        var exception = Assert.ThrowsAsync<PluggableFactoryException>(async () => await _uut!.Create(document));
+        var exception =
+            Assert.ThrowsAsync<ConfigurationException>(async () => await _uut!.Create(document.RootElement));
         Assert.AreEqual("Type property not found", exception!.Message);
         Assert.AreEqual(null, exception.InnerException);
     }
@@ -105,7 +110,7 @@ internal class PluggableFactoryTest<T>
     [TestCase("{\"type\":false}", "False")]
     [TestCase("{\"type\":true}", "True")]
     [TestCase("{\"type\":null}", "null")]
-    public async Task Create_Should_ThrowErrorWhenCreating_If_TypeIdentifierIsNotString(string inputJson,
+    public async Task Create_Should_ThrowError_If_TypeIdentifierIsNotString(string inputJson,
         string typePropertyAsString)
     {
         var pluginMock = new Mock<IFactoryPlugin<T>>();
@@ -115,7 +120,8 @@ internal class PluggableFactoryTest<T>
         await _uut!.RegisterPlugin(pluginMock.Object);
 
         using var document = JsonDocument.Parse(inputJson);
-        var exception = Assert.ThrowsAsync<PluggableFactoryException>(async () => await _uut!.Create(document));
+        var exception =
+            Assert.ThrowsAsync<ConfigurationException>(async () => await _uut!.Create(document.RootElement));
         Assert.AreEqual($"Type property must be a string. --{typePropertyAsString}-- is not a string.",
             exception!.Message);
         Assert.AreEqual(null, exception.InnerException);
@@ -147,10 +153,44 @@ internal class PluggableFactoryTest<T>
                 var json = $"{{\"type\":\"{type}\"}}";
 
                 using var document = JsonDocument.Parse(json);
-                _ = await _uut!.Create(document);
+                _ = await _uut!.Create(document.RootElement);
 
-                pluginMock.Verify(m => m.Create(document, type), Times.Once);
+                pluginMock.Verify(m => m.Create(document.RootElement, type), Times.Once);
             }
+        }
+    }
+
+    [Test]
+    public async Task Create_Should_ReturnInstanceFromCorrectPlugin()
+    {
+        var instancesByType = _fixture.CreateMany<(string Type, T Instance)>().ToArray();
+        var pluginMocks = instancesByType.Select(instanceAndType =>
+        {
+            var result = new Mock<IFactoryPlugin<T>>();
+            result.Setup(m => m.GetSupportedTypeIdentifiers())
+                .Returns(new[] { instanceAndType.Type }.AsAsyncEnumerable());
+            result.Setup(m => m.Create(It.IsAny<JsonElement>(), instanceAndType.Type))
+                .Returns(ValueTask.FromResult(instanceAndType.Instance));
+            return result;
+        }).ToArray();
+
+        foreach (var pluginMock in pluginMocks)
+        {
+            await _uut!.RegisterPlugin(pluginMock.Object);
+        }
+
+        var pluginMockIndex = 0;
+        foreach (var instanceAndType in instancesByType)
+        {
+            var pluginMock = pluginMocks[pluginMockIndex++];
+
+            var json = $"{{\"type\":\"{instanceAndType.Type}\"}}";
+
+            using var document = JsonDocument.Parse(json);
+            var instance = await _uut!.Create(document.RootElement);
+
+            pluginMock.Verify(m => m.Create(document.RootElement, instanceAndType.Type), Times.Once);
+            Assert.AreEqual(instanceAndType.Instance, instance);
         }
     }
 
@@ -162,8 +202,8 @@ internal class PluggableFactoryTest<T>
         {
             var result = new Mock<IFactoryPlugin<T>>();
             result.Setup(m => m.GetSupportedTypeIdentifiers()).Returns(types.AsAsyncEnumerable());
-            result.Setup(m => m.Create(It.IsAny<JsonDocument>(), It.IsAny<string>()))
-                .Callback((JsonDocument _, string type) => throw new Exception(type));
+            result.Setup(m => m.Create(It.IsAny<JsonElement>(), It.IsAny<string>()))
+                .Callback((JsonElement _, string type) => throw new Exception(type));
             return result;
         }).ToArray();
 
@@ -182,7 +222,8 @@ internal class PluggableFactoryTest<T>
                 var json = $"{{\"type\":\"{type}\"}}";
 
                 using var document = JsonDocument.Parse(json);
-                var exception = Assert.ThrowsAsync<PluggableFactoryException>(async () => await _uut!.Create(document));
+                var exception =
+                    Assert.ThrowsAsync<ConfigurationException>(async () => await _uut!.Create(document.RootElement));
                 Assert.AreEqual($"Failed to create type {type} from: {json}",
                     exception!.Message);
                 Assert.IsInstanceOf<Exception>(exception.InnerException);
