@@ -4,7 +4,7 @@ using Cgf.CameraControl.Main.Core.Logging;
 
 namespace Cgf.CameraControl.Main.Core.GenericFactory;
 
-public class PluggableFactory<T> : WillLog
+public class PluggableFactory<T> : WillLog, IPluggableFactory<T>
 {
     private const string TypeIdentifier = "type";
     private readonly Dictionary<string, IFactoryPlugin<T>> _plugins;
@@ -34,22 +34,6 @@ public class PluggableFactory<T> : WillLog
         throw new ConfigurationException($"Could not find plugin for type {concreteType}");
     }
 
-    private static string ReadTypeIdentifier(JsonElement config)
-    {
-        if (config.TryGetProperty(TypeIdentifier, out var typeProperty))
-        {
-            if (typeProperty.ValueKind == JsonValueKind.String)
-            {
-                return typeProperty.GetString()!;
-            }
-
-            throw new ConfigurationException(
-                $"Type property must be a string. --{typeProperty.Format()}-- is not a string.");
-        }
-
-        throw new ConfigurationException("Type property not found");
-    }
-
     public async ValueTask RegisterPlugin(IFactoryPlugin<T> newPlugin)
     {
         await foreach (var type in newPlugin.GetSupportedTypeIdentifiers())
@@ -66,5 +50,21 @@ public class PluggableFactory<T> : WillLog
                 }
             }
         }
+    }
+
+    private static string ReadTypeIdentifier(JsonElement config)
+    {
+        if (config.TryGetProperty(TypeIdentifier, out var typeProperty))
+        {
+            if (typeProperty.ValueKind == JsonValueKind.String)
+            {
+                return typeProperty.GetString()!;
+            }
+
+            throw new ConfigurationException(
+                $"Type property must be a string. --{typeProperty.Format()}-- is not a string.");
+        }
+
+        throw new ConfigurationException("Type property not found");
     }
 }

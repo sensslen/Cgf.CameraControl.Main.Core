@@ -5,7 +5,7 @@ using Cgf.CameraControl.Main.Core.Logging;
 
 namespace Cgf.CameraControl.Main.Core.GenericFactory;
 
-public class PluggableInstanceManager<T> : PluggableFactory<T>, IAsyncDisposable where T : IAsyncDisposable
+public class PluggableInstanceManager<T> : PluggableFactory<T>, IPluggableInstanceManager<T> where T : IAsyncDisposable
 {
     private const string InstanceNumberIdentifier = "instance";
     private readonly ConcurrentDictionary<int, T> _instances = new();

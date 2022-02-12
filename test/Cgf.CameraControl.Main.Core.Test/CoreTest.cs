@@ -1,5 +1,9 @@
 ﻿using System.Text.Json;
-using Cgf.CameraControl.Main.Core.Logging;
+using AutoFixture;
+using Cgf.CameraControl.Main.Core.Camera;
+using Cgf.CameraControl.Main.Core.GenericFactory;
+using Cgf.CameraControl.Main.Core.HMI;
+using Cgf.CameraControl.Main.Core.VideoMixer;
 using Moq;
 using NUnit.Framework;
 
@@ -11,12 +15,30 @@ internal class CoreTest
     [SetUp]
     public void SetUp()
     {
-        _logger = new Mock<ILogger>();
-        _uut = new Core(_logger.Object);
+        _cameraInstanceManager = new Mock<IPluggableInstanceManager<ICamera>>();
+        _videoMixerInstanceManager = new Mock<IPluggableInstanceManager<IVideoMixer>>();
+        _hmiInstanceManager = new Mock<IPluggableInstanceManager<IHmi>>();
+        _fixture = new Fixture();
+        _uut = new Core(_cameraInstanceManager.Object, _videoMixerInstanceManager.Object, _hmiInstanceManager.Object);
+    }
+
+    [TearDown]
+    public async ValueTask Teardown()
+    {
+        if (_uut == null)
+        {
+            return;
+        }
+
+        await _uut.DisposeAsync();
+        _uut = null;
     }
 
     private Core? _uut;
-    private Mock<ILogger>? _logger;
+    private Fixture? _fixture;
+    private Mock<IPluggableInstanceManager<ICamera>>? _cameraInstanceManager;
+    private Mock<IPluggableInstanceManager<IVideoMixer>>? _videoMixerInstanceManager;
+    private Mock<IPluggableInstanceManager<IHmi>>? _hmiInstanceManager;
 
     [Test]
     public void Bootstrap_Should_ThrowError_If_CamsPropertyMissingInInput()
@@ -98,5 +120,80 @@ internal class CoreTest
         Assert.AreEqual($"The interfaces property must be an array. --{interfacesProperty}-- is not an array.",
             exception!.Message);
         Assert.IsNull(exception.InnerException);
+    }
+
+    [Test]
+    public async ValueTask Bootstrap_Should_CreateNoInstancesForEmptyConfiguration()
+    {
+        var json = "{\"cams\":[],\"videoMixers\":[],\"interfaces\":[]}";
+        using var document = JsonDocument.Parse(json);
+        await _uut!.Bootstrap(document);
+
+        _cameraInstanceManager!.Verify(m => m.Create(It.IsAny<JsonElement>()), Times.Never);
+        _videoMixerInstanceManager!.Verify(m => m.Create(It.IsAny<JsonElement>()), Times.Never);
+        _hmiInstanceManager!.Verify(m => m.Create(It.IsAny<JsonElement>()), Times.Never);
+    }
+
+    [Test]
+    public async ValueTask Bootstrap_Should_CreateCorrectCameraInstances()
+    {
+        var cams = _fixture!.CreateMany<string>().ToArray();
+        var jsonFormattedCams = string.Join(",", cams.Select(s => $"\"{s}\""));
+        var json = $"{{\"cams\":[{jsonFormattedCams}],\"videoMixers\":[],\"interfaces\":[]}}";
+        using var document = JsonDocument.Parse(json);
+        await _uut!.Bootstrap(document);
+
+        _cameraInstanceManager!.Verify(m => m.Create(It.IsAny<JsonElement>()), Times.Exactly(cams.Length));
+        _videoMixerInstanceManager!.Verify(m => m.Create(It.IsAny<JsonElement>()), Times.Never);
+        _hmiInstanceManager!.Verify(m => m.Create(It.IsAny<JsonElement>()), Times.Never);
+
+        var camsJsonElements = document.RootElement.GetProperty("cams").EnumerateArray();
+        Assert.AreEqual(cams.Length, camsJsonElements.Count());
+        foreach (var cam in camsJsonElements)
+        {
+            _cameraInstanceManager.Verify(m => m.Create(cam), Times.Once);
+        }
+    }
+
+    [Test]
+    public async ValueTask Bootstrap_Should_CreateCorrectVideoMixersInstances()
+    {
+        var videoMixers = _fixture!.CreateMany<string>().ToArray();
+        var jsonFormattedVideoMixers = string.Join(",", videoMixers.Select(s => $"\"{s}\""));
+        var json = $"{{\"videoMixers\":[{jsonFormattedVideoMixers}],\"cams\":[],\"interfaces\":[]}}";
+        using var document = JsonDocument.Parse(json);
+        await _uut!.Bootstrap(document);
+
+        _cameraInstanceManager!.Verify(m => m.Create(It.IsAny<JsonElement>()), Times.Never);
+        _videoMixerInstanceManager!.Verify(m => m.Create(It.IsAny<JsonElement>()), Times.Exactly(videoMixers.Length));
+        _hmiInstanceManager!.Verify(m => m.Create(It.IsAny<JsonElement>()), Times.Never);
+
+        var videoMixersJsonElements = document.RootElement.GetProperty("videoMixers").EnumerateArray();
+        Assert.AreEqual(videoMixers.Length, videoMixersJsonElements.Count());
+        foreach (var videoMixer in videoMixersJsonElements)
+        {
+            _videoMixerInstanceManager.Verify(m => m.Create(videoMixer), Times.Once);
+        }
+    }
+
+    [Test]
+    public async ValueTask Bootstrap_Should_CreateCorrectInterfaceInstances()
+    {
+        var interfaces = _fixture!.CreateMany<string>().ToArray();
+        var jsonFormattedInterfaces = string.Join(",", interfaces.Select(s => $"\"{s}\""));
+        var json = $"{{\"interfaces\":[{jsonFormattedInterfaces}],\"cams\":[],\"videoMixers\":[]}}";
+        using var document = JsonDocument.Parse(json);
+        await _uut!.Bootstrap(document);
+
+        _cameraInstanceManager!.Verify(m => m.Create(It.IsAny<JsonElement>()), Times.Never);
+        _videoMixerInstanceManager!.Verify(m => m.Create(It.IsAny<JsonElement>()), Times.Never);
+        _hmiInstanceManager!.Verify(m => m.Create(It.IsAny<JsonElement>()), Times.Exactly(interfaces.Length));
+
+        var interfacesJsonElements = document.RootElement.GetProperty("interfaces").EnumerateArray();
+        Assert.AreEqual(interfaces.Length, interfacesJsonElements.Count());
+        foreach (var hmi in interfacesJsonElements)
+        {
+            _hmiInstanceManager.Verify(m => m.Create(hmi), Times.Once);
+        }
     }
 }

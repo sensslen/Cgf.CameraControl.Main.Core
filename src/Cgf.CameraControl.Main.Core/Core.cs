@@ -3,7 +3,6 @@ using Cgf.CameraControl.Main.Core.Camera;
 using Cgf.CameraControl.Main.Core.Extensions;
 using Cgf.CameraControl.Main.Core.GenericFactory;
 using Cgf.CameraControl.Main.Core.HMI;
-using Cgf.CameraControl.Main.Core.Logging;
 using Cgf.CameraControl.Main.Core.VideoMixer;
 
 namespace Cgf.CameraControl.Main.Core;
@@ -11,21 +10,21 @@ namespace Cgf.CameraControl.Main.Core;
 public class Core : IAsyncDisposable
 {
     private const string CameraIdentifier = "cams";
-
     private const string VideoMixerIdentifier = "videoMixers";
-
     private const string HmiIdentifier = "interfaces";
 
-    public Core(ILogger logger)
+    public Core(IPluggableInstanceManager<ICamera> cameraInstanceManager,
+        IPluggableInstanceManager<IVideoMixer> videoMixerInstanceManager,
+        IPluggableInstanceManager<IHmi> hmiInstanceManager)
     {
-        CameraInstanceManager = new PluggableInstanceManager<ICamera>(logger);
-        VideoMixerInstanceManager = new PluggableInstanceManager<IVideoMixer>(logger);
-        HmiInstanceManager = new PluggableInstanceManager<IHmi>(logger);
+        CameraInstanceManager = cameraInstanceManager;
+        VideoMixerInstanceManager = videoMixerInstanceManager;
+        HmiInstanceManager = hmiInstanceManager;
     }
 
-    public PluggableInstanceManager<ICamera> CameraInstanceManager { get; }
-    public PluggableInstanceManager<IVideoMixer> VideoMixerInstanceManager { get; }
-    public PluggableInstanceManager<IHmi> HmiInstanceManager { get; }
+    public IPluggableInstanceManager<ICamera> CameraInstanceManager { get; }
+    public IPluggableInstanceManager<IVideoMixer> VideoMixerInstanceManager { get; }
+    public IPluggableInstanceManager<IHmi> HmiInstanceManager { get; }
 
     public async ValueTask DisposeAsync()
     {
@@ -51,7 +50,7 @@ public class Core : IAsyncDisposable
 
         foreach (var hmiConfig in hmiConfigurations)
         {
-            await VideoMixerInstanceManager.Create(hmiConfig);
+            await HmiInstanceManager.Create(hmiConfig);
         }
     }
 
