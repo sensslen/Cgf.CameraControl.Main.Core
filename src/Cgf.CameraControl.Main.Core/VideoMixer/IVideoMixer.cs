@@ -2,7 +2,7 @@
 
 namespace Cgf.CameraControl.Main.Core.VideoMixer;
 
-public interface IVideoMixer : IConnectionStateProvider, IAsyncDisposable
+public interface IVideoMixer : IObservable<ConnectionState>, IAsyncDisposable
 {
     /// <summary>
     ///     String identifying the connection to the video mixer

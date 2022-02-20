@@ -2,6 +2,6 @@
 
 namespace Cgf.CameraControl.Main.Core.HMI;
 
-public interface IHmi : IAsyncDisposable, IConnectionStateProvider
+public interface IHmi : IAsyncDisposable, IObservable<ConnectionState>
 {
 }

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\3rdParty\LibAtem\LibAtem\LibAtem.csproj" />
+    <ProjectReference Include="..\Cgf.CameraControl.Main.AtemConnection\Cgf.CameraControl.Main.AtemConnection.csproj" />
+    <ProjectReference Include="..\Cgf.CameraControl.Main.Core\Cgf.CameraControl.Main.Core.csproj" />
+    <ProjectReference Include="..\src\Cgf.CameraControl.Main.Core\Cgf.CameraControl.Main.Core.csproj" />
+  </ItemGroup>
+
+</Project>

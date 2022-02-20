@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+    <ProjectReference Include="..\..\3rdParty\LibAtem\LibAtem\LibAtem.csproj" />
+    <ProjectReference Include="..\3rdParty\LibAtem\LibAtem\LibAtem.csproj" />
   </ItemGroup>
 
 </Project>

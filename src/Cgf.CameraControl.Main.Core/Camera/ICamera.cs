@@ -2,7 +2,7 @@
 
 namespace Cgf.CameraControl.Main.Core.Camera;
 
-public interface ICamera : IConnectionStateProvider, IAsyncDisposable
+public interface ICamera : IObservable<ConnectionState>, IAsyncDisposable
 {
     /// <summary>
     ///     String identifying the camera connection

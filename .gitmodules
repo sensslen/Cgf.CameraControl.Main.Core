@@ -1,0 +1,3 @@
+[submodule "3rdParty/LibAtem"]
+	path = 3rdParty/LibAtem
+	url = https://github.com/LibAtem/LibAtem.git

@@ -16,7 +16,7 @@ public class WillLog
         _logger.Log(_moduleIdentifier, message, level);
     }
 
-    public void Log(Exception e, string moduleIdentifier, string message, LogLevel level)
+    public void Log(Exception e, string message, LogLevel level)
     {
         _logger.Log(e, _moduleIdentifier, message, level);
     }

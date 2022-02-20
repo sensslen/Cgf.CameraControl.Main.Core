@@ -1,3 +1,3 @@
 ﻿namespace Cgf.CameraControl.Main.Core.VideoMixer;
 
-public record VideoImageSelection(int number, string identifier);
+public record VideoImageSelection(int Number, string Identifier);
