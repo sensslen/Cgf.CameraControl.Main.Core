@@ -34,25 +34,26 @@
         "start": "node dist/index.js"
     },
     "dependencies": {
-        "@sensslen/node-gamepad": "1.0.4",
-        "ajv": "^8.10.0",
+        "@sensslen/node-gamepad": "1.0.5",
+        "ajv": "^8.11.0",
+        "atem-connection": "^2.4.0",
         "cgf.cameracontrol.main.core": "^1.2.1",
         "everpolate": "0.0.3",
         "strict-event-emitter-types": "^2.0.0",
-        "yargs": "^17.4.0"
+        "yargs": "^17.4.1"
     },
     "devDependencies": {
         "@types/yargs": "^17.0.10",
-        "@typescript-eslint/eslint-plugin": "^5.16.0",
-        "@typescript-eslint/parser": "^5.16.0",
-        "eslint": "^8.11.0",
+        "@typescript-eslint/eslint-plugin": "^5.20.0",
+        "@typescript-eslint/parser": "^5.20.0",
+        "eslint": "^8.13.0",
         "eslint-config-prettier": "^8.5.0",
-        "eslint-plugin-import": "^2.25.4",
+        "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-prettier": "^4.0.0",
-        "prettier": "^2.6.0",
+        "prettier": "^2.6.2",
         "shx": "^0.3.4",
         "sort-package-json": "^1.55.0",
         "ts-json-schema-generator": "^1.0.0",
-        "typescript": "^4.6.2"
+        "typescript": "^4.6.3"
     }
 }

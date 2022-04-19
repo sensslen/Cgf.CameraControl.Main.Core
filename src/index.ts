@@ -8,11 +8,17 @@ import { Logger } from './Logger';
 import { Rumblepad2Builder } from './Hmi/Gamepad/logitech/Rumblepad2/Rumblepad2Builder';
 import yargs from 'yargs/yargs';
 
-async function run(configPath: string) {
+async function run() {
+    const argv = await yargs(process.argv.slice(2))
+        .options({
+            config: { type: 'string', default: path.join(__dirname, 'config.json') },
+        })
+        .parseAsync();
+
     const logger = new Logger();
     let config: undefined;
     try {
-        config = JSON.parse(fs.readFileSync(configPath).toString());
+        config = JSON.parse(fs.readFileSync(argv.config).toString());
     } catch (error) {
         const typedError = error as Error;
         logger.error(typedError.message);
@@ -28,10 +34,4 @@ async function run(configPath: string) {
     await core.bootstrap(logger, config);
 }
 
-const argv = yargs(process.argv.slice(2))
-    .options({
-        config: { type: 'string', default: path.join(__dirname, 'config.json') },
-    })
-    .parseSync();
-
-run(argv.config);
+run();

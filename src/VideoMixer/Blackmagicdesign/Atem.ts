@@ -31,12 +31,12 @@ export class Atem implements IVideoMixer {
     }
 
     public async isKeySet(key: number): Promise<boolean> {
-        const atemState = await this.resolveStateOnce();
+        const atemState = await this.getCurrentSwitcherState();
         return this.isKeySetInState(atemState, key);
     }
 
     public async getAuxilarySelection(aux: number): Promise<number> {
-        const atemState = await this.resolveStateOnce();
+        const atemState = await this.getCurrentSwitcherState();
         const auxSelection = this.getAuxSelectionInState(atemState, aux);
         if (auxSelection !== undefined) {
             return auxSelection;
@@ -139,7 +139,7 @@ export class Atem implements IVideoMixer {
         return state.video.auxilliaries[aux];
     }
 
-    private resolveStateOnce(): Promise<AtemState> {
+    private getCurrentSwitcherState(): Promise<AtemState> {
         return new Promise((resolve, reject) => {
             if (this.connection.connection === undefined) {
                 reject('no connection');
