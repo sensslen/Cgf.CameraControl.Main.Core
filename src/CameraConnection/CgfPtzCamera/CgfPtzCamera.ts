@@ -20,7 +20,10 @@ export class CgfPtzCamera implements ICameraConnection {
     private _connected = false;
     private _connectionEmitter: StrictEventEmitter<EventEmitter, IConnection> = new EventEmitter();
 
-    constructor(private config: ICgfPtzCameraConfiguration, private logger: ILogger) {
+    constructor(
+        private config: ICgfPtzCameraConfiguration,
+        private logger: ILogger
+    ) {
         this.axios = axios.create({
             httpsAgent: new HttpsAgent({
                 rejectUnauthorized: false,
