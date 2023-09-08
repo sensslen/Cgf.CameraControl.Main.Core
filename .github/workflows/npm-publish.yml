@@ -29,7 +29,7 @@ jobs:
                   tag: latest
     npm-publish_prerelease:
         if: github.ref_type != 'tag'
-        name: npm-publish
+        name: npm-publish-prerelease
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
@@ -41,7 +41,7 @@ jobs:
                   node-version: '18'
             - run: npm install
             - run: npm run setuppublish
-            - name: Publish release
+            - name: Publish prerelease
               uses: JS-DevTools/npm-publish@v2
               with:
                   token: ${{ secrets.NPM_AUTH_TOKEN }}
