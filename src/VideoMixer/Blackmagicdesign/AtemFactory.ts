@@ -47,7 +47,10 @@ class AtemConnection implements IAtemConnection {
     readonly connection: AtemConnectionmanager;
     private startupResult: Promise<void> | undefined = undefined;
 
-    constructor(private ip: string, private logger: ILogger) {
+    constructor(
+        private ip: string,
+        private logger: ILogger
+    ) {
         this.atem = new Atem();
 
         this.atem.on('error', (error) => this.error(error));

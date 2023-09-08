@@ -24,6 +24,7 @@
         "clean": "shx rm -rf dist",
         "postinstall": "sort-package-json",
         "lint": "eslint --ext .ts src",
+        "lint-fix": "eslint --ext .ts --fix .",
         "logitech-fx10-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IRumblepad2Config -o src/Hmi/Gamepad/logitech/Fx10/ILogitechFx10Config.json --tsconfig ./tsconfig.json --additional-properties true",
         "logitech-rumblepad2-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IRumblepad2Config -o src/Hmi/Gamepad/logitech/Rumblepad2/IRumblepad2Config.json --tsconfig ./tsconfig.json --additional-properties true",
         "special-function-change-connection-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ISpecialFunctionConnectionChangeConfig -o src/Hmi/Gamepad/Shared/SpecialFunctions/ISpecialFunctionConnectionChangeConfig.json --tsconfig ./tsconfig.json --additional-properties true",
@@ -34,26 +35,27 @@
         "start": "node dist/index.js"
     },
     "dependencies": {
-        "@sensslen/node-gamepad": "1.0.5",
-        "ajv": "^8.11.0",
-        "atem-connection": "^2.4.0",
-        "cgf.cameracontrol.main.core": "^1.2.1",
+        "@sensslen/node-gamepad": "1.0.6",
+        "ajv": "^8.12.0",
+        "atem-connection": "^3.3.0",
+        "cgf.cameracontrol.main.core": "^1.2.3",
         "everpolate": "0.0.3",
         "strict-event-emitter-types": "^2.0.0",
         "yargs": "^17.4.1"
     },
     "devDependencies": {
-        "@types/yargs": "^17.0.10",
-        "@typescript-eslint/eslint-plugin": "^5.20.0",
-        "@typescript-eslint/parser": "^5.20.0",
-        "eslint": "^8.13.0",
-        "eslint-config-prettier": "^8.5.0",
-        "eslint-plugin-import": "^2.26.0",
-        "eslint-plugin-prettier": "^4.0.0",
-        "prettier": "^2.6.2",
+        "@types/node": "^20.5.9",
+        "@types/yargs": "^17.0.24",
+        "@typescript-eslint/eslint-plugin": "^6.6.0",
+        "@typescript-eslint/parser": "^6.6.0",
+        "eslint": "^8.48.0",
+        "eslint-config-prettier": "^9.0.0",
+        "eslint-plugin-import": "^2.28.1",
+        "eslint-plugin-prettier": "^5.0.0",
+        "prettier": "^3.0.3",
         "shx": "^0.3.4",
-        "sort-package-json": "^1.55.0",
-        "ts-json-schema-generator": "^1.0.0",
-        "typescript": "^4.6.3"
+        "sort-package-json": "^2.5.1",
+        "ts-json-schema-generator": "^1.3.0",
+        "typescript": "^5.2.2"
     }
 }

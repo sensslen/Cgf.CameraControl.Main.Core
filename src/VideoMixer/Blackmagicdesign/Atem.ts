@@ -18,7 +18,10 @@ export class Atem implements IVideoMixer {
         onAir: false,
     };
 
-    constructor(private config: IAtemConfig, private atemFactory: AtemFactory) {
+    constructor(
+        private config: IAtemConfig,
+        private atemFactory: AtemFactory
+    ) {
         this.connection = atemFactory.get(config.ip);
 
         this.connection.atem.on('stateChanged', (state, _pathToChange) => {
