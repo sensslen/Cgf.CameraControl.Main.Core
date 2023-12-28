@@ -1,0 +1,182 @@
+{
+  "$ref": "#/definitions/IRumblepad2Config",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ESpecialFunctionType": {
+      "enum": [
+        "key",
+        "macroLoop",
+        "connectionChange",
+        "macroToggle"
+      ],
+      "type": "string"
+    },
+    "IRumblepad2Config": {
+      "properties": {
+        "cameraMap": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "This map maps camera indexes to the mixer's input channel. In the map the key is the input number on the mixer and the value is the camera index in the configuration",
+          "type": "object"
+        },
+        "connectionChange": {
+          "properties": {
+            "alt": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "type": "number"
+                },
+                "left": {
+                  "type": "number"
+                },
+                "right": {
+                  "type": "number"
+                },
+                "up": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            },
+            "altLower": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "type": "number"
+                },
+                "left": {
+                  "type": "number"
+                },
+                "right": {
+                  "type": "number"
+                },
+                "up": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            },
+            "default": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "type": "number"
+                },
+                "left": {
+                  "type": "number"
+                },
+                "right": {
+                  "type": "number"
+                },
+                "up": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "default"
+          ],
+          "type": "object"
+        },
+        "instance": {
+          "type": "number"
+        },
+        "serialNumber": {
+          "type": "string"
+        },
+        "specialFunction": {
+          "properties": {
+            "alt": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "left": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "right": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "up": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                }
+              },
+              "type": "object"
+            },
+            "altLower": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "left": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "right": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "up": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                }
+              },
+              "type": "object"
+            },
+            "default": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "left": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "right": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "up": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "default"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "type": "string"
+        },
+        "videoMixer": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "cameraMap",
+        "connectionChange",
+        "instance",
+        "specialFunction",
+        "type",
+        "videoMixer"
+      ],
+      "type": "object"
+    },
+    "ISpecialFunctionDefinition": {
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/ESpecialFunctionType"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    }
+  }
+}

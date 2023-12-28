@@ -1,0 +1,178 @@
+{
+  "$ref": "#/definitions/IWebGamepadConfig",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ESpecialFunctionType": {
+      "enum": [
+        "key",
+        "macro",
+        "connectionChange"
+      ],
+      "type": "string"
+    },
+    "ISpecialFunctionDefinition": {
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/ESpecialFunctionType"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "IWebGamepadConfig": {
+      "properties": {
+        "communicationChannel": {
+          "type": "string"
+        },
+        "connectionChange": {
+          "properties": {
+            "alt": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "type": "number"
+                },
+                "left": {
+                  "type": "number"
+                },
+                "right": {
+                  "type": "number"
+                },
+                "up": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            },
+            "altLower": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "type": "number"
+                },
+                "left": {
+                  "type": "number"
+                },
+                "right": {
+                  "type": "number"
+                },
+                "up": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            },
+            "default": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "type": "number"
+                },
+                "left": {
+                  "type": "number"
+                },
+                "right": {
+                  "type": "number"
+                },
+                "up": {
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "default"
+          ],
+          "type": "object"
+        },
+        "instance": {
+          "type": "number"
+        },
+        "mixBlock": {
+          "type": "number"
+        },
+        "specialFunction": {
+          "properties": {
+            "alt": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "left": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "right": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "up": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                }
+              },
+              "type": "object"
+            },
+            "altLower": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "left": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "right": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "up": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                }
+              },
+              "type": "object"
+            },
+            "default": {
+              "additionalProperties": false,
+              "properties": {
+                "down": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "left": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "right": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                },
+                "up": {
+                  "$ref": "#/definitions/ISpecialFunctionDefinition"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "default"
+          ],
+          "type": "object"
+        },
+        "type": {
+          "type": "string"
+        },
+        "videoMixer": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "communicationChannel",
+        "connectionChange",
+        "instance",
+        "mixBlock",
+        "specialFunction",
+        "type",
+        "videoMixer"
+      ],
+      "type": "object"
+    }
+  }
+}

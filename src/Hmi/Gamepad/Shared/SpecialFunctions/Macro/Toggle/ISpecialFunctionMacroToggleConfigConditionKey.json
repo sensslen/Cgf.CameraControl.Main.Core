@@ -1,0 +1,28 @@
+{
+  "$ref": "#/definitions/ISpecialFunctionMacroToggleConfigConditionKey",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "EMacroToggleConditionType": {
+      "enum": [
+        "key",
+        "aux_selection"
+      ],
+      "type": "string"
+    },
+    "ISpecialFunctionMacroToggleConfigConditionKey": {
+      "properties": {
+        "key": {
+          "type": "number"
+        },
+        "type": {
+          "$ref": "#/definitions/EMacroToggleConditionType"
+        }
+      },
+      "required": [
+        "key",
+        "type"
+      ],
+      "type": "object"
+    }
+  }
+}
