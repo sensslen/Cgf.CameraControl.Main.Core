@@ -1,5 +1,4 @@
-import { IConnection } from '../GenericFactory/IConnection';
+import { IConnectionProvider } from '../GenericFactory/IConnectionProvider';
 import { IDisposable } from '../GenericFactory/IDisposable';
-import { ISubscription } from '../GenericFactory/ISubscription';
 
-export interface IHmi extends ISubscription<IConnection>, IDisposable {}
+export interface IHmi extends IConnectionProvider, IDisposable {}

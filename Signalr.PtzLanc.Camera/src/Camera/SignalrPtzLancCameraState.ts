@@ -1,4 +1,4 @@
-export class CgfPtzCameraState {
+export class SignalrPtzLancCameraState {
     pan = 0;
     tilt = 0;
     zoom = 0;

@@ -1,13 +1,10 @@
 {
-    "name": "cgf.cameracontrol.main.core",
+    "name": "cgf.cameracontrol.websocket.ptzlanc.camera",
     "version": "1.0.1-beta12",
-    "description": "Core Library of the Camera Control Software initially developped for usage at Chrischona Frauenfeld",
+    "description": "Camera implementation for the PtzLanc camera communicating through websockets",
     "keywords": [
         "Chrischona",
         "Frauenfeld",
-        "Atem",
-        "Blackmagic",
-        "atem-connection",
         "Camera",
         "PTZ"
     ],
@@ -21,9 +18,17 @@
     },
     "license": "MIT",
     "author": {
-        "name": "Simon Ensslen",
-        "email": "sensslen@gmail.com"
+        "name": "Benaja ",
+        "email": "a.b@c.com",
+        "url": "https://github.com/benaja"
     },
+    "contributors": [
+        {
+            "name": "Simon Ensslen",
+            "email": "sensslen@gmail.com",
+            "url": "https://github.com/sensslen"
+        }
+    ],
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
@@ -39,8 +44,11 @@
         "sort": "sort-package-json package.json"
     },
     "dependencies": {
+        "cgf.cameracontrol.main.core": "file:../Core/dist",
+        "partysocket": "^0.0.20",
         "rxjs": "^7.8.1",
         "strict-event-emitter-types": "^2.0.0",
+        "ws": "^8.16.0",
         "zod": "^3.22.4",
         "zod-validation-error": "^2.1.0"
     },

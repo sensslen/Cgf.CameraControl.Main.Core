@@ -1,13 +1,10 @@
 {
-    "name": "cgf.cameracontrol.main.core",
+    "name": "cgf.cameracontrol.signalr.ptzlanc.camera",
     "version": "1.0.1-beta12",
-    "description": "Core Library of the Camera Control Software initially developped for usage at Chrischona Frauenfeld",
+    "description": "Camera implementation for the PtzLanc camera communicating through signalr",
     "keywords": [
         "Chrischona",
         "Frauenfeld",
-        "Atem",
-        "Blackmagic",
-        "atem-connection",
         "Camera",
         "PTZ"
     ],
@@ -39,6 +36,9 @@
         "sort": "sort-package-json package.json"
     },
     "dependencies": {
+        "@microsoft/signalr": "^7.0.10",
+        "axios": "^1.5.0",
+        "cgf.cameracontrol.main.core": "file:../Core/dist",
         "rxjs": "^7.8.1",
         "strict-event-emitter-types": "^2.0.0",
         "zod": "^3.22.4",

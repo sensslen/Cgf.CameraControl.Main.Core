@@ -1,21 +1,16 @@
-import * as ConfigSchema from './Configuration/IConfigurationStructure.json';
-
+import { IConfig, configSchema } from './Configuration/IConfig';
 import { CameraConnectionFactory } from './CameraConnection/CameraConnectionFactory';
-import { CgfPtzCameraBuilder } from './CameraConnection/CgfPtzCamera/CgfPtzCameraBuilder';
-import { ConfigValidator } from './Configuration/ConfigValidator';
 import { HmiFactory } from './Hmi/HmiFactory';
 import { IBuilder } from './GenericFactory/IBuilder';
 import { ICameraConnection } from './CameraConnection/ICameraConnection';
-import { IConfig } from './Configuration/IConfig';
-import { IConfigurationStructure } from './Configuration/IConfigurationStructure';
-import { IConnection } from './GenericFactory/IConnection';
 import { IDisposable } from './GenericFactory/IDisposable';
 import { IHmi } from './Hmi/IHmi';
 import { IImageSelectionChange } from './VideoMixer/IImageSelectionChange';
 import { ILogger } from './Logger/ILogger';
-import { ISubscription } from './GenericFactory/ISubscription';
 import { IVideoMixer } from './VideoMixer/IVideoMixer';
 import { VideomixerFactory } from './VideoMixer/VideoMixerFactory';
+import { fromZodError } from 'zod-validation-error';
+import { rootConfigSchema } from './Configuration/IRootConfig';
 
 export class Core implements IDisposable {
     private _camFactory = new CameraConnectionFactory();
@@ -35,15 +30,14 @@ export class Core implements IDisposable {
     }
 
     public async bootstrap(logger: ILogger, config: unknown): Promise<void> {
-        const configValidator = new ConfigValidator();
-        const validConfig = configValidator.validate<IConfigurationStructure>(config, ConfigSchema);
-        if (validConfig === undefined) {
+        const parseResult = rootConfigSchema.safeParse(config);
+        if (parseResult.success === false) {
             this.error(logger, 'Failed to load configuration');
-            this.error(logger, configValidator.errorGet());
+            this.error(logger, fromZodError(parseResult.error).toString());
             return;
         }
 
-        await this._camFactory.builderAdd(new CgfPtzCameraBuilder(logger), logger);
+        const validConfig = parseResult.data;
 
         for (const cam of validConfig.cams) {
             await this._camFactory.parseConfig(cam, logger);
@@ -75,8 +69,7 @@ export { IBuilder };
 export { ILogger };
 export { VideomixerFactory };
 export { CameraConnectionFactory };
-export { IConnection };
 export { IVideoMixer };
 export { IImageSelectionChange };
 export { ICameraConnection };
-export { ISubscription };
+export { configSchema };

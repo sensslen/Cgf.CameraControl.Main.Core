@@ -1,27 +1,24 @@
 import * as signalR from '@microsoft/signalr';
 
+import { BehaviorSubject, Observable } from 'rxjs';
 import axios, { AxiosInstance } from 'axios';
 
-import { CgfPtzCameraState } from './CgfPtzCameraState';
-import { EventEmitter } from 'events';
 import { Agent as HttpsAgent } from 'https';
-import { ICameraConnection } from '../ICameraConnection';
-import { ICgfPtzCameraConfiguration } from './ICgfPtzCameraConfiguration';
-import { IConnection } from '../../GenericFactory/IConnection';
-import { ILogger } from '../../Logger/ILogger';
-import StrictEventEmitter from 'strict-event-emitter-types';
+import { ICameraConnection } from 'cgf.cameracontrol.main.core';
+import { ILogger } from 'cgf.cameracontrol.main.core';
+import { ISignalrPtzLancCameraConfiguration } from './ISignalrPtzLancCameraConfiguration';
+import { SignalrPtzLancCameraState } from './SignalrPtzLancCameraState';
 
-export class CgfPtzCamera implements ICameraConnection {
+export class SignalrPtzLancCamera implements ICameraConnection {
     private readonly axios: AxiosInstance;
     private readonly socketConnection: signalR.HubConnection;
-    private readonly currentState = new CgfPtzCameraState();
+    private readonly currentState = new SignalrPtzLancCameraState();
     private shouldTransmitState = false;
     private canTransmit = false;
-    private _connected = false;
-    private _connectionEmitter: StrictEventEmitter<EventEmitter, IConnection> = new EventEmitter();
+    private readonly connectionSubject = new BehaviorSubject<boolean>(false);
 
     constructor(
-        private config: ICgfPtzCameraConfiguration,
+        private config: ISignalrPtzLancCameraConfiguration,
         private logger: ILogger
     ) {
         this.axios = axios.create({
@@ -42,12 +39,8 @@ export class CgfPtzCamera implements ICameraConnection {
         return this.config.connectionUrl;
     }
 
-    public get connected(): boolean {
-        return this._connected;
-    }
-    public set connected(v: boolean) {
-        this._connected = v;
-        this._connectionEmitter.emit('change', v);
+    public get whenConnectionChanged(): Observable<boolean> {
+        return this.connectionSubject;
     }
 
     public async dispose(): Promise<void> {
@@ -56,15 +49,6 @@ export class CgfPtzCamera implements ICameraConnection {
         } catch (error) {
             this.logError(`unable to stop socket connection - ${error}`);
         }
-    }
-
-    public subscribe(i: IConnection): void {
-        this._connectionEmitter.on('change', i.change);
-        i.change(this.connected);
-    }
-
-    public unsubscribe(i: IConnection): void {
-        this._connectionEmitter.removeListener('change', i.change);
     }
 
     public pan(value: number): void {
@@ -97,7 +81,7 @@ export class CgfPtzCamera implements ICameraConnection {
         });
         this.socketConnection.onreconnecting(() => {
             this.log('connection error - trying automatic reconnect');
-            this.connected = false;
+            this.connectionSubject.next(false);
         });
         try {
             await this.socketConnection.start();
@@ -137,7 +121,7 @@ export class CgfPtzCamera implements ICameraConnection {
 
     private async connectionSuccessfullyEstablished() {
         this.canTransmit = true;
-        this.connected = true;
+        this.connectionSubject.next(true);
         await this.transmitNextStateIfRequestedAndPossible();
     }
 
@@ -145,7 +129,7 @@ export class CgfPtzCamera implements ICameraConnection {
         if (!this.canTransmit) {
             return;
         }
-        if (!this.connected) {
+        if (!this.connectionSubject.value) {
             return;
         }
         if (this.shouldTransmitState) {

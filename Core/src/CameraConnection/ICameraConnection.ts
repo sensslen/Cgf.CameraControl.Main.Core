@@ -1,8 +1,7 @@
-import { IConnection } from '../GenericFactory/IConnection';
+import { IConnectionProvider } from '../GenericFactory/IConnectionProvider';
 import { IDisposable } from '../GenericFactory/IDisposable';
-import { ISubscription } from '../GenericFactory/ISubscription';
 
-export interface ICameraConnection extends ISubscription<IConnection>, IDisposable {
+export interface ICameraConnection extends IDisposable, IConnectionProvider {
     readonly connectionString: string;
 
     /**

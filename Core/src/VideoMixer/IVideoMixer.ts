@@ -1,11 +1,10 @@
 import { EventEmitter } from 'events';
-import { IConnection } from '../GenericFactory/IConnection';
+import { IConnectionProvider } from '../GenericFactory/IConnectionProvider';
 import { IDisposable } from '../GenericFactory/IDisposable';
 import { IImageSelectionChange } from './IImageSelectionChange';
-import { ISubscription } from '../GenericFactory/ISubscription';
 import StrictEventEmitter from 'strict-event-emitter-types';
 
-export interface IVideoMixer extends ISubscription<IConnection>, IDisposable {
+export interface IVideoMixer extends IConnectionProvider, IDisposable {
     connectionString: string;
 
     /**
