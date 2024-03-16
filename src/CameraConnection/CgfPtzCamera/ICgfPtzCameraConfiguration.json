@@ -13,6 +13,9 @@
         "instance": {
           "type": "number"
         },
+        "panTiltInvert": {
+          "type": "boolean"
+        },
         "type": {
           "type": "string"
         }
