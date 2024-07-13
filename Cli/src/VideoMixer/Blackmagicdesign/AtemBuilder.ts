@@ -1,10 +1,8 @@
-import * as ConfigSchema from './IAtemConfig.json';
-
 import { IBuilder, IConfig, ILogger, IVideoMixer } from 'cgf.cameracontrol.main.core';
 import { Atem } from './Atem';
 import { AtemFactory } from './AtemFactory';
-import { ConfigValidator } from '../../ConfigValidator';
-import { IAtemConfig } from './IAtemConfig';
+import { atemConfigurationSchema } from './IAtemConfig';
+import { fromZodError } from 'zod-validation-error';
 
 export class AtemBuilder implements IBuilder<IVideoMixer> {
     private readonly atemFactory;
@@ -16,14 +14,12 @@ export class AtemBuilder implements IBuilder<IVideoMixer> {
     }
 
     public async build(config: IConfig): Promise<IVideoMixer> {
-        const configValidator = new ConfigValidator();
-        const validConfig = configValidator.validate<IAtemConfig>(config, ConfigSchema);
-
-        if (validConfig === undefined) {
-            return Promise.reject(configValidator.errorGet());
+        const parseResult = atemConfigurationSchema.safeParse(config);
+        if (parseResult.success === false) {
+            return Promise.reject(fromZodError(parseResult.error));
         }
 
-        const atem = new Atem(validConfig, this.atemFactory);
+        const atem = new Atem(parseResult.data, this.atemFactory);
         await atem.startup();
         return atem;
     }

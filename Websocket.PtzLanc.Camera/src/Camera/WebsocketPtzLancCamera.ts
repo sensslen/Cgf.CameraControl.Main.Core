@@ -49,7 +49,7 @@ export class WebsocketPtzLancCamera implements ICameraConnection {
         return this.config.connectionUrl;
     }
 
-    public get whenConnectionChanged(): Observable<boolean> {
+    public get whenConnectedChanged(): Observable<boolean> {
         return this.connectionSubject;
     }
 
@@ -64,13 +64,13 @@ export class WebsocketPtzLancCamera implements ICameraConnection {
 
     public pan(value: number): void {
         this.setState((state) => {
-            state.pan = this.multiplyRoundAndCrop(value * 255, 255);
+            state.pan = this.invertIfNecessaryForPanTilt(this.multiplyRoundAndCrop(value * 255, 255));
             return state;
         });
     }
     public tilt(value: number): void {
         this.setState((state) => {
-            state.tilt = this.multiplyRoundAndCrop(value * 255, 255);
+            state.tilt = this.invertIfNecessaryForPanTilt(this.multiplyRoundAndCrop(value * 255, 255));
             return state;
         });
     }
@@ -102,5 +102,11 @@ export class WebsocketPtzLancCamera implements ICameraConnection {
     private multiplyRoundAndCrop(value: number, maximumAbsolute: number): number {
         const maximized = Math.max(-maximumAbsolute, Math.min(maximumAbsolute, value));
         return Math.round(maximized);
+    }
+    private invertIfNecessaryForPanTilt(value: number): number {
+        if (this.config.panTiltInvert === true) {
+            return -value;
+        }
+        return value;
     }
 }

@@ -1,5 +1,8 @@
-import { ISpecialFunctionDefinition } from '../ISpecialFunctionDefinition';
+import { specialFunctionDefinitionConfigurationSchema } from '../ISpecialFunctionDefinition';
+import { z } from 'zod';
 
-export interface ISpecialFunctionMacroLoopConfig extends ISpecialFunctionDefinition {
-    indexes: [number, ...number[]];
-}
+export const specialFunctionMacroLoopConfigurationSchema = specialFunctionDefinitionConfigurationSchema.extend({
+    indexes: z.array(z.number()).min(1),
+});
+
+export type ISpecialFunctionMacroLoopConfig = z.infer<typeof specialFunctionMacroLoopConfigurationSchema>;

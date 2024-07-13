@@ -19,18 +19,11 @@
     "main": "index.js",
     "scripts": {
         "atem-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IAtemConfig -o src/VideoMixer/Blackmagicdesign/IAtemConfig.json --tsconfig ./tsconfig.json --additional-properties true",
-        "prebuild": "npm run atem-config-schema && npm run special-function-key-config-schema && npm run special-function-change-connection-config-schema && npm run special-function-macro-loop-config-schema && npm run special-function-macro-toggle-config-schema && npm run logitech-rumblepad2-config-schema && npm run logitech-fx10-config-schema",
         "build": "npm run clean && npm run lint && tsc",
         "clean": "shx rm -rf dist",
         "postinstall": "sort-package-json",
         "lint": "eslint --ext .ts src",
         "lint-fix": "eslint --ext .ts --fix .",
-        "logitech-fx10-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IRumblepad2Config -o src/Hmi/Gamepad/logitech/Fx10/ILogitechFx10Config.json --tsconfig ./tsconfig.json --additional-properties true",
-        "logitech-rumblepad2-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type IRumblepad2Config -o src/Hmi/Gamepad/logitech/Rumblepad2/IRumblepad2Config.json --tsconfig ./tsconfig.json --additional-properties true",
-        "special-function-change-connection-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ISpecialFunctionConnectionChangeConfig -o src/Hmi/Gamepad/Shared/SpecialFunctions/ISpecialFunctionConnectionChangeConfig.json --tsconfig ./tsconfig.json --additional-properties true",
-        "special-function-key-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ISpecialFunctionKeyConfig -o src/Hmi/Gamepad/Shared/SpecialFunctions/ISpecialFunctionKeyConfig.json --tsconfig ./tsconfig.json --additional-properties true",
-        "special-function-macro-loop-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ISpecialFunctionMacroLoopConfig -o src/Hmi/Gamepad/Shared/SpecialFunctions/Macro/ISpecialFunctionMacroLoopConfig.json --tsconfig ./tsconfig.json --additional-properties true",
-        "special-function-macro-toggle-config-schema": "ts-json-schema-generator --path \"./src/**/*.ts\" --type ISpecialFunctionMacroToggleConfig -o src/Hmi/Gamepad/Shared/SpecialFunctions/Macro/Toggle/ISpecialFunctionMacroToggleConfig.json --tsconfig ./tsconfig.json --additional-properties true && ts-json-schema-generator --path \"./src/**/*.ts\" --type ISpecialFunctionMacroToggleConfigConditionAuxSelection -o src/Hmi/Gamepad/Shared/SpecialFunctions/Macro/Toggle/ISpecialFunctionMacroToggleConfigConditionAuxSelection.json --tsconfig ./tsconfig.json --additional-properties true && ts-json-schema-generator --path \"./src/**/*.ts\" --type ISpecialFunctionMacroToggleConfigConditionKey -o src/Hmi/Gamepad/Shared/SpecialFunctions/Macro/Toggle/ISpecialFunctionMacroToggleConfigConditionKey.json --tsconfig ./tsconfig.json --additional-properties true",
         "prestart": "npm run build && shx cp src/config.json dist",
         "start": "node dist/index.js"
     },
@@ -38,16 +31,19 @@
         "@sensslen/node-gamepad": "1.0.6",
         "ajv": "^8.12.0",
         "atem-connection": "^3.3.0",
-        "cgf.cameracontrol.main.core": "^1.2.3",
+        "cgf.cameracontrol.main.core": "file:../Core/dist",
         "everpolate": "0.0.3",
+        "rxjs": "^7.8.1",
         "strict-event-emitter-types": "^2.0.0",
-        "yargs": "^17.4.1"
+        "yargs": "^17.4.1",
+        "zod": "^3.23.8",
+        "zod-validation-error": "^3.3.0"
     },
     "devDependencies": {
         "@types/node": "^20.5.9",
         "@types/yargs": "^17.0.24",
-        "@typescript-eslint/eslint-plugin": "^6.6.0",
-        "@typescript-eslint/parser": "^6.6.0",
+        "@typescript-eslint/eslint-plugin": "^7.16.0",
+        "@typescript-eslint/parser": "^7.16.0",
         "eslint": "^8.48.0",
         "eslint-config-prettier": "^9.0.0",
         "eslint-plugin-import": "^2.28.1",
@@ -55,7 +51,6 @@
         "prettier": "^3.0.3",
         "shx": "^0.3.4",
         "sort-package-json": "^2.5.1",
-        "ts-json-schema-generator": "^1.3.0",
         "typescript": "^5.2.2"
     }
 }

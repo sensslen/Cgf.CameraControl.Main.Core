@@ -1,5 +1,8 @@
-import { ISpecialFunctionDefinition } from './ISpecialFunctionDefinition';
+import { specialFunctionDefinitionConfigurationSchema } from './ISpecialFunctionDefinition';
+import { z } from 'zod';
 
-export interface ISpecialFunctionKeyConfig extends ISpecialFunctionDefinition {
-    index: number;
-}
+export const specialFunctionKeyConfigurationSchema = specialFunctionDefinitionConfigurationSchema.extend({
+    index: z.number().int().positive(),
+});
+
+export type ISpecialFunctionKeyConfiguration = z.infer<typeof specialFunctionKeyConfigurationSchema>;

@@ -1,19 +1,17 @@
+import { BehaviorSubject, Observable } from 'rxjs';
 import {
     CameraConnectionFactory,
     ICameraConnection,
-    IConnection,
     IHmi,
     ILogger,
     IVideoMixer,
     VideomixerFactory,
 } from 'cgf.cameracontrol.main.core';
-import { EButtonDirection, IGamepadConfiguration } from './IGamepadConfiguration';
+import { EButtonDirection, IConnectionChangeConfiguration, IGamepadConfiguration } from './IGamepadConfiguration';
 
-import { EventEmitter } from 'events';
 import { ISpecialFunction } from './SpecialFunctions/ISpecialFunction';
 import { ISpecialFunctionDefinition } from './SpecialFunctions/ISpecialFunctionDefinition';
 import { SpecialFunctionFactory } from './SpecialFunctions/SpecialFunctionFactory';
-import { StrictEventEmitter } from 'strict-event-emitter-types';
 
 enum EAltKey {
     none,
@@ -22,21 +20,16 @@ enum EAltKey {
 }
 
 export abstract class Gamepad implements IHmi {
-    private readonly _connectionEmitter: StrictEventEmitter<EventEmitter, IConnection> = new EventEmitter();
     private altKeyState = EAltKey.none;
     private readonly mixer?: IVideoMixer;
     private readonly cameras: { [key: number]: ICameraConnection } = {};
     private selectedCamera?: ICameraConnection;
-    private readonly connectionChange: {
-        default: { [key in EButtonDirection]?: number };
-        alt?: { [key in EButtonDirection]?: number };
-        altLower?: { [key in EButtonDirection]?: number };
-    };
+    private readonly connectionChange: IConnectionChangeConfiguration;
 
     private readonly specialFunctionDefault: { [key in EButtonDirection]?: ISpecialFunction } = {};
     private readonly specialFunctionAlt: { [key in EButtonDirection]?: ISpecialFunction } = {};
     private readonly specialFunctionAltLower: { [key in EButtonDirection]?: ISpecialFunction } = {};
-    private _connected = false;
+    private readonly _connectionSubject = new BehaviorSubject<boolean>(false);
 
     constructor(
         config: IGamepadConfiguration,
@@ -46,12 +39,12 @@ export abstract class Gamepad implements IHmi {
     ) {
         this.mixer = mixerFactory.get(config.videoMixer);
 
-        for (const key in config.cameraMap) {
-            const camera = cameraConnectionFactory.get(config.cameraMap[key]);
+        config.cameraMap.forEach((value: number, key: number) => {
+            const camera = cameraConnectionFactory.get(value);
             if (camera !== undefined) {
                 this.cameras[key] = camera;
             }
-        }
+        });
 
         this.connectionChange = config.connectionChange;
 
@@ -76,32 +69,21 @@ export abstract class Gamepad implements IHmi {
             .on('previewChange', (preview: number, onAir: boolean) => this.mixerPreviewChange(preview, onAir));
     }
 
-    public get connected(): boolean {
-        return this._connected;
-    }
-    public set connected(v: boolean) {
-        this._connected = v;
-    }
-
-    public subscribe(i: IConnection): void {
-        i.change(this._connected);
-        this._connectionEmitter.on('change', i.change);
-    }
-    public unsubscribe(i: IConnection): void {
-        this._connectionEmitter.removeListener('change', i.change);
+    public get whenConnectedChanged(): Observable<boolean> {
+        return this._connectionSubject;
     }
 
     protected changeConnection(direction: EButtonDirection): void {
-        let nextInput = this.connectionChange.default[direction];
+        let nextInput = this.connectionChange.default.get(direction);
         switch (this.altKeyState) {
             case EAltKey.alt:
                 if (this.connectionChange.alt) {
-                    nextInput = this.connectionChange.alt[direction];
+                    nextInput = this.connectionChange.alt.get(direction);
                 }
                 break;
             case EAltKey.altLower:
                 if (this.connectionChange.altLower) {
-                    nextInput = this.connectionChange.altLower[direction];
+                    nextInput = this.connectionChange.altLower.get(direction);
                 }
                 break;
             default:
@@ -217,17 +199,14 @@ export abstract class Gamepad implements IHmi {
     }
 
     private parseSpecialFunctionConfig(
-        config: { [key in EButtonDirection]?: ISpecialFunctionDefinition },
+        config: Map<EButtonDirection, ISpecialFunctionDefinition>,
         run: (key: EButtonDirection, config: ISpecialFunctionDefinition) => void
     ) {
-        for (const key in config) {
-            if (Object.prototype.hasOwnProperty.call(config, key)) {
-                const specialFunctionConfig = config[key as EButtonDirection];
-                if (specialFunctionConfig !== undefined) {
-                    run(key as EButtonDirection, specialFunctionConfig);
-                }
+        config.forEach((value, key) => {
+            if (value !== undefined) {
+                run(key, value);
             }
-        }
+        });
     }
 
     abstract dispose(): Promise<void>;

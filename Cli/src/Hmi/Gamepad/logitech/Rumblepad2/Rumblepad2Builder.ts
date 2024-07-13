@@ -1,16 +1,9 @@
-import * as ConfigSchema from './IRumblepad2Config.json';
-
-import {
-    CameraConnectionFactory,
-    IBuilder,
-    IConfig,
-    IHmi,
-    ILogger,
-    VideomixerFactory,
-} from 'cgf.cameracontrol.main.core';
-import { ConfigValidator } from '../../../../ConfigValidator';
-import { IRumblepad2Config } from './IRumblepad2Config';
+import { CameraConnectionFactory, IBuilder, IHmi, VideomixerFactory } from 'cgf.cameracontrol.main.core';
+import { IConfig } from 'cgf.cameracontrol.main.core';
+import { ILogger } from 'cgf.cameracontrol.main.core';
 import { Rumblepad2 } from './Rumblepad2';
+import { fromZodError } from 'zod-validation-error';
+import { rumblepad2ConfigurationShema } from './IRumblepad2Config';
 
 export class Rumblepad2Builder implements IBuilder<IHmi> {
     constructor(
@@ -18,18 +11,16 @@ export class Rumblepad2Builder implements IBuilder<IHmi> {
         private mixerFactory: VideomixerFactory,
         private cameraFactory: CameraConnectionFactory
     ) {}
-    supportedTypes(): Promise<string[]> {
+    public supportedTypes(): Promise<string[]> {
         return Promise.resolve(['logitech/Rumblepad2']);
     }
 
-    build(config: IConfig): Promise<IHmi> {
-        const configValidator = new ConfigValidator();
-        const validConfig = configValidator.validate<IRumblepad2Config>(config, ConfigSchema);
-
-        if (validConfig === undefined) {
-            return Promise.reject(configValidator.errorGet());
+    public build(config: IConfig): Promise<IHmi> {
+        const parseResult = rumblepad2ConfigurationShema.safeParse(config);
+        if (parseResult.success === false) {
+            return Promise.reject(fromZodError(parseResult.error));
         }
 
-        return Promise.resolve(new Rumblepad2(validConfig, this.logger, this.mixerFactory, this.cameraFactory));
+        return Promise.resolve(new Rumblepad2(parseResult.data, this.logger, this.mixerFactory, this.cameraFactory));
     }
 }

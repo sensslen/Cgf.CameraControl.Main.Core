@@ -1,5 +1,8 @@
-import { IGamepadConfiguration } from '../../Shared/IGamepadConfiguration';
+import { gamepadConfigurationSchema } from '../../Shared/IGamepadConfiguration';
+import { z } from 'zod';
 
-export interface IRumblepad2Config extends IGamepadConfiguration {
-    serialNumber?: string;
-}
+export const rumblepad2ConfigurationShema = gamepadConfigurationSchema.extend({
+    serialNumber: z.string().optional(),
+});
+
+export type IRumblepad2Config = z.infer<typeof rumblepad2ConfigurationShema>;

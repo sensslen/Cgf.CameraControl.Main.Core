@@ -36,20 +36,20 @@
         "sort": "sort-package-json package.json"
     },
     "dependencies": {
-        "@microsoft/signalr": "^7.0.10",
+        "@microsoft/signalr": "^8.0.7",
         "axios": "^1.5.0",
         "cgf.cameracontrol.main.core": "file:../Core/dist",
         "rxjs": "^7.8.1",
         "strict-event-emitter-types": "^2.0.0",
         "zod": "^3.22.4",
-        "zod-validation-error": "^2.1.0"
+        "zod-validation-error": "^3.3.0"
     },
     "devDependencies": {
         "@types/node": "^20.5.9",
         "@types/semver": "^7.5.1",
-        "@typescript-eslint/eslint-plugin": "^6.6.0",
-        "@typescript-eslint/parser": "^6.6.0",
-        "eslint": "^8.48.0",
+        "@typescript-eslint/eslint-plugin": "^7.16.0",
+        "@typescript-eslint/parser": "^7.16.0",
+        "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.0.0",
         "eslint-plugin-import": "^2.28.1",
         "eslint-plugin-prettier": "^5.0.0",

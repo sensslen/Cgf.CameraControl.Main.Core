@@ -1,4 +1,5 @@
-import { IConfig, IConnection, IImageSelectionChange, IVideoMixer } from 'cgf.cameracontrol.main.core';
+import { IConfig, IImageSelectionChange, IVideoMixer } from 'cgf.cameracontrol.main.core';
+import { Observable, of } from 'rxjs';
 
 import { EventEmitter } from 'events';
 import { StrictEventEmitter } from 'strict-event-emitter-types';
@@ -12,11 +13,15 @@ export class Passthrough implements IVideoMixer {
     private _currentPreview = 0;
 
     constructor(_config: IConfig) {
-        // nothing to construc here
+        // nothing to construct here
     }
 
     public get connectionString(): string {
         return 'passthrough';
+    }
+
+    public get whenConnectedChanged(): Observable<boolean> {
+        return of(true);
     }
 
     public async isKeySet(_key: number): Promise<boolean> {
@@ -55,14 +60,6 @@ export class Passthrough implements IVideoMixer {
     }
 
     public runMacro(_macro: number): void {
-        // intentionally nothing
-    }
-
-    public subscribe(i: IConnection): void {
-        i.change(true);
-    }
-
-    public unsubscribe(_i: IConnection): void {
         // intentionally nothing
     }
 

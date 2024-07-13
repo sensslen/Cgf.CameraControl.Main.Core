@@ -39,7 +39,7 @@ export class SignalrPtzLancCamera implements ICameraConnection {
         return this.config.connectionUrl;
     }
 
-    public get whenConnectionChanged(): Observable<boolean> {
+    public get whenConnectedChanged(): Observable<boolean> {
         return this.connectionSubject;
     }
 
@@ -52,11 +52,11 @@ export class SignalrPtzLancCamera implements ICameraConnection {
     }
 
     public pan(value: number): void {
-        this.currentState.pan = this.multiplyRoundAndCrop(value * 255, 255);
+        this.currentState.pan = this.invertIfNecessaryForPanTilt(this.multiplyRoundAndCrop(value * 255, 255));
         this.scheduleStateTransmission();
     }
     public tilt(value: number): void {
-        this.currentState.tilt = this.multiplyRoundAndCrop(value * 255, 255);
+        this.currentState.tilt = this.invertIfNecessaryForPanTilt(this.multiplyRoundAndCrop(value * 255, 255));
         this.scheduleStateTransmission();
     }
     public zoom(value: number): void {
@@ -165,5 +165,11 @@ export class SignalrPtzLancCamera implements ICameraConnection {
     private multiplyRoundAndCrop(value: number, maximumAbsolute: number): number {
         const maximized = Math.max(-maximumAbsolute, Math.min(maximumAbsolute, value));
         return Math.round(maximized);
+    }
+    private invertIfNecessaryForPanTilt(value: number): number {
+        if (this.config.panTiltInvert === true) {
+            return -value;
+        }
+        return value;
     }
 }

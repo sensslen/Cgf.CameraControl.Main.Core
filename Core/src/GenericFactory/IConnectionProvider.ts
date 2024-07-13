@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
 
 export interface IConnectionProvider {
-    readonly whenConnectionChanged: Observable<boolean>;
+    readonly whenConnectedChanged: Observable<boolean>;
 }

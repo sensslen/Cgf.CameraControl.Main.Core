@@ -1,20 +1,16 @@
-import * as ISpecialFunctionMacroToggleConfigConditionAuxSelectionSchema from './ISpecialFunctionMacroToggleConfigConditionAuxSelection.json';
-import * as ISpecialFunctionMacroToggleConfigConditionKeySchema from './ISpecialFunctionMacroToggleConfigConditionKey.json';
-
 import {
     EMacroToggleConditionType,
-    ISpecialFunctionMacroToggleConfigCondition,
-    ISpecialFunctionMacroToggleConfigConditionAuxSelection,
-    ISpecialFunctionMacroToggleConfigConditionKey,
+    ISpecialFunctionMacroToggleConditionConfiguration,
+    specialFunctionMacroToggleConfigConditionAuxSelectionConfigurationSchema,
+    specialFunctionMacroToggleConfigConditionKeyConfigurationSchema,
 } from './ISpecialFunctionMacroToggleConfig';
-import { ConfigValidator } from '../../../../../../ConfigValidator';
 import { IMacroToggleSpecialFunctionCondition } from './IMacroToggleSpecialFunctionCondition';
 import { MacroToggleSpecialFunctionConditionAuxSelection } from './MacroToggleSpecialFunctionConditionAuxSelection';
 import { MacroToggleSpecialFunctionConditionKey } from './MacroToggleSpecialFunctionConditionKey';
 
 export class MacroToggleSpecialFunctionConditionFactory {
     public static get(
-        config: ISpecialFunctionMacroToggleConfigCondition
+        config: ISpecialFunctionMacroToggleConditionConfiguration
     ): IMacroToggleSpecialFunctionCondition | undefined {
         switch (config.type) {
             case EMacroToggleConditionType.key:
@@ -27,32 +23,22 @@ export class MacroToggleSpecialFunctionConditionFactory {
     }
 
     private static getKeyCondition(
-        config: ISpecialFunctionMacroToggleConfigCondition
+        config: ISpecialFunctionMacroToggleConditionConfiguration
     ): IMacroToggleSpecialFunctionCondition | undefined {
-        const configValidator = new ConfigValidator();
-        const validConfig = configValidator.validate<ISpecialFunctionMacroToggleConfigConditionKey>(
-            config,
-            ISpecialFunctionMacroToggleConfigConditionKeySchema
-        );
-
-        if (validConfig === undefined) {
+        const parseResult = specialFunctionMacroToggleConfigConditionKeyConfigurationSchema.safeParse(config);
+        if (parseResult.success === false) {
             return undefined;
         }
-        return new MacroToggleSpecialFunctionConditionKey(validConfig);
+        return new MacroToggleSpecialFunctionConditionKey(parseResult.data);
     }
 
     private static getAuxSelectionCondition(
-        config: ISpecialFunctionMacroToggleConfigCondition
+        config: ISpecialFunctionMacroToggleConditionConfiguration
     ): IMacroToggleSpecialFunctionCondition | undefined {
-        const configValidator = new ConfigValidator();
-        const validConfig = configValidator.validate<ISpecialFunctionMacroToggleConfigConditionAuxSelection>(
-            config,
-            ISpecialFunctionMacroToggleConfigConditionAuxSelectionSchema
-        );
-
-        if (validConfig === undefined) {
+        const parseResult = specialFunctionMacroToggleConfigConditionAuxSelectionConfigurationSchema.safeParse(config);
+        if (parseResult.success === false) {
             return undefined;
         }
-        return new MacroToggleSpecialFunctionConditionAuxSelection(validConfig);
+        return new MacroToggleSpecialFunctionConditionAuxSelection(parseResult.data);
     }
 }

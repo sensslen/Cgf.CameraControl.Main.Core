@@ -1,5 +1,8 @@
-import { IGamepadConfiguration } from '../../Shared/IGamepadConfiguration';
+import { gamepadConfigurationSchema } from '../../Shared/IGamepadConfiguration';
+import { z } from 'zod';
 
-export interface ILogitechFx10Config extends IGamepadConfiguration {
-    serialNumber?: string;
-}
+export const logitechFx10ConfigurationShema = gamepadConfigurationSchema.extend({
+    serialNumber: z.string().optional(),
+});
+
+export type ILogitechFx10Config = z.infer<typeof logitechFx10ConfigurationShema>;

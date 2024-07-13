@@ -1,12 +1,12 @@
 import { IMacroToggleSpecialFunctionCondition } from './IMacroToggleSpecialFunctionCondition';
 import { ISpecialFunction } from '../../ISpecialFunction';
-import { ISpecialFunctionMacroToggleConfig } from './ISpecialFunctionMacroToggleConfig';
+import { ISpecialFunctionMacroToggleConfiguration } from './ISpecialFunctionMacroToggleConfig';
 import { IVideoMixer } from 'cgf.cameracontrol.main.core';
 import { MacroToggleSpecialFunctionConditionFactory } from './MacroToggleSpecialFunctionConditionFactory';
 
 export class MacroToggleSpecialFunction implements ISpecialFunction {
     private condition?: IMacroToggleSpecialFunctionCondition;
-    constructor(private config: ISpecialFunctionMacroToggleConfig) {
+    constructor(private config: ISpecialFunctionMacroToggleConfiguration) {
         this.condition = MacroToggleSpecialFunctionConditionFactory.get(this.config.condition);
     }
 

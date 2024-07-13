@@ -1,51 +1,19 @@
-import { IConnection, ILogger, ISubscription } from 'cgf.cameracontrol.main.core';
+import { BehaviorSubject, Observable } from 'rxjs';
+
 import { Atem } from 'atem-connection';
-import { EventEmitter } from 'events';
-import { StrictEventEmitter } from 'strict-event-emitter-types';
-
-class AtemConnectionmanager implements ISubscription<IConnection> {
-    private readonly _connectionEmitter: StrictEventEmitter<EventEmitter, IConnection> = new EventEmitter();
-
-    private _connected = false;
-
-    constructor(atem: Atem) {
-        atem.on('connected', () => {
-            this.setConnected(true);
-        });
-        atem.on('disconnected', () => {
-            this.setConnected(false);
-        });
-    }
-
-    public get connected(): boolean {
-        return this._connected;
-    }
-
-    subscribe(i: IConnection): void {
-        i.change(this._connected);
-        this._connectionEmitter.on('change', i.change);
-    }
-    unsubscribe(i: IConnection): void {
-        this._connectionEmitter.removeListener('change', i.change);
-    }
-
-    private setConnected(value: boolean) {
-        this._connectionEmitter.emit('change', value);
-        this._connected = value;
-    }
-}
+import { ILogger } from 'cgf.cameracontrol.main.core';
 
 export interface IAtemConnection {
     readonly atem: Atem;
     readonly connected: boolean;
-    readonly connection: ISubscription<IConnection>;
+    readonly whenConnectionChanged: Observable<boolean>;
     startup(): Promise<void>;
 }
 
 class AtemConnection implements IAtemConnection {
     readonly atem: Atem;
-    readonly connection: AtemConnectionmanager;
     private startupResult: Promise<void> | undefined = undefined;
+    private _connectionSubject = new BehaviorSubject<boolean>(false);
 
     constructor(
         private ip: string,
@@ -53,13 +21,23 @@ class AtemConnection implements IAtemConnection {
     ) {
         this.atem = new Atem();
 
+        this.atem.on('connected', () => {
+            this._connectionSubject.next(true);
+        });
+        this.atem.on('disconnected', () => {
+            this._connectionSubject.next(false);
+        });
+
         this.atem.on('error', (error) => this.error(error));
         this.atem.on('info', (log) => this.log(log));
-
-        this.connection = new AtemConnectionmanager(this.atem);
     }
+
     get connected(): boolean {
-        return this.connection.connected;
+        return this._connectionSubject.value;
+    }
+
+    public get whenConnectionChanged(): Observable<boolean> {
+        return this._connectionSubject;
     }
 
     async startup(): Promise<void> {

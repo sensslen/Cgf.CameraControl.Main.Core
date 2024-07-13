@@ -1,26 +1,43 @@
-import { ISpecialFunctionDefinition } from '../../ISpecialFunctionDefinition';
+import { specialFunctionDefinitionConfigurationSchema } from '../../ISpecialFunctionDefinition';
 
 export enum EMacroToggleConditionType {
     key = 'key',
     auxSelection = 'aux_selection',
 }
 
-export interface ISpecialFunctionMacroToggleConfigCondition {
-    type: EMacroToggleConditionType;
-}
+import { z } from 'zod';
 
-export interface ISpecialFunctionMacroToggleConfig extends ISpecialFunctionDefinition {
-    indexOn: number;
-    indexOff: number;
-    condition: ISpecialFunctionMacroToggleConfigCondition;
-}
+export const specialFunctionMacroToggleConditionConfigurationSchema = z.object({
+    type: z.nativeEnum(EMacroToggleConditionType),
+});
 
-export interface ISpecialFunctionMacroToggleConfigConditionKey extends ISpecialFunctionMacroToggleConfigCondition {
-    key: number;
-}
+export type ISpecialFunctionMacroToggleConditionConfiguration = z.infer<
+    typeof specialFunctionMacroToggleConditionConfigurationSchema
+>;
 
-export interface ISpecialFunctionMacroToggleConfigConditionAuxSelection
-    extends ISpecialFunctionMacroToggleConfigCondition {
-    aux: number;
-    selection: number;
-}
+export const specialFunctionMacroToggleConfigurationSchema = specialFunctionDefinitionConfigurationSchema.extend({
+    indexOn: z.number().int().positive(),
+    indexOff: z.number().int().positive(),
+    condition: specialFunctionMacroToggleConditionConfigurationSchema,
+});
+
+export type ISpecialFunctionMacroToggleConfiguration = z.infer<typeof specialFunctionMacroToggleConfigurationSchema>;
+
+export const specialFunctionMacroToggleConfigConditionKeyConfigurationSchema =
+    specialFunctionMacroToggleConditionConfigurationSchema.extend({
+        key: z.number().int().positive(),
+    });
+
+export type ISpecialFunctionMacroToggleConfigConditionKeyConfiguration = z.infer<
+    typeof specialFunctionMacroToggleConfigConditionKeyConfigurationSchema
+>;
+
+export const specialFunctionMacroToggleConfigConditionAuxSelectionConfigurationSchema =
+    specialFunctionMacroToggleConditionConfigurationSchema.extend({
+        aux: z.number().int().positive(),
+        selection: z.number().int().positive(),
+    });
+
+export type ISpecialFunctionMacroToggleConfigConditionAuxSelectionConfiguration = z.infer<
+    typeof specialFunctionMacroToggleConfigConditionAuxSelectionConfigurationSchema
+>;

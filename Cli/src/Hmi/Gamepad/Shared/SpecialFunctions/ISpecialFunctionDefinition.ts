@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export enum ESpecialFunctionType {
     key = 'key',
     macroLoop = 'macroLoop',
@@ -5,6 +7,8 @@ export enum ESpecialFunctionType {
     macroToggle = 'macroToggle',
 }
 
-export interface ISpecialFunctionDefinition {
-    type: ESpecialFunctionType;
-}
+export const specialFunctionDefinitionConfigurationSchema = z.object({
+    type: z.nativeEnum(ESpecialFunctionType),
+});
+
+export type ISpecialFunctionDefinition = z.infer<typeof specialFunctionDefinitionConfigurationSchema>;
