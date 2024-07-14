@@ -29,6 +29,11 @@ export class Core implements IDisposable {
         return this._hmiFactory;
     }
 
+    public async reconfigure(logger: ILogger, config: unknown): Promise<void> {
+        await this.dispose();
+        await this.bootstrap(logger, config);
+    }
+
     public async bootstrap(logger: ILogger, config: unknown): Promise<void> {
         const parseResult = rootConfigSchema.safeParse(config);
         if (parseResult.success === false) {
