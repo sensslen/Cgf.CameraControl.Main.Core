@@ -14,9 +14,10 @@ export class Atem implements IVideoMixer {
         EventEmitter,
         IImageSelectionChange
     >;
-    private readonly _currentConnection: { selectedInput: number; onAir: boolean } = {
-        selectedInput: -1,
-        onAir: false,
+    private readonly _currentSelectionState: { previewInput: number; previewOnAir: boolean; programInput: number } = {
+        previewInput: -1,
+        previewOnAir: false,
+        programInput: -1,
     };
     private readonly _connectedSubject = new BehaviorSubject<boolean>(false);
 
@@ -105,24 +106,27 @@ export class Atem implements IVideoMixer {
     private stateChange(state: AtemState): void {
         const meState = state.video.mixEffects[this.config.mixEffectBlock];
         if (meState !== undefined) {
-            this.updatePreview(meState);
+            this.updateActiveInputs(meState);
         }
     }
 
-    private updatePreview(state: MixEffect) {
-        const onAirInputs = this.connection.atem.listVisibleInputs('program');
+    private updateActiveInputs(state: MixEffect) {
+        const onAirInputs = this.connection.atem.listVisibleInputs('program', this.config.mixEffectBlock);
         const newPreviewIsOnAir = onAirInputs.some((input) => input === state.previewInput);
 
         if (
-            this._currentConnection.selectedInput === state.previewInput &&
-            this._currentConnection.onAir === newPreviewIsOnAir
+            this._currentSelectionState.previewInput !== state.previewInput &&
+            this._currentSelectionState.previewOnAir !== newPreviewIsOnAir
         ) {
-            return;
+            this._selectedChangeEmitter.emit('previewChange', state.previewInput, newPreviewIsOnAir);
+            this._currentSelectionState.previewInput = state.previewInput;
+            this._currentSelectionState.previewOnAir = newPreviewIsOnAir;
         }
-        this._selectedChangeEmitter.emit('previewChange', state.previewInput, newPreviewIsOnAir);
 
-        this._currentConnection.selectedInput = state.previewInput;
-        this._currentConnection.onAir = newPreviewIsOnAir;
+        if (this._currentSelectionState.programInput !== state.programInput) {
+            this._selectedChangeEmitter.emit('programChange', state.programInput);
+            this._currentSelectionState.programInput = state.programInput;
+        }
     }
 
     private isKeySetInState(state: AtemState, key: number): boolean {

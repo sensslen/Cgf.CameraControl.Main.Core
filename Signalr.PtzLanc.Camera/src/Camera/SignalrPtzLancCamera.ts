@@ -67,6 +67,7 @@ export class SignalrPtzLancCamera implements ICameraConnection {
         this.currentState.focus = this.multiplyRoundAndCrop(value * 1.2, 1);
         this.scheduleStateTransmission();
     }
+    public tallyState(_: 'off' | 'preview' | 'program'): void {}
 
     private async socketReconnected() {
         await this.setupRemote();

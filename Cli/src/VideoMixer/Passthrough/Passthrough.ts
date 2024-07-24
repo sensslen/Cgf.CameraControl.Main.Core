@@ -9,8 +9,8 @@ export class Passthrough implements IVideoMixer {
         EventEmitter,
         IImageSelectionChange
     >;
-    private _currentOnAir = 0;
-    private _currentPreview = 0;
+    private _currentOnAir = -1;
+    private _currentPreview = -1;
 
     constructor(_config: IConfig) {
         // nothing to construct here
@@ -40,19 +40,21 @@ export class Passthrough implements IVideoMixer {
         const oldPreview = this._currentPreview;
         this._currentPreview = this._currentOnAir;
         this._currentOnAir = oldPreview;
-        this._selectedChangeEmitter.emit('previewChange', this._currentOnAir, false);
+        this._selectedChangeEmitter.emit('previewChange', this._currentPreview, false);
+        this._selectedChangeEmitter.emit('programChange', this._currentOnAir);
     }
 
     public auto(): void {
         const oldPreview = this._currentPreview;
         this._currentPreview = this._currentOnAir;
         this._currentOnAir = oldPreview;
-        this._selectedChangeEmitter.emit('previewChange', this._currentOnAir, false);
+        this._selectedChangeEmitter.emit('previewChange', this._currentPreview, false);
+        this._selectedChangeEmitter.emit('programChange', this._currentOnAir);
     }
 
     public changeInput(newInput: number): void {
         this._currentPreview = newInput;
-        this._selectedChangeEmitter.emit('previewChange', this._currentOnAir, false);
+        this._selectedChangeEmitter.emit('previewChange', this._currentPreview, false);
     }
 
     public toggleKey(_key: number): void {

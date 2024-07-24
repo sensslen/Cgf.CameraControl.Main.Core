@@ -28,4 +28,9 @@ export interface ICameraConnection extends IDisposable, IConnectionProvider {
      * -1 represents maximum speed out and 1 represents maximum speed in
      */
     focus(value: number): void;
+
+    /**
+     * Tell the camera the current tally state.
+     */
+    tallyState(value: 'off' | 'preview' | 'program'): void;
 }

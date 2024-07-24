@@ -80,9 +80,23 @@ export class WebsocketPtzLancCamera implements ICameraConnection {
             return state;
         });
     }
-    public focus(value: number): void {
+    public focus(_: number): void {}
+    public tallyState(tallyState: 'off' | 'preview' | 'program'): void {
         this.setState((state) => {
-            state.focus = this.multiplyRoundAndCrop(value * 1.2, 1);
+            switch (tallyState) {
+                case 'off':
+                    state.green = 0;
+                    state.red = 0;
+                    break;
+                case 'preview':
+                    state.green = 255;
+                    state.red = 0;
+                    break;
+                case 'program':
+                    state.green = 0;
+                    state.red = 255;
+                    break;
+            }
             return state;
         });
     }

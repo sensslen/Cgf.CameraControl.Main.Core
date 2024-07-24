@@ -23,7 +23,8 @@ export abstract class Gamepad implements IHmi {
     private altKeyState = EAltKey.none;
     private readonly mixer?: IVideoMixer;
     private readonly cameras: { [key: number]: ICameraConnection } = {};
-    private selectedCamera?: ICameraConnection;
+    private selectedPreviewCamera?: ICameraConnection;
+    private selectedOnAirCamera?: ICameraConnection;
     private readonly connectionChange: IConnectionChangeConfiguration;
 
     private readonly specialFunctionDefault: { [key in EButtonDirection]?: ISpecialFunction } = {};
@@ -64,9 +65,15 @@ export abstract class Gamepad implements IHmi {
             });
         }
 
-        this.mixer
-            ?.imageSelectionChangeGet()
-            .on('previewChange', (preview: number, onAir: boolean) => this.mixerPreviewChange(preview, onAir));
+        const connectionChangeEmitter = this.mixer?.imageSelectionChangeGet();
+        if (connectionChangeEmitter !== undefined) {
+            connectionChangeEmitter.on('previewChange', (preview: number, onAir: boolean) =>
+                this.mixerPreviewChange(preview, onAir)
+            );
+            connectionChangeEmitter.on('programChange', (program: number) => {
+                this.mixerProgramChange(program);
+            });
+        }
     }
 
     public get whenConnectedChanged(): Observable<boolean> {
@@ -126,19 +133,19 @@ export abstract class Gamepad implements IHmi {
     }
 
     protected pan(value: number): void {
-        this.selectedCamera?.pan(value);
+        this.selectedPreviewCamera?.pan(value);
     }
 
     protected tilt(value: number): void {
-        this.selectedCamera?.tilt(value);
+        this.selectedPreviewCamera?.tilt(value);
     }
 
     protected zoom(value: number): void {
-        this.selectedCamera?.zoom(value);
+        this.selectedPreviewCamera?.zoom(value);
     }
 
     protected focus(value: number): void {
-        this.selectedCamera?.focus(value);
+        this.selectedPreviewCamera?.focus(value);
     }
 
     protected cut(): void {
@@ -175,18 +182,39 @@ export abstract class Gamepad implements IHmi {
 
     private mixerPreviewChange(preview: number, onAir: boolean): void {
         const selectedCamera = this.cameras[preview];
-        if (selectedCamera !== this.selectedCamera) {
+        if (selectedCamera !== this.selectedPreviewCamera) {
+            if (this.selectedOnAirCamera !== this.selectedPreviewCamera) {
+                this.selectedOnAirCamera?.tallyState('off');
+            }
             this.zoom(0);
             this.focus(0);
             this.pan(0);
             this.tilt(0);
         }
 
-        this.selectedCamera = selectedCamera;
+        this.selectedPreviewCamera = selectedCamera;
         if (selectedCamera !== undefined) {
             this.printConnectionMessage(preview, selectedCamera.connectionString, onAir);
+            if (this.selectedOnAirCamera !== selectedCamera) {
+                selectedCamera.tallyState('preview');
+            }
         } else {
             this.printConnectionMessage(preview, 'not a camera', onAir);
+        }
+    }
+
+    private mixerProgramChange(program: number): void {
+        const newOnAirCamera = this.cameras[program];
+        if (newOnAirCamera !== this.selectedOnAirCamera) {
+            if (this.selectedOnAirCamera !== this.selectedPreviewCamera) {
+                this.selectedOnAirCamera?.tallyState('off');
+            } else {
+                this.selectedPreviewCamera?.tallyState('preview');
+            }
+            this.selectedOnAirCamera = newOnAirCamera;
+            if (this.selectedOnAirCamera !== undefined) {
+                this.selectedOnAirCamera.tallyState('program');
+            }
         }
     }
 
